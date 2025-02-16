@@ -173,8 +173,8 @@ if __name__ == "__main__":
     #run_backtest_DaxPattern("../../data/SBUX.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
     #                        target_strategy=ins.mean_reversion_signal_v1, add_indicators=True)
 
-    #run_backtest_DaxPattern("../../data/HON.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
-    #                        target_strategy=ins.mean_reversion_signal_v1, add_indicators=True)
+    run_backtest_DaxPattern("../../data/HON.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
+                            target_strategy=ins.mean_reversion_signal_v1, add_indicators=True)
     # Measure execution time
     start_time = time.time()
      #df=exec_analysis()
@@ -189,8 +189,9 @@ if __name__ == "__main__":
     pd.set_option("display.max_columns", None)  # Show all columns
     print("RESULTS __________________________________________")
     res_filtered=df[(df["Win Rate [%]"] >= 70)
-    #                 & (df["Last Action"]==2)
-                     & (df["Equity Final [$]"] >20000)
+                     & (df["Last Action"]==2)
+    #                 & (df["Equity Final [$]"] >20000)
                      & (df["# Trades"] > 1)
     ]
+    res_filtered=res_filtered[["Ticker","Win Rate [%]","Equity Final [$]","# Trades","strategy","Last Action"]]
     print(res_filtered)
