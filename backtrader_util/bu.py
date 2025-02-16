@@ -55,6 +55,8 @@ def save_reports_to_df(reports):
         # Ensure report is a dictionary
         if isinstance(report, dict):
             row.update(report)
+        elif isinstance(report,pd.Series):
+            row.update(report.to_dict())
         else:
             row["Value"] = report  # Store float or other non-dict values with a generic key
 

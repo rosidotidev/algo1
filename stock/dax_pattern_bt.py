@@ -1,5 +1,4 @@
-import backtrader as bt
-from stock.base import BaseStrategy
+from backtesting import Backtest, Strategy
 import stock.ticker as ti
 from backtrader_util import bu
 import candle_signal as cs
@@ -10,89 +9,78 @@ import traceback
 import concurrent.futures
 import time
 
+from stock.base_bt import BaseStrategyBT
 
-class DaxPattern(BaseStrategy):
-    params = (
-        ('slperc', 0.05),  # Fast SMA period
-        ('tpperc', 0.02),  # Slow SMA period
-    )
-    def __init__(self):
-        super().__init__()
+
+class DaxPatternBT(BaseStrategyBT):
+    slperc= 0.05
+    def init(self):
         self.long_stop_price = None  # Stop Loss
         self.short_stop_price = None
 
     def stop_loss_long_check(self):
-        stop_l = self.data.close[0] < self.long_stop_price
-        if (stop_l):
-            print(f"***** long stop loss {self.data.close[0]} < {self.long_stop_price}")
+        stop_l = self.data.Close[-1] < self.long_stop_price
         return stop_l
 
     def stop_loss_short_check(self):
-        stop_l = self.data.close[0] > self.short_stop_price
-        if (stop_l):
-            print(f"***** short stop loss {self.data.close[0]} > {self.short_stop_price}")
+        stop_l = self.data.Close[-1] > self.short_stop_price
         return stop_l
 
     def next(self):
         # Get the current date in the format of the DataFrame index
         #total_signal=self.get_total_signal()
         total_signal=self.current_df()["TotalSignal"]
-        size = self.calculate_size()  # Calculate size dynamically based on capital allocation
+
+        #size = self.calculate_size()  # Calculate size dynamically based on capital allocation
         self.track_no_action()
-        if not self.position:
-            if size>0:
-                if total_signal == 2:
-                    self.buy(size=size)
-                    self.track_enter_long()
-                    self.long_stop_price=self.data.close[0] * (1 - self.params.slperc)
-                elif total_signal == 1:
-                    self.sell(size=size)
-                    self.track_enter_short()
-                    self.short_stop_price = self.data.close[0] * (1 + self.params.slperc)
+        if not (self.position.is_short or self.position.is_long):
+
+            if total_signal == 2:
+                self.buy()
+                self.track_enter_long()
+                self.long_stop_price=self.data.Close[-1] * (1 - self.slperc)
+            elif total_signal == 1:
+                self.sell()
+                self.track_enter_short()
+                self.short_stop_price = self.data.Close[-1] * (1 + self.slperc)
         else:
-            if self.position.size>0 and ((total_signal==1 or total_signal==-2)
+            if self.position.is_long and ((total_signal==1 or total_signal==-2)
                     or self.stop_loss_long_check()):
-                self.close()
+                self.position.close()
                 self.track_close_long()
-            elif self.position.size<0 and ((total_signal==2 or total_signal==-1)
+            elif self.position.is_short and ((total_signal==2 or total_signal==-1)
                     or self.stop_loss_short_check()):
-                self.close()
+                self.position.close()
                 self.track_close_short()
 
 
 
 
 
-def run_backtest_DaxPattern(data_path,slperc=0.04,tpperc=0.02,capital_allocation=1,show_plot=False,target_strategy=cs.dax_total_signal,add_indicators=False):
+def run_backtest_DaxPattern(data_path,slperc=0.04,tpperc=0.02,capital_allocation=1,show_plot=False,target_strategy=cs.dax_total_signal,add_indicators=True):
     df=ti.read_from_csv(data_path)
     df=bu.norm_date_time(df)
     if add_indicators:
         df=de.add_rsi_macd_bb(df)
     df = ti.add_total_signal(df,target_strategy)
-    print(df[df["TotalSignal"]>0])
-    #df = ti.add_total_signal(df, cs.shooting_star_hammer_signal)
-    data_feed = bt.feeds.PandasData(dataname=df)
-    # Initialize Cerebro
-    cerebro = bt.Cerebro()
-    cerebro.adddata(data_feed)
-    bu.add_analyzers_to_cerebro(cerebro)
-    # Add strategy
-    cerebro.addstrategy(DaxPattern,
-                        capital_allocation=capital_allocation,
-                        df=df,
-                        slperc=slperc)
+    #print(df[df["TotalSignal"]>0])
+    bt = Backtest(df, DaxPatternBT,
+                  cash=10000,
+                  finalize_trades=True,
+                  exclusive_orders=True,
+                  commission=.002)
 
-    # Run the backtest
-    # Set initial capital
-    cerebro.broker.setcash(10000.0)
-    results = cerebro.run()
-    report=bu.get_backtest_report(results)
-    #print(report)
-    #cerebro.plot()
+    # Esegui il backtest
+    ctx={}
+    results = bt.run(slperc=0.20,df=df,ctx=ctx)
+    ctx.update(results.to_dict())
+    #print(f" ctx {results}")
     if show_plot:
-        cerebro.plot()
+        bt.plot()
+    for key, value in ctx.items():
+        results[key] = value
     #return cerebro.broker.getvalue()
-    return report
+    return results
 
 def run_backtest_for_all_tickers(tickers_file, data_directory,candle_strategy=cs.dax_momentum_signal,add_indicators=False):
     """Runs backtests for all tickers in tickers.txt and determines the best performer."""
@@ -104,12 +92,10 @@ def run_backtest_for_all_tickers(tickers_file, data_directory,candle_strategy=cs
     # Dictionary to store final portfolio values
     results = {}
     reports = {}
-    field_selected='Final Portfolio Value'
+    field_selected='Equity Final [$]'
     #field_selected='Win Rate (%)'
     print(f"""
-    
-    {candle_strategy.__name__}
-    
+        {candle_strategy.__name__}
     """)
     for ticker in tickers:
         print(ticker)
@@ -131,7 +117,6 @@ def run_backtest_for_all_tickers(tickers_file, data_directory,candle_strategy=cs
         print("\nBest performing ticker:", best_ticker)
         print(f"strategy {candle_strategy}")
         print(f"{field_selected}:", results[best_ticker])
-        print("report:",reports[best_ticker] )
         print(results)
         return df
 
@@ -185,11 +170,14 @@ def exec_analysis_parallel():
 
 if __name__ == "__main__":
     #run_backtest_DaxPattern("../../data/GS.csv",slperc=0.15,tpperc=0.02,capital_allocation=1,show_plot=True)
-    run_backtest_DaxPattern("../../data/SBUX.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
-                            target_strategy=ins.mean_reversion_signal_v1, add_indicators=True)
+    #run_backtest_DaxPattern("../../data/SBUX.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
+    #                        target_strategy=ins.mean_reversion_signal_v1, add_indicators=True)
+
+    #run_backtest_DaxPattern("../../data/HON.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
+    #                        target_strategy=ins.mean_reversion_signal_v1, add_indicators=True)
     # Measure execution time
     start_time = time.time()
-    #df=exec_analysis_parallel()
+     #df=exec_analysis()
 
     df=bu.load_csv("../../results/report.csv")
     end_time = time.time()
@@ -200,8 +188,9 @@ if __name__ == "__main__":
     pd.set_option("display.max_rows", None)  # Show all rows
     pd.set_option("display.max_columns", None)  # Show all columns
     print("RESULTS __________________________________________")
-    res_filtered=df[(df["Win Rate (%)"] >= 80)
-    #                & (df["Last Action"]==2)
-                     & (df["Total Trades"] > 10)
+    res_filtered=df[(df["Win Rate [%]"] >= 70)
+    #                 & (df["Last Action"]==2)
+                     & (df["Equity Final [$]"] >20000)
+                     & (df["# Trades"] > 1)
     ]
     print(res_filtered)
