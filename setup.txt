@@ -1,0 +1,1 @@
+pipenv install pandas numpy python-dotenv yfinance matplotlib backtrader scikit-learn joblib pandas-ta xgboost

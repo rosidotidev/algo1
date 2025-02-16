@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pandas = "*"
+numpy = "==1.26.4"
+python-dotenv = "*"
+yfinance = "*"
+matplotlib = "*"
+backtrader = "*"
+scikit-learn = "*"
+joblib = "*"
+pandas-ta = "*"
+xgboost = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
