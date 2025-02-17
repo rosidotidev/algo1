@@ -98,7 +98,7 @@ def run_backtest_for_all_tickers(tickers_file, data_directory,candle_strategy=cs
         {candle_strategy.__name__}
     """)
     for ticker in tickers:
-        print(ticker)
+        #print(ticker)
         data_path = f"{data_directory}/{ticker}.csv"  # Path to CSV file
         try:
             report = run_backtest_DaxPattern(data_path, slperc=0.15,tpperc=0.02,capital_allocation=1,target_strategy=candle_strategy,add_indicators=add_indicators)
@@ -177,7 +177,7 @@ if __name__ == "__main__":
                             target_strategy=ins.mean_reversion_signal_v1, add_indicators=True)
     # Measure execution time
     start_time = time.time()
-     #df=exec_analysis()
+    #df=exec_analysis_parallel()
 
     df=bu.load_csv("../../results/report.csv")
     end_time = time.time()
@@ -188,10 +188,10 @@ if __name__ == "__main__":
     pd.set_option("display.max_rows", None)  # Show all rows
     pd.set_option("display.max_columns", None)  # Show all columns
     print("RESULTS __________________________________________")
-    res_filtered=df[(df["Win Rate [%]"] >= 70)
-                     & (df["Last Action"]==2)
-    #                 & (df["Equity Final [$]"] >20000)
-                     & (df["# Trades"] > 1)
+    res_filtered=df[(df["Win Rate [%]"] >= 10)
+    #                 & (df["Last Action"]==2)
+                     & (df["Equity Final [$]"] >80000)
+                     & (df["# Trades"] > 0)
     ]
     res_filtered=res_filtered[["Ticker","Win Rate [%]","Equity Final [$]","# Trades","strategy","Last Action"]]
     print(res_filtered)
