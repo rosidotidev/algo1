@@ -6,6 +6,11 @@ def add_rsi_column(df, length=14):
     df['RSI'] = ta.rsi(df['Close'], length=length)
     return df
 
+def add_adx_column(df, length=14):
+    # Calculate ADX
+    df['ADX'] = ta.adx(df['High'], df['Low'], df['Close'],length = 14)[f'ADX_{length}']
+    return df
+
 
 def add_macd_columns(df, macd_fast=12, macd_slow=26, macd_signal=9):
     # Calculate MACD and add it as new columns to the DataFrame
@@ -106,6 +111,7 @@ if __name__ == "__main__":
     df = pd.read_csv("../../data/AAPL.csv", parse_dates=["Date"], index_col="Date")
     df=add_rsi_column(df)
     df=add_bb_columns(df)
+    df=add_adx_column(df)
     df=add_macd_columns(df).dropna()
 
     print(df.head())  # Show the first few rows

@@ -1,8 +1,8 @@
 from backtesting import Backtest, Strategy
 import stock.ticker as ti
 from backtrader_util import bu
-import candle_signal as cs
-import indicators_signal as ins
+import stock.candle_signal as cs
+import stock.indicators_signal as ins
 import stock.data_enricher as de
 import pandas as pd
 import traceback
@@ -76,7 +76,7 @@ def run_backtest_DaxPattern(data_path,slperc=0.04,tpperc=0.02,capital_allocation
     ctx.update(results.to_dict())
     #print(f" ctx {results}")
     if show_plot:
-        bt.plot()
+        bt.plot(filename=None)
     for key, value in ctx.items():
         results[key] = value
     #return cerebro.broker.getvalue()
@@ -123,17 +123,13 @@ def run_backtest_for_all_tickers(tickers_file, data_directory,candle_strategy=cs
 def exec_analysis():
     df = None
     for strategy in cs.candlestick_strategies:
-        df1 = run_backtest_for_all_tickers('../../data/tickers.txt', '../../data/', candle_strategy=strategy)
+        df1 = run_backtest_for_all_tickers('../data/tickers.txt', '../data/', candle_strategy=strategy)
         df = bu.append_df(df, df1)
     for strategy in ins.indicators_strategy:
-        df1 = run_backtest_for_all_tickers('../../data/tickers.txt', '../../data/', candle_strategy=strategy,
+        df1 = run_backtest_for_all_tickers('../data/tickers.txt', '../data/', candle_strategy=strategy,
                                            add_indicators=True)
         df = bu.append_df(df, df1)
     return df
-
-
-import concurrent.futures
-
 
 def exec_analysis_parallel():
     """
@@ -166,20 +162,22 @@ def exec_analysis_parallel():
                 print(f"Error during backtest execution: {repr(e)}")
 
     return df
-
+def exec_analysis_and_save_results():
+    df=exec_analysis()
+    df.to_csv("../../results/report.csv", index=False)
 
 if __name__ == "__main__":
     #run_backtest_DaxPattern("../../data/GS.csv",slperc=0.15,tpperc=0.02,capital_allocation=1,show_plot=True)
     #run_backtest_DaxPattern("../../data/SBUX.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
     #                        target_strategy=ins.mean_reversion_signal_v1, add_indicators=True)
 
-    run_backtest_DaxPattern("../../data/HON.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
-                            target_strategy=ins.mean_reversion_signal_v1, add_indicators=True)
+    #run_backtest_DaxPattern("../../data/HON.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
+    #                        target_strategy=ins.mean_reversion_signal_v1, add_indicators=True)
     # Measure execution time
     start_time = time.time()
-    #df=exec_analysis_parallel()
+    df=exec_analysis_parallel()
 
-    df=bu.load_csv("../../results/report.csv")
+    #df=bu.load_csv("../../results/report.csv")
     end_time = time.time()
     print(f""
           f"***** Execution time: {end_time - start_time:.4f} seconds"
@@ -188,10 +186,10 @@ if __name__ == "__main__":
     pd.set_option("display.max_rows", None)  # Show all rows
     pd.set_option("display.max_columns", None)  # Show all columns
     print("RESULTS __________________________________________")
-    res_filtered=df[(df["Win Rate [%]"] >= 10)
-    #                 & (df["Last Action"]==2)
-                     & (df["Equity Final [$]"] >80000)
-                     & (df["# Trades"] > 0)
+    res_filtered=df[(df["Win Rate [%]"] >= 50)
+                     & (df["Last Action"]==1)
+    #                 & (df["Equity Final [$]"] >80000)
+                     & (df["# Trades"] >0 )
     ]
     res_filtered=res_filtered[["Ticker","Win Rate [%]","Equity Final [$]","# Trades","strategy","Last Action"]]
     print(res_filtered)

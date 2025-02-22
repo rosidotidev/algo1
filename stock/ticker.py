@@ -73,7 +73,7 @@ def fetch_and_save_ticker_data(ticker_file="tickers.txt", output_directory="hist
 
     # Create output directory if it doesn't exist
     os.makedirs(output_directory, exist_ok=True)
-
+    output_string=""
     # Fetch data for each ticker and save as CSV
     for ticker in tickers:
         try:
@@ -81,16 +81,21 @@ def fetch_and_save_ticker_data(ticker_file="tickers.txt", output_directory="hist
             if not df.empty:
                 file_path = os.path.join(output_directory, f"{ticker}.csv")
                 df.to_csv(file_path)
-                print(f"Saved {ticker} data to {file_path}")
+                res = f"Saved {ticker} data to {file_path} \r\n"
+                output_string +=res
+                print(res)
             else:
                 print(f"No data for {ticker}")
         except Exception as e:
-            print(f"Error retrieving data for {ticker}: {e}")
+            res=f"Error retrieving data for {ticker}: {e} \r\n"
+            output_string += res
+            print(res)
 
         # Delay to prevent hitting API rate limits
         time.sleep(0.2)
 
     print("Data fetching complete.")
+    return output_string
 
 def add_total_signal(df,total_signal_function):
     """
