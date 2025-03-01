@@ -4,18 +4,25 @@ import stock.dax_pattern_bt as trades
 import stock.indicators_signal as ins
 import stock.candle_signal as cs
 import stock.ticker as ti
+import backtrader_util.bu as bu
+
+def save_cache(stop_loss, take_profit):
+    """save values on cache"""
+    bu.cache["stop_loss"] = stop_loss
+    bu.cache["take_profit"] = take_profit
+    return "Values saved!"
 
 def run_backtest(ticker,function_name):
     function_name=function_name.replace(" ","_")
     merged_functions_list = cs.candlestick_strategies + ins.indicators_strategy
     functions_dict = {func.__name__: func for func in merged_functions_list}
     func=functions_dict[function_name]
-    res=trades.run_backtest_DaxPattern(f"../data/{ticker}.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
+    res=trades.run_backtest_DaxPattern(f"../data/{ticker}.csv", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"], capital_allocation=1, show_plot=True,
                             target_strategy=func, add_indicators=True)
     return res
 # Predefined function to load all tickers
-def long_process():
-    trades.exec_analysis_and_save_results(base_path="./")
+def run_long_process():
+    trades.exec_analysis_and_save_results(base_path="./",slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"])
     return "finished"
 
 
@@ -97,9 +104,21 @@ df[(df['Win Rate [%]'] >= 50)
             with gr.TabItem("Process all strategies"):
                 gr.Markdown("### Run Long Process")
                 # This textbox will display feedback after the long process completes
-                process_output = gr.Textbox(label="Process strategies")
-                long_process_button = gr.Button("Start Long Process")
-                long_process_button.click(long_process, outputs=process_output)
+                with gr.Row():
+                    with gr.Column(scale=1):  # Colonna per i widget di input
+                        stop_loss_input = gr.Number(label="Stop Loss",
+                                                    value=bu.cache.get("stop_loss", 0))  # Usa cache.get()
+                        take_profit_input = gr.Number(label="Take Profit",
+                                                      value=bu.cache.get("take_profit", 0))  # Usa cache.get()
+                        save_button = gr.Button("Save")
+                        save_output = gr.Textbox(label="Save Status")
+
+                        save_button.click(save_cache, inputs=[stop_loss_input, take_profit_input], outputs=save_output)
+
+                    with gr.Column(scale=5):  # Colonna per il pulsante e l'output del processo
+                        process_output = gr.Textbox(label="Process strategies")
+                        long_process_button = gr.Button("Start Long Process")
+                        long_process_button.click(run_long_process, outputs=process_output)
 
     # Launch the Gradio app
     demo.launch()

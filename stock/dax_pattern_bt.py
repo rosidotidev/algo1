@@ -14,13 +14,24 @@ from stock.base_bt import BaseStrategyBT
 
 class DaxPatternBT(BaseStrategyBT):
     slperc= 0.05
+    tpperc= 1.00
     def init(self):
         self.long_stop_price = None  # Stop Loss
         self.short_stop_price = None
+        self.long_tp_price= None
+        self.short_tp_price= None
 
     def stop_loss_long_check(self):
         stop_l = self.data.Close[-1] < self.long_stop_price
         return stop_l
+
+    def take_profit_long_check(self):
+        take_p = self.data.Close[-1] > self.long_tp_price
+        return take_p
+
+    def take_profit_short_check(self):
+        take_p = self.data.Close[-1] < self.short_tp_price
+        return take_p
 
     def stop_loss_short_check(self):
         stop_l = self.data.Close[-1] > self.short_stop_price
@@ -39,17 +50,19 @@ class DaxPatternBT(BaseStrategyBT):
                 self.buy()
                 self.track_enter_long()
                 self.long_stop_price=self.data.Close[-1] * (1 - self.slperc)
+                self.long_tp_price = self.data.Close[-1] * (1 + self.tpperc)
             elif total_signal == 1:
                 self.sell()
                 self.track_enter_short()
                 self.short_stop_price = self.data.Close[-1] * (1 + self.slperc)
+                self.short_tp_price = self.data.Close[-1] * (1 - self.tpperc)
         else:
             if self.position.is_long and ((total_signal==1 or total_signal==-2)
-                    or self.stop_loss_long_check()):
+                    or self.stop_loss_long_check() or self.take_profit_long_check()):
                 self.position.close()
                 self.track_close_long()
             elif self.position.is_short and ((total_signal==2 or total_signal==-1)
-                    or self.stop_loss_short_check()):
+                    or self.stop_loss_short_check() or self.take_profit_short_check()):
                 self.position.close()
                 self.track_close_short()
 
@@ -72,17 +85,17 @@ def run_backtest_DaxPattern(data_path,slperc=0.04,tpperc=0.02,capital_allocation
 
     # Esegui il backtest
     ctx={}
-    results = bt.run(slperc=0.20,df=df,ctx=ctx)
+    results = bt.run(slperc=slperc,tpperc=tpperc,df=df,ctx=ctx)
     ctx.update(results.to_dict())
     #print(f" ctx {results}")
     if show_plot:
         bt.plot(filename=None)
     for key, value in ctx.items():
-        results[key] = value
+        results[key] = bu.format_value(value)
     #return cerebro.broker.getvalue()
     return results
 
-def run_backtest_for_all_tickers(tickers_file, data_directory,candle_strategy=cs.dax_momentum_signal,add_indicators=False):
+def run_backtest_for_all_tickers(tickers_file, data_directory,slperc=0.15,tpperc=0.15,candle_strategy=cs.dax_momentum_signal,add_indicators=False):
     """Runs backtests for all tickers in tickers.txt and determines the best performer."""
     best_report=None
     # Read tickers from file
@@ -101,7 +114,7 @@ def run_backtest_for_all_tickers(tickers_file, data_directory,candle_strategy=cs
         #print(ticker)
         data_path = f"{data_directory}/{ticker}.csv"  # Path to CSV file
         try:
-            report = run_backtest_DaxPattern(data_path, slperc=0.15,tpperc=0.02,capital_allocation=1,target_strategy=candle_strategy,add_indicators=add_indicators)
+            report = run_backtest_DaxPattern(data_path, slperc=slperc,tpperc=tpperc,capital_allocation=1,target_strategy=candle_strategy,add_indicators=add_indicators)
             report["strategy"]=candle_strategy.__name__
             results[ticker] = report[field_selected]
             reports[ticker] = report
@@ -120,13 +133,13 @@ def run_backtest_for_all_tickers(tickers_file, data_directory,candle_strategy=cs
         print(results)
         return df
 
-def exec_analysis(base_path="../"):
+def exec_analysis(base_path="../",slperc=0.15, tpperc=1.0):
     df = None
     for strategy in cs.candlestick_strategies:
-        df1 = run_backtest_for_all_tickers(f'{base_path}../data/tickers.txt', f'{base_path}../data/', candle_strategy=strategy)
+        df1 = run_backtest_for_all_tickers(f'{base_path}../data/tickers.txt', f'{base_path}../data/', slperc=slperc,tpperc=tpperc,candle_strategy=strategy)
         df = bu.append_df(df, df1)
     for strategy in ins.indicators_strategy:
-        df1 = run_backtest_for_all_tickers(f'{base_path}../data/tickers.txt', f'{base_path}../data/', candle_strategy=strategy,
+        df1 = run_backtest_for_all_tickers(f'{base_path}../data/tickers.txt', f'{base_path}../data/', slperc=slperc,tpperc=tpperc,candle_strategy=strategy,
                                            add_indicators=True)
         df = bu.append_df(df, df1)
     return df
@@ -162,8 +175,8 @@ def exec_analysis_parallel():
                 print(f"Error during backtest execution: {repr(e)}")
 
     return df
-def exec_analysis_and_save_results(base_path='../'):
-    df=exec_analysis(base_path)
+def exec_analysis_and_save_results(base_path='../',slperc=0.15, tpperc=1.0):
+    df=exec_analysis(base_path,slperc=slperc, tpperc=tpperc)
     df.to_csv(f"{base_path}../results/report.csv", index=False)
 
 if __name__ == "__main__":

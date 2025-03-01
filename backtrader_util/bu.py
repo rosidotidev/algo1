@@ -66,19 +66,6 @@ def save_reports_to_df(reports):
     df = pd.DataFrame(data)
     return df
 
-def add_analyzers_to_cerebro(cerebro):
-    """
-    Adds advanced analyzers to Cerebro for comprehensive backtest reporting.
-
-    Args:
-        cerebro (bt.Cerebro): Cerebro instance to enhance with analyzers.
-    """
-    cerebro.addanalyzer(btanalyzers.SharpeRatio, _name='sharpe')
-    cerebro.addanalyzer(btanalyzers.DrawDown, _name='drawdown')
-    cerebro.addanalyzer(btanalyzers.TradeAnalyzer, _name='trade')
-    cerebro.addanalyzer(btanalyzers.Returns, _name='returns')
-
-
 def print_backtest_report(results):
     """
     Prints a detailed backtest report with aggregated performance metrics.
@@ -220,7 +207,26 @@ def norm_date_time(df):
     df.set_index('Date', inplace=True)
     return df
 
+def format_value(x):
+    """
+    Formats a value to two decimal places if numeric, or to 'YYYY-MM-DD' if it's a date.
+
+    Args:
+        x: The value to format.
+
+    Returns:
+        str: The formatted value as a string.
+    """
+    if isinstance(x, (int, float)):
+        return "{:.2f}".format(x)  # Format to two decimal places
+    elif isinstance(x, pd.Timestamp):
+        return x.strftime('%Y-%m-%d')  # Format date to 'YYYY-MM-DD'
+    return x
+
+cache={"stop_loss":0.15,"take_profit":0.15}
+
+
 
 if __name__ == "__main__":
-    load_and_display_csv(input_file="../../data/report.csv")
+    print(format_value(2.333))
 
