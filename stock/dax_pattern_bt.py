@@ -1,9 +1,9 @@
-from backtesting import Backtest, Strategy
+from backtesting import Backtest
 import stock.ticker as ti
 from backtrader_util import bu
 import stock.candle_signal as cs
 import stock.indicators_signal as ins
-import stock.data_enricher as de
+import data.data_enricher as de
 import pandas as pd
 import traceback
 import concurrent.futures
@@ -120,13 +120,13 @@ def run_backtest_for_all_tickers(tickers_file, data_directory,candle_strategy=cs
         print(results)
         return df
 
-def exec_analysis():
+def exec_analysis(base_path="../"):
     df = None
     for strategy in cs.candlestick_strategies:
-        df1 = run_backtest_for_all_tickers('../data/tickers.txt', '../data/', candle_strategy=strategy)
+        df1 = run_backtest_for_all_tickers(f'{base_path}../data/tickers.txt', f'{base_path}../data/', candle_strategy=strategy)
         df = bu.append_df(df, df1)
     for strategy in ins.indicators_strategy:
-        df1 = run_backtest_for_all_tickers('../data/tickers.txt', '../data/', candle_strategy=strategy,
+        df1 = run_backtest_for_all_tickers(f'{base_path}../data/tickers.txt', f'{base_path}../data/', candle_strategy=strategy,
                                            add_indicators=True)
         df = bu.append_df(df, df1)
     return df
@@ -162,9 +162,9 @@ def exec_analysis_parallel():
                 print(f"Error during backtest execution: {repr(e)}")
 
     return df
-def exec_analysis_and_save_results():
-    df=exec_analysis()
-    df.to_csv("../../results/report.csv", index=False)
+def exec_analysis_and_save_results(base_path='../'):
+    df=exec_analysis(base_path)
+    df.to_csv(f"{base_path}../results/report.csv", index=False)
 
 if __name__ == "__main__":
     #run_backtest_DaxPattern("../../data/GS.csv",slperc=0.15,tpperc=0.02,capital_allocation=1,show_plot=True)
@@ -175,7 +175,7 @@ if __name__ == "__main__":
     #                        target_strategy=ins.mean_reversion_signal_v1, add_indicators=True)
     # Measure execution time
     start_time = time.time()
-    df=exec_analysis_parallel()
+    df=exec_analysis("../")
 
     #df=bu.load_csv("../../results/report.csv")
     end_time = time.time()

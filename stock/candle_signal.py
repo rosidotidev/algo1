@@ -318,6 +318,34 @@ def inverted_hammer_signal(df, current_candle):
 
     return 0
 
+def combined_signal(df, current_candle):
+    """
+    Combines signals from various candlestick strategies, excluding itself.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing candlestick data.
+        current_candle (index): Index of the current candle.
+        candlestick_strategies (list): List of candlestick strategy functions.
+
+    Returns:
+        int: 2 for buy signal, 1 for sell signal, 0 for no signal.
+    """
+    # Create a new list excluding combined_signal
+    strategies = [func for func in candlestick_strategies if func != combined_signal]
+
+    signals = [func(df, current_candle) for func in strategies]
+    buy_signals = signals.count(2)
+    sell_signals = signals.count(1)
+
+    # Example combination logic (customize as needed)
+    if buy_signals > sell_signals and buy_signals > 2:
+        return 2  # Strong buy signal
+    elif sell_signals > buy_signals and sell_signals > 2:
+        return 1  # Strong sell signal
+    else:
+        return 0  # No strong signal
+
+
 def aaa():
     """
 
@@ -349,5 +377,6 @@ candlestick_strategies = [
     morning_evening_star_signal,
     shooting_star_hammer_signal,
     hammer_signal,
-    inverted_hammer_signal
+    inverted_hammer_signal,
+    combined_signal
 ]

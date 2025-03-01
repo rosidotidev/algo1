@@ -106,7 +106,16 @@ def add_total_signal(df,total_signal_function):
 
     df['TotalSignal'] = df.apply(lambda row: total_signal_function(df, row.name), axis=1)
     return df
-
+# Function to read tickers from the file
+def read_tickers_from_file(filepath="../../data/tickers.txt"):
+    try:
+        with open(filepath, "r") as f:
+            tickers = [line.strip() for line in f]
+        return tickers
+    except FileNotFoundError:
+        return ["Tickers file not found."]
+    except Exception as e:
+        return [f"Error reading file: {str(e)}"]
 # Example usage
 if __name__ == "__main__":
     fetch_and_save_ticker_data("../../data/tickers.txt","../../data/","3y")
