@@ -102,9 +102,9 @@ def add_total_signal(df,total_signal_function):
     Adds the 'TotalSignal' column to the DataFrame without using progress_apply.
     """
     if 'TotalSignal' not in df.columns:
-        df['TotalSignal'] = 0  # Default value if missing
+        df.loc[:, 'TotalSignal'] = 0  # Default value if missing
 
-    df['TotalSignal'] = df.apply(lambda row: total_signal_function(df, row.name), axis=1)
+    df.loc[:, 'TotalSignal'] = df.apply(lambda row: total_signal_function(df, row.name), axis=1)
     return df
 # Function to read tickers from the file
 def read_tickers_from_file(filepath="../../data/tickers.txt"):

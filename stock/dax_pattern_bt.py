@@ -75,6 +75,8 @@ def run_backtest_DaxPattern(data_path,slperc=0.04,tpperc=0.02,capital_allocation
     df=bu.norm_date_time(df)
     if add_indicators:
         df=de.add_rsi_macd_bb(df)
+        df=de.add_smas_long_short(df)
+        df=de.add_stoch(df)
     df = ti.add_total_signal(df,target_strategy)
     #print(df[df["TotalSignal"]>0])
     bt = Backtest(df, DaxPatternBT,
@@ -184,13 +186,13 @@ if __name__ == "__main__":
     #run_backtest_DaxPattern("../../data/SBUX.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
     #                        target_strategy=ins.mean_reversion_signal_v1, add_indicators=True)
 
-    #run_backtest_DaxPattern("../../data/HON.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
-    #                        target_strategy=ins.mean_reversion_signal_v1, add_indicators=True)
+    #run_backtest_DaxPattern("../../data/AAPL.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
+    #                        target_strategy=ins.moving_average_crossover_signal, add_indicators=True)
     # Measure execution time
     start_time = time.time()
     df=exec_analysis("../")
 
-    #df=bu.load_csv("../../results/report.csv")
+    df=bu.load_csv("../../results/report.csv")
     end_time = time.time()
     print(f""
           f"***** Execution time: {end_time - start_time:.4f} seconds"

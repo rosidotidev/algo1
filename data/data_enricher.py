@@ -1,10 +1,13 @@
 import pandas as pd
 import pandas_ta as ta
 
-import pandas as pd
-import pandas_ta as ta
+import backtrader_util.bu
 
 
+def add_sma_column(df, col="SMA",length=14):
+    # Calculate RSI and add it as a new column to the DataFrame
+    df[f"{col}"] = ta.sma(df['Close'], length=length)
+    return df
 
 def add_rsi_column(df, length=14):
     # Calculate RSI and add it as a new column to the DataFrame
@@ -102,6 +105,17 @@ def add_indicators(df, sma_period=20, bb_period=20, macd_short=12, macd_long=26,
 
     print(df)
     return df.dropna()  # Remove NaN values at the start
+
+def add_smas_long_short(df):
+    df= add_sma_column(df,"SMA_short",20)
+    df= add_sma_column(df,"SMA_long",50)
+    return df.dropna()
+
+def add_stoch(df):
+    stoch = ta.stoch(high=df['High'], low=df['Low'], close=df['Close'], k=14, d=3, append=True)
+    df["STOCHk_14_3_3"] = stoch['STOCHk_14_3_3']
+    df["STOCHd_14_3_3"] = stoch['STOCHd_14_3_3']
+    return df
 
 def add_rsi_macd_bb(df):
     df = add_rsi_column(df)
