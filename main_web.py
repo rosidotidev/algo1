@@ -33,9 +33,9 @@ def load_all_tickers():
 
 
 # Function to filter the DataFrame using the provided query
-def filter_dataframe(query: str):
+def filter_dataframe(query,file_name='report.csv'):
     # Load the DataFrame from a CSV file (modify "data.csv" with the correct path)
-    df = pd.read_csv("../results/report.csv")
+    df = pd.read_csv(f"../results/{file_name}")
 
     try:
         # Evaluate the query on the DataFrame.
@@ -59,22 +59,35 @@ def main():
         gr.Markdown("Use the sections below to filter the DataFrame or to load all tickers.")
 
         with gr.Tabs():
-            with gr.TabItem("DataFrame Filter"):
-                gr.Markdown("### Filter the DataFrame")
-                query_input = gr.Textbox(
-                    lines=2,
-                    placeholder='Enter a filter, e.g., df[(df["Close"] > 0)]',
-                    label="Query", value="""
-df[(df['Win Rate [%]'] >= 50)
-        & (df['Last Action']==1)
-    #   & (df['Equity Final [$]'] >80000)
-        & (df['# Trades'] >0 )
-]"""
+            with gr.TabItem("Results Inspector"):
+                with gr.Row():
+                    with gr.Column(scale=1):  # Colonna per il dropdown dei file
+                        files = bu.get_csv_files("../results/")
+                        file_dropdown = gr.Dropdown(files, label="Select CSV File")
 
-                )
-                df_output = gr.Dataframe(label="Filtered DataFrame")
-                filter_button = gr.Button("Apply Filter")
-                filter_button.click(filter_dataframe, inputs=query_input, outputs=df_output)
+                    with gr.Column(scale=4):
+                        df_file_name = None
+
+
+
+                        gr.Markdown("### Filter the DataFrame")
+                        query_input = gr.Textbox(
+                            lines=2,
+                            placeholder='Enter a filter, e.g., df[(df["Close"] > 0)]',
+                            label="Query", value="""
+df[(df['Win Rate [%]'] >= 50)
+                & (df['Last Action']==1)
+            #   & (df['Ticker'] =='CPR.MI')    
+            #   & (df['Equity Final [$]'] >80000)
+                & (df['# Trades'] >0 )
+        ]"""
+
+                        )
+                        df_output = gr.Dataframe(label="Filtered DataFrame")
+                        filter_button = gr.Button("Apply Filter")
+                        filter_button.click(filter_dataframe, inputs=query_input, outputs=df_output)
+
+                        file_dropdown.change(fn=filter_dataframe, inputs=[query_input,file_dropdown], outputs=df_output)
             with gr.TabItem("Backtesting"):
                 gr.Markdown("### Run Backtesting")
                 tickers = ti.read_tickers_from_file("../data/tickers.txt")  # Read tickers from file
@@ -121,7 +134,7 @@ df[(df['Win Rate [%]'] >= 50)
                         long_process_button.click(run_long_process, outputs=process_output)
 
     # Launch the Gradio app
-    demo.launch()
+    demo.launch(share=True)
 
 
 if __name__ == '__main__':

@@ -8,6 +8,7 @@ import pandas as pd
 import traceback
 import concurrent.futures
 import time
+import datetime
 
 from stock.base_bt import BaseStrategyBT
 
@@ -179,6 +180,8 @@ def exec_analysis_parallel():
     return df
 def exec_analysis_and_save_results(base_path='../',slperc=0.15, tpperc=1.0):
     df=exec_analysis(base_path,slperc=slperc, tpperc=tpperc)
+    today = datetime.datetime.now().strftime("%Y%m%d")
+    df.to_csv(f"{base_path}../results/report_{today}.csv", index=False)
     df.to_csv(f"{base_path}../results/report.csv", index=False)
 
 if __name__ == "__main__":

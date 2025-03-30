@@ -1,5 +1,7 @@
+import os
 import pandas as pd
 from datetime import datetime
+
 
 def get_timestamp():
     return datetime.now().strftime("%Y%m%d%H%M")
@@ -88,6 +90,18 @@ def format_value(x):
     elif isinstance(x, pd.Timestamp):
         return x.strftime('%Y-%m-%d')  # Format date to 'YYYY-MM-DD'
     return x
+
+def get_csv_files(directory):
+    """list of csv file in a directory"""
+    try:
+        files = [f for f in os.listdir(directory) if f.endswith('.csv')]
+        return files
+    except FileNotFoundError:
+        return ["Directory not found"]
+
+
+
+
 
 cache={"stop_loss":0.15,"take_profit":0.15}
 
