@@ -184,18 +184,22 @@ def exec_analysis_and_save_results(base_path='../',slperc=0.15, tpperc=1.0):
     df.to_csv(f"{base_path}../results/report_{today}.csv", index=False)
     df.to_csv(f"{base_path}../results/report.csv", index=False)
 
-if __name__ == "__main__":
-    #run_backtest_DaxPattern("../../data/GS.csv",slperc=0.15,tpperc=0.02,capital_allocation=1,show_plot=True)
-    #run_backtest_DaxPattern("../../data/SBUX.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
+def test0():
+    run_backtest_DaxPattern("../../data/GS.csv",slperc=0.15,tpperc=0.02,capital_allocation=1000000,show_plot=True)
+
+
+def test1():
+    # run_backtest_DaxPattern("../../data/GS.csv",slperc=0.15,tpperc=0.02,capital_allocation=1,show_plot=True)
+    # run_backtest_DaxPattern("../../data/SBUX.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
     #                        target_strategy=ins.mean_reversion_signal_v1, add_indicators=True)
 
-    #run_backtest_DaxPattern("../../data/AAPL.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
+    # run_backtest_DaxPattern("../../data/AAPL.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
     #                        target_strategy=ins.moving_average_crossover_signal, add_indicators=True)
     # Measure execution time
     start_time = time.time()
-    df=exec_analysis("../")
+    df = exec_analysis("../")
 
-    df=bu.load_csv("../../results/report.csv")
+    df = bu.load_csv("../../results/report.csv")
     end_time = time.time()
     print(f""
           f"***** Execution time: {end_time - start_time:.4f} seconds"
@@ -204,10 +208,14 @@ if __name__ == "__main__":
     pd.set_option("display.max_rows", None)  # Show all rows
     pd.set_option("display.max_columns", None)  # Show all columns
     print("RESULTS __________________________________________")
-    res_filtered=df[(df["Win Rate [%]"] >= 50)
-                     & (df["Last Action"]==1)
-    #                 & (df["Equity Final [$]"] >80000)
-                     & (df["# Trades"] >0 )
-    ]
-    res_filtered=res_filtered[["Ticker","Win Rate [%]","Equity Final [$]","# Trades","strategy","Last Action"]]
+    res_filtered = df[(df["Win Rate [%]"] >= 50)
+                      & (df["Last Action"] == 1)
+                      #                 & (df["Equity Final [$]"] >80000)
+                      & (df["# Trades"] > 0)
+                      ]
+    res_filtered = res_filtered[["Ticker", "Win Rate [%]", "Equity Final [$]", "# Trades", "strategy", "Last Action"]]
     print(res_filtered)
+
+
+if __name__ == "__main__":
+    test0()

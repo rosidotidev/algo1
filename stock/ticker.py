@@ -3,6 +3,7 @@ import os
 import numpy as np
 import time
 import pandas as pd
+from stock.my_yfinance import MyYFinance
 
 def read_from_csv(file_path):
     return pd.read_csv(file_path)
@@ -46,7 +47,8 @@ def read_pandas_ticker(stock:str,period='1y'):
     Valid options for period are 1d, 5d, 1mo, 3mo, 6mo, 1y,
      2y, 5y, 10y and ytd.
    """
-   history = yf.Ticker(ticker=stock).history(period=period)
+   #history = yf.Ticker(ticker=stock).history(period=period)
+   history = MyYFinance.fetch_by_period(stock,period=period)
    return history
 
 def add_BB(data,window=21,k=2):
@@ -118,6 +120,7 @@ def read_tickers_from_file(filepath="../../data/tickers.txt"):
         return [f"Error reading file: {str(e)}"]
 # Example usage
 if __name__ == "__main__":
+    # https://github.com/ranaroussi/yfinance/issues/2422
     fetch_and_save_ticker_data("../../data/tickers.txt","../../data/","3y")
 
 
