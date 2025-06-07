@@ -22,8 +22,9 @@ def run_backtest(ticker,function_name):
     return res
 # Predefined function to load all tickers
 def run_long_process():
-    trades.exec_analysis_and_save_results(base_path="./",slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"])
-    return "finished"
+    trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"])
+    updated_files = bu.get_csv_files("../results/")
+    return "Finished", gr.update(choices=updated_files)
 
 
 # Predefined function to load all tickers
@@ -36,7 +37,16 @@ def load_all_tickers():
 def filter_dataframe(query,file_name='report.csv'):
     # Load the DataFrame from a CSV file (modify "data.csv" with the correct path)
     df = pd.read_csv(f"../results/{file_name}")
-
+    selected_columns = [
+        'Ticker',
+        'Equity Final [$]',
+        'Return [%]',
+        'Buy & Hold Return [%]',
+        '# Trades',
+        'Win Rate [%]',
+        '_strategy',
+        'strategy'
+    ]
     try:
         # Evaluate the query on the DataFrame.
         # The variables 'df' and 'pd' are available to the query
@@ -45,7 +55,7 @@ def filter_dataframe(query,file_name='report.csv'):
         # If the result is not a DataFrame, try to convert it
         if not isinstance(filtered_df, pd.DataFrame):
             filtered_df = pd.DataFrame(filtered_df)
-        return filtered_df
+        return filtered_df[selected_columns]
 
     except Exception as e:
         # In case of error, return a DataFrame containing the error message
@@ -131,7 +141,7 @@ df[(df['Win Rate [%]'] >= 50)
                     with gr.Column(scale=5):  # Colonna per il pulsante e l'output del processo
                         process_output = gr.Textbox(label="Process strategies")
                         long_process_button = gr.Button("Start Long Process")
-                        long_process_button.click(run_long_process, outputs=process_output)
+                        long_process_button.click(run_long_process, outputs=[process_output, file_dropdown])
 
     # Launch the Gradio app
     demo.launch(share=True)
