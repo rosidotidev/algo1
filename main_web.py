@@ -11,7 +11,6 @@ warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 def save_cache(stop_loss, take_profit):
-    """save values on cache"""
     bu.cache["stop_loss"] = stop_loss
     bu.cache["take_profit"] = take_profit
     return "Values saved!"
@@ -24,22 +23,17 @@ def run_backtest(ticker,function_name):
     res=trades.run_backtest_DaxPattern(f"../data/{ticker}.csv", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"], capital_allocation=1, show_plot=True,
                             target_strategy=func, add_indicators=True)
     return res
-# Predefined function to load all tickers
+
 def run_long_process():
     result_string=trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"])
     updated_files = bu.get_csv_files("../results/")
     return result_string, gr.update(choices=updated_files)
 
-
-# Predefined function to load all tickers
 def load_all_tickers():
     res=ti.fetch_and_save_ticker_data("../data/tickers.txt","../data/","3y")
     return res
 
-
-# Function to filter the DataFrame using the provided query
 def filter_dataframe(query,file_name='report.csv'):
-    # Load the DataFrame from a CSV file (modify "data.csv" with the correct path)
     df = pd.read_csv(f"../results/{file_name}")
     selected_columns = [
         'Ticker',
@@ -52,22 +46,14 @@ def filter_dataframe(query,file_name='report.csv'):
         'strategy'
     ]
     try:
-        # Evaluate the query on the DataFrame.
-        # The variables 'df' and 'pd' are available to the query
         filtered_df = eval(query, {"df": df, "pd": pd})
-
-        # If the result is not a DataFrame, try to convert it
         if not isinstance(filtered_df, pd.DataFrame):
             filtered_df = pd.DataFrame(filtered_df)
         return filtered_df[selected_columns]
-
     except Exception as e:
-        # In case of error, return a DataFrame containing the error message
         return pd.DataFrame({"Error": [str(e)]})
 
-
 def main():
-    # Create an interface using gr.Blocks with two tabs for different functionalities
     with gr.Blocks(theme=gr.themes.Soft()) as demo:
         gr.Markdown("# Stock Analysis and Ticker Loader")
 
@@ -75,83 +61,78 @@ def main():
             with gr.TabItem("Results Inspector"):
                 gr.Markdown("### Use this section to filter CSV results based on conditions")
                 with gr.Row():
-                    with gr.Column(scale=1):  # Colonna per il dropdown dei file
+                    with gr.Column(scale=1):
                         files = bu.get_csv_files("../results/")
                         file_dropdown = gr.Dropdown(files, label="Select CSV File")
 
+                        win_rate_slider = gr.Slider(minimum=0, maximum=100, value=80, label="Min Win Rate [%]")
+                        return_slider = gr.Slider(minimum=0, maximum=500, value=50, label="Min Return [%]")
+                        trades_slider = gr.Slider(minimum=0, maximum=100, value=1, label="Min # Trades")
+                        last_action_check = gr.CheckboxGroup([1, 2], label="Last Action values to include")
+
+                        filter_button = gr.Button("Apply Filter")
+
                     with gr.Column(scale=4):
-                        df_file_name = None
-
-
-
-                        gr.Markdown("### Filter the DataFrame")
                         query_input = gr.Textbox(
-                            lines=2,
+                            lines=4,
                             placeholder='Enter a filter, e.g., df[(df["Close"] > 0)]',
-                            label="Query", value="""
+                            label="Query",
+                            value="""
 df[
     (df['Win Rate [%]'] > 80) &
     (df['Return [%]'] > 50) &
     (df['Last Action'].isin([1, 2])) &
     (df['# Trades'] > 0)
-]
-"""
-
-
+]"""
                         )
                         df_output = gr.Dataframe(label="Filtered DataFrame")
-                        filter_button = gr.Button("Apply Filter")
-                        filter_button.click(filter_dataframe, inputs=query_input, outputs=df_output)
 
-                        file_dropdown.change(fn=filter_dataframe, inputs=[query_input,file_dropdown], outputs=df_output)
+                        def build_query_and_filter(file_name, win_rate, ret, trades, actions):
+                            if not actions:
+                                actions = [1, 2]
+                            query = f"""df[(df['Win Rate [%]'] > {win_rate}) & (df['Return [%]'] > {ret}) & (df['# Trades'] >= {trades}) & (df['Last Action'].isin({actions}))]"""
+                            return filter_dataframe(query, file_name)
+
+                        filter_button.click(build_query_and_filter, inputs=[file_dropdown, win_rate_slider, return_slider, trades_slider, last_action_check], outputs=df_output)
+
+                        execute_query_button = gr.Button("Execute Query")
+                        execute_query_button.click(fn=filter_dataframe, inputs=[query_input, file_dropdown], outputs=df_output)
+
+                        file_dropdown.change(fn=filter_dataframe, inputs=[query_input, file_dropdown], outputs=df_output)
+
             with gr.TabItem("Backtesting"):
                 gr.Markdown("### Run a backtest on a specific ticker with a selected trading strategy.")
-                tickers = ti.read_tickers_from_file("../data/tickers.txt")  # Read tickers from file
-
+                tickers = ti.read_tickers_from_file("../data/tickers.txt")
                 with gr.Row():
-                    ticker_dropdown = gr.Dropdown(
-                        choices=tickers,
-                        label="Select Ticker"
-                    )
+                    ticker_dropdown = gr.Dropdown(choices=tickers, label="Select Ticker")
                     backtesting_functions = ins.indicators_strategy + cs.candlestick_strategies
                     algorithm_choices = [f.__name__.replace("_", " ") for f in backtesting_functions]
-
-                    algorithm_dropdown = gr.Dropdown(
-                        choices=algorithm_choices,
-                        label="Select Algorithm"
-                    )
-
+                    algorithm_dropdown = gr.Dropdown(choices=algorithm_choices, label="Select Algorithm")
                 backtest_output = gr.Textbox(label="Backtesting Results")
                 backtest_button = gr.Button("Run Backtest")
-                backtest_button.click(run_backtest, inputs=[ticker_dropdown, algorithm_dropdown],
-                                      outputs=backtest_output)
+                backtest_button.click(run_backtest, inputs=[ticker_dropdown, algorithm_dropdown], outputs=backtest_output)
+
             with gr.TabItem("Load Tickers"):
                 gr.Markdown("### Fetch and store recent historical data for all tickers.")
-                tickers_output = gr.Textbox(label="Loaded Tickers")  # Usa gr.Textbox
+                tickers_output = gr.Textbox(label="Loaded Tickers")
                 load_button = gr.Button("Load Tickers")
                 load_button.click(load_all_tickers, outputs=tickers_output)
+
             with gr.TabItem("Process all strategies"):
                 gr.Markdown("### Run all strategies across all tickers and generate daily reports.")
-                # This textbox will display feedback after the long process completes
                 with gr.Row():
-                    with gr.Column(scale=1):  # Colonna per i widget di input
-                        stop_loss_input = gr.Number(label="Stop Loss",
-                                                    value=bu.cache.get("stop_loss", 0))  # Usa cache.get()
-                        take_profit_input = gr.Number(label="Take Profit",
-                                                      value=bu.cache.get("take_profit", 0))  # Usa cache.get()
+                    with gr.Column(scale=1):
+                        stop_loss_input = gr.Number(label="Stop Loss", value=bu.cache.get("stop_loss", 0))
+                        take_profit_input = gr.Number(label="Take Profit", value=bu.cache.get("take_profit", 0))
                         save_button = gr.Button("Save")
                         save_output = gr.Textbox(label="Save Status")
-
                         save_button.click(save_cache, inputs=[stop_loss_input, take_profit_input], outputs=save_output)
-
-                    with gr.Column(scale=5):  # Colonna per il pulsante e l'output del processo
+                    with gr.Column(scale=5):
                         process_output = gr.Textbox(label="Process strategies")
                         long_process_button = gr.Button("Start Long Process")
                         long_process_button.click(run_long_process, outputs=[process_output, file_dropdown])
 
-    # Launch the Gradio app
     demo.launch(share=True)
-
 
 if __name__ == '__main__':
     main()

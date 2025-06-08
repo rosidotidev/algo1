@@ -164,7 +164,7 @@ def exec_analysis_parallel(base_path="../", slperc=0.15, tpperc=1.0):
     tickers_file = f'{base_path}../data/tickers.txt'
     data_dir = f'{base_path}../data/'
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=3) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=6) as executor:
         # Candlestick strategies
         for strategy in cs.candlestick_strategies:
             futures.append(executor.submit(
