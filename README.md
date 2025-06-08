@@ -6,8 +6,8 @@ Make sure you have **Python 3.9+** and **Pipenv** installed.
  
 ```bash
 # Clone the repository
-git clone https://github.com/<your-username>/<repo-name>.git
-cd <repo-name>
+git https://github.com/rosidotidev/algo1.git
+cd algo1
 
 # Install dependencies using Pipenv
 pipenv install
