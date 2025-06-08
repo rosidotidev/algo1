@@ -31,7 +31,7 @@ Its goal is to help users make **daily investment or short-selling decisions**, 
 Each day, follow these steps:
 
 ### ✅ 1. Load updated price data
-Use an external script or `yfinance` to download the latest historical prices for your monitored tickers. The app expects CSV files to be stored in the `../results/` directory.
+Run the “Load Tickers” feature in the app to ensure the list of tickers is up to date (it reads tickers.txt).
 
 ### ✅ 2. Run the full strategy processing
 Go to the **"Process all strategies"** tab:
