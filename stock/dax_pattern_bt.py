@@ -147,38 +147,6 @@ def exec_analysis(base_path="../",slperc=0.15, tpperc=1.0):
         df = bu.append_df(df, df1)
     return df
 
-def exec_analysis_parallel_old():
-    """
-    Executes backtesting for all tickers using both candlestick and indicator strategies in parallel.
-
-    Returns:
-        DataFrame: The combined results of all backtests.
-    """
-    df = None
-    futures = []
-
-    # Use ThreadPoolExecutor to run the loops in parallel
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-        # First loop: Run backtests for candlestick strategies
-        for strategy in cs.candlestick_strategies:
-            futures.append(
-                executor.submit(run_backtest_for_all_tickers, '../../data/tickers.txt', '../../data/', strategy))
-
-        # Second loop: Run backtests for indicator strategies
-        for strategy in ins.indicators_strategy:
-            futures.append(
-                executor.submit(run_backtest_for_all_tickers, '../../data/tickers.txt', '../../data/', strategy, True))
-
-        # Collect results as they complete
-        for future in concurrent.futures.as_completed(futures):
-            try:
-                df1 = future.result()
-                df = bu.append_df(df, df1)
-            except Exception as e:
-                print(f"Error during backtest execution: {repr(e)}")
-
-    return df
-
 def exec_analysis_parallel(base_path="../", slperc=0.15, tpperc=1.0):
     """
     Executes backtesting for all tickers using both candlestick and indicator strategies in parallel.
@@ -235,21 +203,18 @@ def exec_analysis_and_save_results(base_path='../', slperc=0.15, tpperc=1.0, par
 
     # ⏱️ Print decorated summary
     elapsed_time = time.time() - start_time
-    print("\n" + "*" * 60)
-    print("*           Backtest Execution Completed            *")
-    print("*" * 60)
-    print(f"* Mode:       {'Parallel' if parallel else 'Sequential':<42}*")
-    print(f"* Stop Loss:  {slperc:<42}*")
-    print(f"* Take Profit:{tpperc:<42}*")
-    print(f"* Duration:   {elapsed_time:.2f} seconds{'':<29}*")
-    print("*" * 60 + "\n")
-
-
-def exec_analysis_and_save_results_old(base_path='../',slperc=0.15, tpperc=1.0):
-    df=exec_analysis(base_path,slperc=slperc, tpperc=tpperc)
-    today = datetime.datetime.now().strftime("%Y%m%d")
-    df.to_csv(f"{base_path}../results/report_{today}.csv", index=False)
-    df.to_csv(f"{base_path}../results/report.csv", index=False)
+    summary = (
+            "\n" + "*" * 60 + "\n" +
+            "*           Backtest Execution Completed            *\n" +
+            "*" * 60 + "\n" +
+            f"* Mode:       {'Parallel' if parallel else 'Sequential':<42}*\n" +
+            f"* Stop Loss:  {slperc:<42}*\n" +
+            f"* Take Profit:{tpperc:<42}*\n" +
+            f"* Duration:   {elapsed_time:.2f} seconds{'':<29}*\n" +
+            "*" * 60 + "\n"
+    )
+    print(summary)  # Optional: print to console
+    return summary
 
 def test0():
     run_backtest_DaxPattern("../../data/GS.csv",slperc=0.15,tpperc=0.02,capital_allocation=1000000,show_plot=True)

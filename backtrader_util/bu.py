@@ -103,7 +103,7 @@ def get_csv_files(directory):
 
 
 
-cache={"stop_loss":0.15,"take_profit":0.15}
+cache={"stop_loss":0.10,"take_profit":0.40}
 
 
 

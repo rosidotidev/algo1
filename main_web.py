@@ -1,3 +1,4 @@
+import warnings
 import gradio as gr
 import pandas as pd
 import stock.dax_pattern_bt as trades
@@ -5,6 +6,9 @@ import stock.indicators_signal as ins
 import stock.candle_signal as cs
 import stock.ticker as ti
 import backtrader_util.bu as bu
+
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 def save_cache(stop_loss, take_profit):
     """save values on cache"""
@@ -22,9 +26,9 @@ def run_backtest(ticker,function_name):
     return res
 # Predefined function to load all tickers
 def run_long_process():
-    trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"])
+    result_string=trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"])
     updated_files = bu.get_csv_files("../results/")
-    return "Finished", gr.update(choices=updated_files)
+    return result_string, gr.update(choices=updated_files)
 
 
 # Predefined function to load all tickers
@@ -66,10 +70,10 @@ def main():
     # Create an interface using gr.Blocks with two tabs for different functionalities
     with gr.Blocks(theme=gr.themes.Soft()) as demo:
         gr.Markdown("# Stock Analysis and Ticker Loader")
-        gr.Markdown("Use the sections below to filter the DataFrame or to load all tickers.")
 
         with gr.Tabs():
             with gr.TabItem("Results Inspector"):
+                gr.Markdown("### Use this section to filter CSV results based on conditions")
                 with gr.Row():
                     with gr.Column(scale=1):  # Colonna per il dropdown dei file
                         files = bu.get_csv_files("../results/")
@@ -85,12 +89,14 @@ def main():
                             lines=2,
                             placeholder='Enter a filter, e.g., df[(df["Close"] > 0)]',
                             label="Query", value="""
-df[(df['Win Rate [%]'] >= 50)
-                & (df['Last Action']==1)
-            #   & (df['Ticker'] =='CPR.MI')    
-            #   & (df['Equity Final [$]'] >80000)
-                & (df['# Trades'] >0 )
-        ]"""
+df[
+    (df['Win Rate [%]'] > 80) &
+    (df['Return [%]'] > 50) &
+    (df['Last Action'].isin([1, 2])) &
+    (df['# Trades'] > 0)
+]
+"""
+
 
                         )
                         df_output = gr.Dataframe(label="Filtered DataFrame")
@@ -99,7 +105,7 @@ df[(df['Win Rate [%]'] >= 50)
 
                         file_dropdown.change(fn=filter_dataframe, inputs=[query_input,file_dropdown], outputs=df_output)
             with gr.TabItem("Backtesting"):
-                gr.Markdown("### Run Backtesting")
+                gr.Markdown("### Run a backtest on a specific ticker with a selected trading strategy.")
                 tickers = ti.read_tickers_from_file("../data/tickers.txt")  # Read tickers from file
 
                 with gr.Row():
@@ -120,12 +126,12 @@ df[(df['Win Rate [%]'] >= 50)
                 backtest_button.click(run_backtest, inputs=[ticker_dropdown, algorithm_dropdown],
                                       outputs=backtest_output)
             with gr.TabItem("Load Tickers"):
-                gr.Markdown("### Load All Tickers")
+                gr.Markdown("### Fetch and store recent historical data for all tickers.")
                 tickers_output = gr.Textbox(label="Loaded Tickers")  # Usa gr.Textbox
                 load_button = gr.Button("Load Tickers")
                 load_button.click(load_all_tickers, outputs=tickers_output)
             with gr.TabItem("Process all strategies"):
-                gr.Markdown("### Run Long Process")
+                gr.Markdown("### Run all strategies across all tickers and generate daily reports.")
                 # This textbox will display feedback after the long process completes
                 with gr.Row():
                     with gr.Column(scale=1):  # Colonna per i widget di input
