@@ -53,6 +53,36 @@ def filter_dataframe(query,file_name='report.csv'):
     except Exception as e:
         return pd.DataFrame({"Error": [str(e)]})
 
+def top_strategies(file_name='report.csv', metric='Return [%]', top_n=10):
+    df = pd.read_csv(f"../results/{file_name}")
+    df = df.dropna(subset=['Ticker', 'strategy', 'Return [%]', 'Win Rate [%]', '# Trades'])
+
+    if metric == 'aggregate':
+        df['score'] = (df['Return [%]'] * df['Win Rate [%]']).round(2)
+        metric = 'score'
+
+    # Group by Ticker and strategy, calculate mean for relevant metrics
+    grouped = df.groupby(['Ticker', 'strategy']).agg({
+        'Return [%]': 'mean',
+        'Win Rate [%]': 'mean',
+        '# Trades': 'mean',
+        metric: 'mean' if metric != 'score' else 'first'
+    }).reset_index()
+
+    if metric == 'score':
+        grouped = grouped.rename(columns={'score': 'Score'})
+        grouped['Score'] = grouped['Score'].round(2)
+        sort_col = 'Score'
+    else:
+        sort_col = metric
+
+    grouped[['Return [%]', 'Win Rate [%]', '# Trades']] = grouped[['Return [%]', 'Win Rate [%]', '# Trades']].round(2)
+
+    grouped = grouped.sort_values(by=sort_col, ascending=False).head(top_n)
+    return grouped
+
+
+
 def main():
     with gr.Blocks(theme=gr.themes.Soft()) as demo:
         gr.Markdown("# Stock Analysis and Ticker Loader")
@@ -99,6 +129,12 @@ df[
                         execute_query_button.click(fn=filter_dataframe, inputs=[query_input, file_dropdown], outputs=df_output)
 
                         file_dropdown.change(fn=filter_dataframe, inputs=[query_input, file_dropdown], outputs=df_output)
+
+                        with gr.Accordion("Suggested Top Ticker + Strategy Combos", open=True):
+                            metric_selector = gr.Dropdown(choices=['Return [%]', 'Win Rate [%]', 'aggregate'], value='Return [%]', label="Select Metric")
+                            top_button = gr.Button("Show Top Strategies")
+                            top_output = gr.Dataframe(label="Top Strategies")
+                            top_button.click(top_strategies, inputs=[file_dropdown, metric_selector], outputs=top_output)
 
             with gr.TabItem("Backtesting"):
                 gr.Markdown("### Run a backtest on a specific ticker with a selected trading strategy.")
