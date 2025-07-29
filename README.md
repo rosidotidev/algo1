@@ -13,7 +13,7 @@ cd algo1
 pipenv install
 
 # Run the app
-pipenv run python main.py
+pipenv run python main_web.py
 ```
 
 ---
