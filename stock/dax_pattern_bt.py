@@ -80,7 +80,8 @@ def run_backtest_DaxPattern(data_path,slperc=0.04,tpperc=0.02,capital_allocation
         df=de.add_stoch(df)
     df = ti.add_total_signal(df,target_strategy)
     #print(df[df["TotalSignal"]>0])
-    bt = Backtest(df, DaxPatternBT,
+
+    bt = Backtest(df.dropna(), DaxPatternBT,
                   cash=10000,
                   finalize_trades=True,
                   exclusive_orders=True,
