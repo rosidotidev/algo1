@@ -130,11 +130,6 @@ df[
 
                         file_dropdown.change(fn=filter_dataframe, inputs=[query_input, file_dropdown], outputs=df_output)
 
-                        with gr.Accordion("Suggested Top Ticker + Strategy Combos", open=True):
-                            metric_selector = gr.Dropdown(choices=['Return [%]', 'Win Rate [%]', 'aggregate'], value='Return [%]', label="Select Metric")
-                            top_button = gr.Button("Show Top Strategies")
-                            top_output = gr.Dataframe(label="Top Strategies")
-                            top_button.click(top_strategies, inputs=[file_dropdown, metric_selector], outputs=top_output)
 
             with gr.TabItem("Backtesting"):
                 gr.Markdown("### Run a backtest on a specific ticker with a selected trading strategy.")
@@ -167,6 +162,15 @@ df[
                         process_output = gr.Textbox(label="Process strategies")
                         long_process_button = gr.Button("Start Long Process")
                         long_process_button.click(run_long_process, outputs=[process_output, file_dropdown])
+            with gr.TabItem("Strategy report"):
+                gr.Markdown("### Show best strategies using filters")
+                with gr.Row():
+                    with gr.Accordion( open=True):
+                        metric_selector = gr.Dropdown(choices=['Return [%]', 'Win Rate [%]', 'aggregate'],
+                                                      value='Return [%]', label="Select Metric")
+                        top_button = gr.Button("Show Top Strategies")
+                        top_output = gr.Dataframe(label="Top Strategies")
+                        top_button.click(top_strategies, inputs=[file_dropdown, metric_selector], outputs=top_output)
 
     demo.launch(share=True)
 
