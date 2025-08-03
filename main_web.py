@@ -24,6 +24,37 @@ def run_backtest(ticker,function_name):
                             target_strategy=func, add_indicators=True)
     return res
 
+def toggle_strategy_filter(full_matrix, only_valid):
+    import pandas as pd
+    if only_valid:
+        return full_matrix[full_matrix["strategy"] != "NO_STRATEGY"].reset_index(drop=True)
+    else:
+        return full_matrix
+
+def generate_best_matrix(win_rate, ret, trades):
+    df = pd.read_csv("../results/report.csv")
+
+    query = (
+        f"df[(df['Win Rate [%]'] > {win_rate}) & "
+        f"(df['Return [%]'] > {ret}) & "
+        f"(df['# Trades'] >= {trades})]"
+    )
+
+    try:
+        filtered = eval(query, {"df": df, "pd": pd})
+        selected = filtered[['Ticker', 'strategy']].copy()
+    except Exception as e:
+        selected = pd.DataFrame({"Error": [str(e)]})
+
+    all_tickers = set(df['Ticker'].unique())
+    selected_tickers = set(selected['Ticker'].unique())
+    missing = all_tickers - selected_tickers
+    missing_df = pd.DataFrame([{'Ticker': t, 'strategy': 'NO_STRATEGY'} for t in missing])
+
+    result_df = pd.concat([selected, missing_df], ignore_index=True).sort_values('Ticker')
+    result_df.to_csv("../data/best_matrix.csv", index=False)
+    return result_df
+
 def run_long_process():
     result_string=trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"])
     updated_files = bu.get_csv_files("../results/")
@@ -171,6 +202,34 @@ df[
                         top_button = gr.Button("Show Top Strategies")
                         top_output = gr.Dataframe(label="Top Strategies")
                         top_button.click(top_strategies, inputs=[file_dropdown, metric_selector], outputs=top_output)
+            with gr.TabItem("Generate Best Matrix"):
+                gr.Markdown("### Generate and Save Best Strategy Matrix")
+                matrix_output = gr.State()
+                with gr.Row():
+                    with gr.Column(scale=1):
+                        win_rate_input = gr.Slider(minimum=0, maximum=100, value=60, label="Min Win Rate [%]")
+                        return_input = gr.Slider(minimum=0, maximum=500, value=70, label="Min Return [%]")
+                        trades_input = gr.Slider(minimum=0, maximum=100, value=1, label="Min # Trades")
+                        generate_button = gr.Button("Generate Matrix")
+                        show_only_valid_strategies = gr.Checkbox(label="Show only valid strategies", value=True)
+                    with gr.Column(scale=2):
+                        matrix_output = gr.Dataframe(label="Best Matrix")
+
+                generate_button.click(
+                    fn=generate_best_matrix,
+                    inputs=[win_rate_input, return_input, trades_input],
+                    outputs=matrix_output
+                ).then(
+                    fn=toggle_strategy_filter,
+                    inputs=[matrix_output, show_only_valid_strategies],
+                    outputs=matrix_output
+                )
+
+                show_only_valid_strategies.change(
+                    fn=toggle_strategy_filter,
+                    inputs=[matrix_output, show_only_valid_strategies],
+                    outputs=matrix_output
+                )
 
     demo.launch(share=True)
 
