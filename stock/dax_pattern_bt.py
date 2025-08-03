@@ -9,6 +9,7 @@ import traceback
 import concurrent.futures
 import time
 import datetime
+import os
 
 from stock.base_bt import BaseStrategyBT
 
@@ -67,7 +68,36 @@ class DaxPatternBT(BaseStrategyBT):
                 self.position.close()
                 self.track_close_short()
 
+def load_best_matrix(path: str) -> pd.DataFrame:
+    if os.path.exists(path):
+        try:
+            return pd.read_csv(path)
+        except Exception as e:
+            print(f"Error reading file {path}: {e}")
+            return pd.DataFrame()
+    else:
+        return pd.DataFrame()
 
+def is_valid_strategy(ticker: str, strategy: str, best_matrix: pd.DataFrame) -> bool:
+    print(f"[TRACE] Called is_valid_strategy with:\n  Ticker: {ticker}\n  Strategy: {strategy}")
+
+    # Filtra tutte le righe per quel ticker
+    ticker_rows = best_matrix[best_matrix['Ticker'] == ticker]
+    print(f"[TRACE] Found {len(ticker_rows)} rows for ticker '{ticker}'.")
+
+    if ticker_rows.empty:
+        print(f"[TRACE] No entries found for ticker '{ticker}'. Returning: True")
+        return True
+
+    # Verifica se esiste almeno una riga con strategy uguale e diversa da NO_STRATEGY
+    match = ticker_rows[
+        (ticker_rows['strategy'] == strategy) &
+        (ticker_rows['strategy'] != 'NO_STRATEGY')
+    ]
+
+    result = not match.empty
+    print(f"[TRACE] Match found for strategy '{strategy}' and not NO_STRATEGY: {result}")
+    return result
 
 
 
@@ -98,13 +128,17 @@ def run_backtest_DaxPattern(data_path,slperc=0.04,tpperc=0.02,capital_allocation
     #return cerebro.broker.getvalue()
     return results
 
-def run_backtest_for_all_tickers(tickers_file, data_directory,slperc=0.15,tpperc=0.15,candle_strategy=cs.dax_momentum_signal,add_indicators=False):
+
+def run_backtest_for_all_tickers(tickers_file, data_directory,slperc=0.15,tpperc=0.15,candle_strategy=cs.dax_momentum_signal,add_indicators=False,optimize=False):
     """Runs backtests for all tickers in tickers.txt and determines the best performer."""
     best_report=None
     # Read tickers from file
     with open(tickers_file, "r") as f:
         tickers = [line.strip() for line in f.readlines()]
-
+    best_matrix=None
+    if optimize:
+        best_path=f"{data_directory}/best_matrix.csv"
+        best_matrix=load_best_matrix(best_path)
     # Dictionary to store final portfolio values
     results = {}
     reports = {}
@@ -115,17 +149,19 @@ def run_backtest_for_all_tickers(tickers_file, data_directory,slperc=0.15,tpperc
     """)
     for ticker in tickers:
         #print(ticker)
-        data_path = f"{data_directory}/{ticker}.csv"  # Path to CSV file
-        try:
-            report = run_backtest_DaxPattern(data_path, slperc=slperc,tpperc=tpperc,capital_allocation=1,target_strategy=candle_strategy,add_indicators=add_indicators)
-            report["strategy"]=candle_strategy.__name__
-            results[ticker] = report[field_selected]
-            reports[ticker] = report
-        except Exception as e:
-            print(f"Error running backtest for {ticker}: {repr(e)}")
-            traceback.print_exc()
+        if (not optimize or is_valid_strategy(ticker,candle_strategy.__name__,best_matrix)):
+            data_path = f"{data_directory}/{ticker}.csv"  # Path to CSV file
+            try:
+                report = run_backtest_DaxPattern(data_path, slperc=slperc,tpperc=tpperc,capital_allocation=1,target_strategy=candle_strategy,add_indicators=add_indicators)
+                report["strategy"]=candle_strategy.__name__
+                results[ticker] = report[field_selected]
+                reports[ticker] = report
+            except Exception as e:
+                print(f"Error running backtest for {ticker}: {repr(e)}")
+                traceback.print_exc()
 
-
+        else:
+            print(f"skip {ticker} {candle_strategy.__name__}")
     # Find the best-performing ticker
     if results:
         df=bu.save_reports_to_df(reports)
@@ -135,19 +171,20 @@ def run_backtest_for_all_tickers(tickers_file, data_directory,slperc=0.15,tpperc
         #print(f"{field_selected}:", results[best_ticker])
         #print(results)
         return df
+    return None
 
-def exec_analysis(base_path="../",slperc=0.15, tpperc=1.0):
+def exec_analysis(base_path="../",slperc=0.15, tpperc=1.0, optimize=False):
     df = None
     for strategy in cs.candlestick_strategies:
-        df1 = run_backtest_for_all_tickers(f'{base_path}../data/tickers.txt', f'{base_path}../data/', slperc=slperc,tpperc=tpperc,candle_strategy=strategy)
+        df1 = run_backtest_for_all_tickers(f'{base_path}../data/tickers.txt', f'{base_path}../data/', slperc=slperc,tpperc=tpperc,candle_strategy=strategy,optimize=optimize)
         df = bu.append_df(df, df1)
     for strategy in ins.indicators_strategy:
         df1 = run_backtest_for_all_tickers(f'{base_path}../data/tickers.txt', f'{base_path}../data/', slperc=slperc,tpperc=tpperc,candle_strategy=strategy,
-                                           add_indicators=True)
+                                           add_indicators=True,optimize=optimize)
         df = bu.append_df(df, df1)
     return df
 
-def exec_analysis_parallel(base_path="../", slperc=0.15, tpperc=1.0):
+def exec_analysis_parallel(base_path="../", slperc=0.15, tpperc=1.0, optimize=False):
     """
     Executes backtesting for all tickers using both candlestick and indicator strategies in parallel.
 
@@ -159,7 +196,7 @@ def exec_analysis_parallel(base_path="../", slperc=0.15, tpperc=1.0):
     Returns:
         DataFrame: Combined results from all backtests.
     """
-    df = None
+    df = pd.DataFrame()
     futures = []
     tickers_file = f'{base_path}../data/tickers.txt'
     data_dir = f'{base_path}../data/'
@@ -169,14 +206,14 @@ def exec_analysis_parallel(base_path="../", slperc=0.15, tpperc=1.0):
         for strategy in cs.candlestick_strategies:
             futures.append(executor.submit(
                 run_backtest_for_all_tickers,
-                tickers_file, data_dir, slperc, tpperc, strategy, False
+                tickers_file, data_dir, slperc, tpperc, strategy, False,optimize
             ))
 
         # Indicator strategies
         for strategy in ins.indicators_strategy:
             futures.append(executor.submit(
                 run_backtest_for_all_tickers,
-                tickers_file, data_dir, slperc, tpperc, strategy, True
+                tickers_file, data_dir, slperc, tpperc, strategy, True,optimize
             ))
 
         for future in concurrent.futures.as_completed(futures):
@@ -187,14 +224,14 @@ def exec_analysis_parallel(base_path="../", slperc=0.15, tpperc=1.0):
                 print(f"Error during backtest execution: {repr(e)}")
 
     return df
-def exec_analysis_and_save_results(base_path='../', slperc=0.15, tpperc=1.0, parallel=True):
+def exec_analysis_and_save_results(base_path='../', slperc=0.15, tpperc=1.0, parallel=True,optimize=False):
     start_time = time.time()  # ⏱️ Start timer
 
     # Choose execution mode
     if parallel:
-        df = exec_analysis_parallel(base_path, slperc=slperc, tpperc=tpperc)
+        df = exec_analysis_parallel(base_path, slperc=slperc, tpperc=tpperc,optimize=optimize)
     else:
-        df = exec_analysis(base_path, slperc=slperc, tpperc=tpperc)
+        df = exec_analysis(base_path, slperc=slperc, tpperc=tpperc,optimize=optimize)
 
     # Save results
     today = datetime.datetime.now().strftime("%Y%m%d")
@@ -248,6 +285,7 @@ def test1():
     res_filtered = res_filtered[["Ticker", "Win Rate [%]", "Equity Final [$]", "# Trades", "strategy", "Last Action"]]
     print(res_filtered)
 
-
+def test2():
+    exec_analysis_and_save_results(optimize=True,base_path="../")
 if __name__ == "__main__":
-    test0()
+    test2()

@@ -42,7 +42,7 @@ def generate_best_matrix(win_rate, ret, trades):
 
     try:
         filtered = eval(query, {"df": df, "pd": pd})
-        selected = filtered[['Ticker', 'strategy']].copy()
+        selected = filtered[['Ticker', 'strategy','Win Rate [%]','Return [%]','# Trades']].copy()
     except Exception as e:
         selected = pd.DataFrame({"Error": [str(e)]})
 
@@ -55,8 +55,8 @@ def generate_best_matrix(win_rate, ret, trades):
     result_df.to_csv("../data/best_matrix.csv", index=False)
     return result_df
 
-def run_long_process():
-    result_string=trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"])
+def run_long_process(optimize=False):
+    result_string=trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"],optimize=optimize)
     updated_files = bu.get_csv_files("../results/")
     return result_string, gr.update(choices=updated_files)
 
@@ -68,6 +68,7 @@ def filter_dataframe(query,file_name='report.csv'):
     df = pd.read_csv(f"../results/{file_name}")
     selected_columns = [
         'Ticker',
+        'Last Action',
         'Equity Final [$]',
         'Return [%]',
         'Buy & Hold Return [%]',
@@ -129,7 +130,7 @@ def main():
                         win_rate_slider = gr.Slider(minimum=0, maximum=100, value=80, label="Min Win Rate [%]")
                         return_slider = gr.Slider(minimum=0, maximum=500, value=50, label="Min Return [%]")
                         trades_slider = gr.Slider(minimum=0, maximum=100, value=1, label="Min # Trades")
-                        last_action_check = gr.CheckboxGroup([1, 2], label="Last Action values to include")
+                        last_action_check = gr.CheckboxGroup([1, 2,0,-1,-2], label="Last Action values to include")
 
                         filter_button = gr.Button("Apply Filter")
 
@@ -142,7 +143,7 @@ def main():
 df[
     (df['Win Rate [%]'] > 80) &
     (df['Return [%]'] > 50) &
-    (df['Last Action'].isin([1, 2])) &
+    (df['Last Action'].isin([1, 2,0,-1,-2])) &
     (df['# Trades'] > 0)
 ]"""
                         )
@@ -191,8 +192,15 @@ df[
                         save_button.click(save_cache, inputs=[stop_loss_input, take_profit_input], outputs=save_output)
                     with gr.Column(scale=5):
                         process_output = gr.Textbox(label="Process strategies")
+                        optimize_checkbox = gr.Checkbox(label="Optimize", value=False)
                         long_process_button = gr.Button("Start Long Process")
-                        long_process_button.click(run_long_process, outputs=[process_output, file_dropdown])
+
+                        # Modifica run_long_process per accettare un parametro optimize
+                        long_process_button.click(
+                            run_long_process,
+                            inputs=[optimize_checkbox],
+                            outputs=[process_output, file_dropdown]
+                        )
             with gr.TabItem("Strategy report"):
                 gr.Markdown("### Show best strategies using filters")
                 with gr.Row():
