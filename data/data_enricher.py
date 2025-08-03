@@ -38,10 +38,10 @@ def add_bb_columns(df, bb_length=20, bb_std=2):
         df['BB_Upper'] = pd.NA
         df['BB_Middle'] = pd.NA
         df['BB_Lower'] = pd.NA
-    # Bollinger Bands: Upper, Middle, and Lower bands
-    df['BB_Upper'] = bb['BBU_20_2.0']  # Upper Bollinger Band
-    df['BB_Middle'] = bb['BBM_20_2.0']  # Middle Bollinger Band (Moving Average)
-    df['BB_Lower'] = bb['BBL_20_2.0']  # Lower Bollinger Band
+    else:# Bollinger Bands: Upper, Middle, and Lower bands
+        df['BB_Upper'] = bb['BBU_20_2.0']  # Upper Bollinger Band
+        df['BB_Middle'] = bb['BBM_20_2.0']  # Middle Bollinger Band (Moving Average)
+        df['BB_Lower'] = bb['BBL_20_2.0']  # Lower Bollinger Band
 
     return df
 
