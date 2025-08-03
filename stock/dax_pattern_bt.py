@@ -83,10 +83,10 @@ def is_valid_strategy(ticker: str, strategy: str, best_matrix: pd.DataFrame) -> 
 
     # Filtra tutte le righe per quel ticker
     ticker_rows = best_matrix[best_matrix['Ticker'] == ticker]
-    print(f"[TRACE] Found {len(ticker_rows)} rows for ticker '{ticker}'.")
+    #print(f"[TRACE] Found {len(ticker_rows)} rows for ticker '{ticker}'.")
 
     if ticker_rows.empty:
-        print(f"[TRACE] No entries found for ticker '{ticker}'. Returning: True")
+        #print(f"[TRACE] No entries found for ticker '{ticker}'. Returning: True")
         return True
 
     # Verifica se esiste almeno una riga con strategy uguale e diversa da NO_STRATEGY
@@ -96,7 +96,7 @@ def is_valid_strategy(ticker: str, strategy: str, best_matrix: pd.DataFrame) -> 
     ]
 
     result = not match.empty
-    print(f"[TRACE] Match found for strategy '{strategy}' and not NO_STRATEGY: {result}")
+    #print(f"[TRACE] Match found for strategy '{strategy}' and not NO_STRATEGY: {result}")
     return result
 
 
