@@ -33,7 +33,11 @@ def add_macd_columns(df, macd_fast=12, macd_slow=26, macd_signal=9):
 def add_bb_columns(df, bb_length=20, bb_std=2):
     # Calculate Bollinger Bands and add them as new columns to the DataFrame
     bb = ta.bbands(df['Close'], length=bb_length, std=bb_std)
-
+    if bb is None or bb.empty:
+        # If calculation failed, fill columns with NaN
+        df['BB_Upper'] = pd.NA
+        df['BB_Middle'] = pd.NA
+        df['BB_Lower'] = pd.NA
     # Bollinger Bands: Upper, Middle, and Lower bands
     df['BB_Upper'] = bb['BBU_20_2.0']  # Upper Bollinger Band
     df['BB_Middle'] = bb['BBM_20_2.0']  # Middle Bollinger Band (Moving Average)
