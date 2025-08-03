@@ -192,7 +192,7 @@ df[
                         save_button.click(save_cache, inputs=[stop_loss_input, take_profit_input], outputs=save_output)
                     with gr.Column(scale=5):
                         process_output = gr.Textbox(label="Process strategies")
-                        optimize_checkbox = gr.Checkbox(label="Optimize", value=False)
+                        optimize_checkbox = gr.Checkbox(label="Optimize", value=True)
                         long_process_button = gr.Button("Start Long Process")
 
                         # Modifica run_long_process per accettare un parametro optimize
