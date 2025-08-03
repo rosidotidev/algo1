@@ -24,9 +24,14 @@ def add_macd_columns(df, macd_fast=12, macd_slow=26, macd_signal=9):
     # Calculate MACD and add it as new columns to the DataFrame
     macd = ta.macd(df['Close'], fast=macd_fast, slow=macd_slow, signal=macd_signal)
     # MACD returns a DataFrame with three columns: MACD, Signal, and Histogram
-    df['MACD'] = macd['MACD_12_26_9']
-    df['MACD_Signal'] = macd['MACDs_12_26_9']
-    df['MACD_Histogram'] = macd['MACDh_12_26_9']
+    if macd is None or macd.empty:
+        df['MACD'] = pd.NA
+        df['MACD_Signal'] = pd.NA
+        df['MACD_Histogram'] = pd.NA
+    else:
+        df['MACD'] = macd['MACD_12_26_9']
+        df['MACD_Signal'] = macd['MACDs_12_26_9']
+        df['MACD_Histogram'] = macd['MACDh_12_26_9']
 
     return df
 
