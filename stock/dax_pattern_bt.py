@@ -160,8 +160,8 @@ def run_backtest_for_all_tickers(tickers_file, data_directory,slperc=0.15,tpperc
                 print(f"Error running backtest for {ticker}: {repr(e)}")
                 traceback.print_exc()
 
-        else:
-            print(f"skip {ticker} {candle_strategy.__name__}")
+        #else:
+            #print(f"skip {ticker} {candle_strategy.__name__}")
     # Find the best-performing ticker
     if results:
         df=bu.save_reports_to_df(reports)
