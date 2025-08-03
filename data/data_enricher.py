@@ -122,8 +122,13 @@ def add_smas_long_short(df):
 
 def add_stoch(df):
     stoch = ta.stoch(high=df['High'], low=df['Low'], close=df['Close'], k=14, d=3, append=True)
-    df["STOCHk_14_3_3"] = stoch['STOCHk_14_3_3']
-    df["STOCHd_14_3_3"] = stoch['STOCHd_14_3_3']
+    if stoch is None or stoch.empty:
+        # If calculation failed, fill columns with NaN
+        df["STOCHk_14_3_3"] = pd.NA
+        df["STOCHd_14_3_3"] = pd.NA
+    else:
+        df["STOCHk_14_3_3"] = stoch['STOCHk_14_3_3']
+        df["STOCHd_14_3_3"] = stoch['STOCHd_14_3_3']
     return df
 
 def add_rsi_macd_bb(df):
