@@ -215,9 +215,9 @@ df[
                 matrix_output = gr.State()
                 with gr.Row():
                     with gr.Column(scale=1):
-                        win_rate_input = gr.Slider(minimum=0, maximum=100, value=60, label="Min Win Rate [%]")
-                        return_input = gr.Slider(minimum=0, maximum=500, value=70, label="Min Return [%]")
-                        trades_input = gr.Slider(minimum=0, maximum=100, value=1, label="Min # Trades")
+                        win_rate_input = gr.Slider(minimum=0, maximum=100, value=80, label="Min Win Rate [%]")
+                        return_input = gr.Slider(minimum=0, maximum=500, value=60, label="Min Return [%]")
+                        trades_input = gr.Slider(minimum=0, maximum=100, value=3, label="Min # Trades")
                         generate_button = gr.Button("Generate Matrix")
                         show_only_valid_strategies = gr.Checkbox(label="Show only valid strategies", value=True)
                     with gr.Column(scale=2):
