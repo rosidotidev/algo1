@@ -79,7 +79,7 @@ def load_best_matrix(path: str) -> pd.DataFrame:
         return pd.DataFrame()
 
 def is_valid_strategy(ticker: str, strategy: str, best_matrix: pd.DataFrame) -> bool:
-    print(f"[TRACE] Called is_valid_strategy with:\n  Ticker: {ticker}\n  Strategy: {strategy}")
+    #print(f"[TRACE] Called is_valid_strategy with:\n  Ticker: {ticker}\n  Strategy: {strategy}")
 
     # Filtra tutte le righe per quel ticker
     ticker_rows = best_matrix[best_matrix['Ticker'] == ticker]
