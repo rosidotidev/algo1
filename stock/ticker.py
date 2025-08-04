@@ -121,6 +121,6 @@ def read_tickers_from_file(filepath="../../data/tickers.txt"):
 # Example usage
 if __name__ == "__main__":
     # https://github.com/ranaroussi/yfinance/issues/2422
-    fetch_and_save_ticker_data("../../data/tickers.txt","../../data/","3y")
-
+    #fetch_and_save_ticker_data("../../data/tickers.txt","../../data/","3y")
+    print(read_pandas_ticker("MB.MI"))
 

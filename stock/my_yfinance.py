@@ -77,9 +77,9 @@ class MyYFinance:
             start = today - timedelta(days=days)
         else:
             raise ValueError("Unsupported period format. Use '1y', '6mo', '30d', etc.")
-
+        tomorrow=today+timedelta(days=1)
         start_str = start.strftime("%Y%m%d")
-        end_str = today.strftime("%Y%m%d")
+        end_str = tomorrow.strftime("%Y%m%d")
 
         return MyYFinance.fetch_data(symbol, start_str, end_str, interval)
 
