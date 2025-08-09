@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from datetime import datetime
+import backtrader_util.bu as bu
 
 
 def get_timestamp():
@@ -100,10 +101,51 @@ def get_csv_files(directory):
         return ["Directory not found"]
 
 
+cache = {
+    "stop_loss": 0.10,
+    "take_profit": 0.40,
+    "df": {}
+}
+
+
+def reset_df_cache():
+    """Reset the 'df' entry in cache to an empty dict."""
+    bu.cache["df"] = {}
+
+
+def ticker_exists(ticker: str, dtype: str) -> bool:
+    """
+    Check if ticker with exact dtype key exists in cache.
+    If dtype is None, check if ticker_base or ticker_enriched exists.
+    """
+    if "df" not in bu.cache:
+        return False
+
+    key = f"{ticker}_{dtype}"
+    return key in bu.cache["df"]
 
 
 
-cache={"stop_loss":0.10,"take_profit":0.40}
+def add_df_to_cache(ticker: str, df: pd.DataFrame, dtype: str='base'):
+    """
+    Add a DataFrame to cache with key ticker_dtype.
+    Overwrites if key already exists.
+    """
+    if "df" not in bu.cache:
+        bu.cache["df"] = {}
+    key = f"{ticker}_{dtype}"
+    if len(bu.cache["df"]) <= 300:
+        bu.cache["df"][key] = df.copy()
+
+
+
+def get_df_from_cache(ticker: str, dtype: str) -> pd.DataFrame | None:
+    """
+    Get DataFrame from cache by ticker and dtype key.
+    Returns None if not found.
+    """
+    key = f"{ticker}_{dtype}"
+    return bu.cache["df"].get(key)
 
 
 

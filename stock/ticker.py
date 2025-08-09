@@ -61,6 +61,10 @@ def calculate_performance_index(df: pd.DataFrame,
 
     return df
 
+def get_ticker_from_file_path(file_path):
+    filename = os.path.basename(file_path)  # 'ticker.csv'
+    ticker = os.path.splitext(filename)[0]
+    return ticker
 
 def read_from_csv(file_path):
     return pd.read_csv(file_path)

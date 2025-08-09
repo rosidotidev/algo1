@@ -10,9 +10,10 @@ import concurrent.futures
 import time
 import datetime
 import os
-
+import threading
 from stock.base_bt import BaseStrategyBT
 
+lock = threading.Lock()
 
 class DaxPatternBT(BaseStrategyBT):
     slperc= 0.05
@@ -22,6 +23,7 @@ class DaxPatternBT(BaseStrategyBT):
         self.short_stop_price = None
         self.long_tp_price= None
         self.short_tp_price= None
+
 
     def stop_loss_long_check(self):
         stop_l = self.data.Close[-1] < self.long_stop_price
@@ -102,12 +104,27 @@ def is_valid_strategy(ticker: str, strategy: str, best_matrix: pd.DataFrame) -> 
 
 
 def run_backtest_DaxPattern(data_path,slperc=0.04,tpperc=0.02,capital_allocation=1,show_plot=False,target_strategy=cs.dax_total_signal,add_indicators=True):
-    df=ti.read_from_csv(data_path)
-    df=bu.norm_date_time(df)
+    dtype=""
     if add_indicators:
-        df=de.add_rsi_macd_bb(df)
-        df=de.add_smas_long_short(df)
-        df=de.add_stoch(df)
+        dtype="enriched"
+    else:
+        dtype="base"
+    _ticker=ti.get_ticker_from_file_path(data_path)
+    df=None
+    #with(lock):
+    if True:
+        if(bu.ticker_exists(_ticker,dtype)):
+            df=bu.get_df_from_cache(_ticker,dtype)
+            #print(f"[{threading.current_thread().name}] [{target_strategy}] using {_ticker}_{dtype} from cache")
+        else:
+            df=ti.read_from_csv(data_path)
+            df=bu.norm_date_time(df)
+            if add_indicators:
+                df=de.add_rsi_macd_bb(df)
+                df=de.add_smas_long_short(df)
+                df=de.add_stoch(df)
+            bu.add_df_to_cache(_ticker,df,dtype)
+            #print(f"[{threading.current_thread().name}] [{target_strategy}] added {_ticker}_{dtype} to cache")
     df = ti.add_total_signal(df,target_strategy)
 
     bt = Backtest(df.dropna(), DaxPatternBT,
@@ -224,12 +241,56 @@ def exec_analysis_parallel(base_path="../", slperc=0.15, tpperc=1.0, optimize=Fa
                 print(f"Error during backtest execution: {repr(e)}")
 
     return df
+
+def exec_analysis_parallel_threads(base_path="../", slperc=0.15, tpperc=1.0, optimize=False):
+    """
+    Executes backtesting for all tickers using both candlestick and indicator strategies in parallel (threads).
+
+    Args:
+        base_path (str): Base path for data files and output.
+        slperc (float): Stop loss percentage.
+        tpperc (float): Take profit percentage.
+        optimize (bool): Whether to optimize parameters.
+
+    Returns:
+        DataFrame: Combined results from all backtests.
+    """
+    df = pd.DataFrame()
+    futures = []
+    tickers_file = f'{base_path}../data/tickers.txt'
+    data_dir = f'{base_path}../data/'
+
+    # Use threads instead of processes
+    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
+        # Candlestick strategies
+        for strategy in cs.candlestick_strategies:
+            futures.append(executor.submit(
+                run_backtest_for_all_tickers,
+                tickers_file, data_dir, slperc, tpperc, strategy, False, optimize
+            ))
+
+        # Indicator strategies
+        for strategy in ins.indicators_strategy:
+            futures.append(executor.submit(
+                run_backtest_for_all_tickers,
+                tickers_file, data_dir, slperc, tpperc, strategy, True, optimize
+            ))
+
+        # Collect results
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                df1 = future.result()
+                df = bu.append_df(df, df1)
+            except Exception as e:
+                print(f"Error during backtest execution: {repr(e)}")
+
+    return df
 def exec_analysis_and_save_results(base_path='../', slperc=0.15, tpperc=1.0, parallel=True,optimize=False):
     start_time = time.time()  # ⏱️ Start timer
 
     # Choose execution mode
     if parallel:
-        df = exec_analysis_parallel(base_path, slperc=slperc, tpperc=tpperc,optimize=optimize)
+        df = exec_analysis_parallel_threads(base_path, slperc=slperc, tpperc=tpperc,optimize=optimize)
     else:
         df = exec_analysis(base_path, slperc=slperc, tpperc=tpperc,optimize=optimize)
 
@@ -286,6 +347,6 @@ def test1():
     print(res_filtered)
 
 def test2():
-    exec_analysis_and_save_results(optimize=True,base_path="../")
+    exec_analysis_and_save_results(parallel=True,optimize=False,base_path="../")
 if __name__ == "__main__":
     test2()
