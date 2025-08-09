@@ -13,7 +13,7 @@ def calculate_performance_index(df: pd.DataFrame,
     """
     Calculate a normalized PerformanceIndex (0-100) for each strategy in the DataFrame.
 
-    Parameters:
+    Parameters :
     - df: DataFrame with columns ['Return [%]', 'Win Rate [%]', '# Trades', 'Buy & Hold [%]']
     - weight_return: weight for Return [%]
     - weight_win_rate: weight for Win Rate [%]
