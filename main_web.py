@@ -70,12 +70,12 @@ def filter_dataframe(query,file_name='report.csv'):
     selected_columns = [
         'Ticker',
         'Last Action',
+        'BobIndex',
         'Equity Final [$]',
         'Return [%]',
         'Buy & Hold Return [%]',
         '# Trades',
         'Win Rate [%]',
-        'BobIndex',
         '_strategy',
         'strategy'
     ]
