@@ -5,6 +5,63 @@ import time
 import pandas as pd
 from stock.my_yfinance import MyYFinance
 
+def calculate_performance_index(df: pd.DataFrame,
+                                weight_return=0.4,
+                                weight_win_rate=0.3,
+                                weight_trades=0.1,
+                                weight_bh=0.2) -> pd.DataFrame:
+    """
+    Calculate a normalized PerformanceIndex (0-100) for each strategy in the DataFrame.
+
+    Parameters:
+    - df: DataFrame with columns ['Return [%]', 'Win Rate [%]', '# Trades', 'Buy & Hold [%]']
+    - weight_return: weight for Return [%]
+    - weight_win_rate: weight for Win Rate [%]
+    - weight_trades: weight for # Trades
+    - weight_bh: weight for Buy & Hold Return [%]
+
+    Returns:
+    - DataFrame with an added 'PerformanceIndex' column scaled 0-100.
+    """
+
+    df = df.copy()
+    cols = ['Return [%]', 'Win Rate [%]', '# Trades', 'Buy & Hold Return [%]']
+
+    # Normalize each metric to 0-1 scale (min-max)
+    for col in cols:
+        min_val = df[col].min()
+        max_val = df[col].max()
+        range_val = max_val - min_val
+        if range_val == 0:
+            # Avoid division by zero if all values identical
+            df[f'norm_{col}'] = 0.0
+        else:
+            df[f'norm_{col}'] = (df[col] - min_val) / range_val
+
+    # Weighted sum of normalized features
+    df['PerformanceIndex_raw'] = (
+            weight_return * df['norm_Return [%]'] +
+            weight_win_rate * df['norm_Win Rate [%]'] +
+            weight_trades * df['norm_# Trades'] +
+            weight_bh * df['norm_Buy & Hold Return [%]']
+    )
+
+    # Normalize final score 0-100
+    min_pi = df['PerformanceIndex_raw'].min()
+    max_pi = df['PerformanceIndex_raw'].max()
+    range_pi = max_pi - min_pi
+    if range_pi == 0:
+        df['BobIndex'] = 100.0  # all equal → max score
+    else:
+        df['BobIndex'] = 100 * (df['PerformanceIndex_raw'] - min_pi) / range_pi
+    # Round to 2 decimal places
+    df['BobIndex'] = df['BobIndex'].round(2)
+    # Cleanup intermediate columns
+    df.drop(columns=[f'norm_{col}' for col in cols] + ['PerformanceIndex_raw'], inplace=True)
+
+    return df
+
+
 def read_from_csv(file_path):
     return pd.read_csv(file_path)
 # Function to generate forward-looking labels for trading signals

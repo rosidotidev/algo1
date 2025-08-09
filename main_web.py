@@ -66,6 +66,7 @@ def load_all_tickers():
 
 def filter_dataframe(query,file_name='report.csv'):
     df = pd.read_csv(f"../results/{file_name}")
+    df=ti.calculate_performance_index(df)
     selected_columns = [
         'Ticker',
         'Last Action',
@@ -74,6 +75,7 @@ def filter_dataframe(query,file_name='report.csv'):
         'Buy & Hold Return [%]',
         '# Trades',
         'Win Rate [%]',
+        'BobIndex',
         '_strategy',
         'strategy'
     ]
