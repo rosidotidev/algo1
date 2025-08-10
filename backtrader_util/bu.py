@@ -134,7 +134,7 @@ def add_df_to_cache(ticker: str, df: pd.DataFrame, dtype: str='base'):
     if "df" not in bu.cache:
         bu.cache["df"] = {}
     key = f"{ticker}_{dtype}"
-    if len(bu.cache["df"]) <= 300:
+    if len(bu.cache["df"]) <= 30:
         bu.cache["df"][key] = df.copy()
 
 

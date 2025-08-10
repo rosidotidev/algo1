@@ -1,1 +1,14 @@
 pipenv install pandas numpy==1.26.4 python-dotenv yfinance matplotlib scikit-learn joblib pandas-ta xgboost backtesting
+
+
+pipenv install \
+  pandas==2.2.3 \
+  numpy==1.23.5 \
+  python-dotenv==1.0.1 \
+  yfinance==0.2.54 \
+  matplotlib==3.10.0 \
+  scikit-learn==1.6.1 \
+  joblib==1.4.2 \
+  pandas-ta==0.3.14b0 \
+  xgboost==2.1.4 \
+  backtesting==0.6.2

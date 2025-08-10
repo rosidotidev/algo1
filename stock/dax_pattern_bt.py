@@ -104,6 +104,11 @@ def is_valid_strategy(ticker: str, strategy: str, best_matrix: pd.DataFrame) -> 
 
 
 def run_backtest_DaxPattern(data_path,slperc=0.04,tpperc=0.02,capital_allocation=1,show_plot=False,target_strategy=cs.dax_total_signal,add_indicators=True):
+    '''
+    Commenting this code because this kind of approach with caching doesn't work as expected
+    May be increase memory drops performance
+
+
     dtype=""
     if add_indicators:
         dtype="enriched"
@@ -112,7 +117,7 @@ def run_backtest_DaxPattern(data_path,slperc=0.04,tpperc=0.02,capital_allocation
     _ticker=ti.get_ticker_from_file_path(data_path)
     df=None
     #with(lock):
-    if True:
+
         if(bu.ticker_exists(_ticker,dtype)):
             df=bu.get_df_from_cache(_ticker,dtype)
             #print(f"[{threading.current_thread().name}] [{target_strategy}] using {_ticker}_{dtype} from cache")
@@ -125,6 +130,14 @@ def run_backtest_DaxPattern(data_path,slperc=0.04,tpperc=0.02,capital_allocation
                 df=de.add_stoch(df)
             bu.add_df_to_cache(_ticker,df,dtype)
             #print(f"[{threading.current_thread().name}] [{target_strategy}] added {_ticker}_{dtype} to cache")
+    df = ti.add_total_signal(df,target_strategy)
+    '''
+    df=ti.read_from_csv(data_path)
+    df=bu.norm_date_time(df)
+    if add_indicators:
+        df=de.add_rsi_macd_bb(df)
+        df=de.add_smas_long_short(df)
+        df=de.add_stoch(df)
     df = ti.add_total_signal(df,target_strategy)
 
     bt = Backtest(df.dropna(), DaxPatternBT,
@@ -290,7 +303,7 @@ def exec_analysis_and_save_results(base_path='../', slperc=0.15, tpperc=1.0, par
 
     # Choose execution mode
     if parallel:
-        df = exec_analysis_parallel_threads(base_path, slperc=slperc, tpperc=tpperc,optimize=optimize)
+        df = exec_analysis_parallel(base_path, slperc=slperc, tpperc=tpperc,optimize=optimize)
     else:
         df = exec_analysis(base_path, slperc=slperc, tpperc=tpperc,optimize=optimize)
 
