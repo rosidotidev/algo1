@@ -321,6 +321,15 @@ def rsi_bollinger_macd_total_signal_v2(df, current_p):
     return 0  # Hold Signal (Do nothing)
 
 def mean_reversion_signal_v1(df, current_p, tolerance_percent=5):
+    return mean_reversion_signal_generic(df, current_p, tolerance_percent)
+
+def mean_reversion_signal_v2(df, current_p, tolerance_percent=10):
+    return mean_reversion_signal_generic(df, current_p, tolerance_percent)
+
+def mean_reversion_signal_v3(df, current_p, tolerance_percent=15):
+    return mean_reversion_signal_generic(df, current_p, tolerance_percent)
+
+def mean_reversion_signal_generic(df, current_p, tolerance_percent):
     """
     Generates mean reversion trading signals based on RSI and Bollinger Bands,
     using a percentage range to define "near" the Bollinger Bands.
@@ -371,6 +380,10 @@ def mean_reversion_signal_v1(df, current_p, tolerance_percent=5):
         return -1
 
     return 0
+
+
+
+
 
 def rsi_engulfing_signals(df, current_p):
     """
@@ -655,6 +668,8 @@ indicators_strategy =[
     rsi_bollinger_macd_total_signal_v1,
     rsi_bollinger_macd_total_signal_v2,
     mean_reversion_signal_v1,
+    mean_reversion_signal_v2,
+    mean_reversion_signal_v3,
     rsi_engulfing_signals,
     mixed_signal_strategy,
     pinbar_macd_strategy,
