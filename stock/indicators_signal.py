@@ -372,6 +372,70 @@ def mean_reversion_signal_v1(df, current_p, tolerance_percent=5):
 
     return 0
 
+def rsi_engulfing_signals(df, current_p):
+    """
+    Generates trading signals based on Engulfing candlestick patterns and RSI,
+    confirmed by overbought/oversold conditions.
+
+    Args:
+        df (pandas.DataFrame): DataFrame containing OHLC data and RSI.
+        current_p (int): Index of the current data point.
+
+    Returns:
+        int: Trading signal (2 = Buy, 1 = Sell Short, 0 = Hold,
+             -1 = Exit Short, -2 = Exit Long).
+    """
+
+    current_pos = df.index.get_loc(current_p)
+
+    # Ensure there is at least one previous candle for the analysis
+    if current_pos < 1:
+        return 0
+
+    previous_candle = df.iloc[current_pos - 1]
+    current_candle = df.iloc[current_pos]
+
+    # Conditions for Bullish Engulfing
+    is_bullish_engulfing = (
+        current_candle['Close'] > previous_candle['Open'] and
+        current_candle['Open'] < previous_candle['Close'] and
+        current_candle['Low'] < previous_candle['Low']
+    )
+
+    # Conditions for Bearish Engulfing
+    is_bearish_engulfing = (
+        current_candle['Open'] > previous_candle['Close'] and
+        current_candle['Close'] < previous_candle['Open'] and
+        current_candle['High'] > previous_candle['High']
+    )
+
+    # 📈 LONG SIGNAL (2)
+    # Enter long if there is a bullish engulfing in an oversold area (RSI < 30)
+    rsi_long_condition = current_candle['RSI'] < 30
+    if is_bullish_engulfing and rsi_long_condition:
+        return 2
+
+    # 📉 SHORT SIGNAL (1)
+    # Enter short if there is a bearish engulfing in an overbought area (RSI > 70)
+    rsi_short_condition = current_candle['RSI'] > 70
+    if is_bearish_engulfing and rsi_short_condition:
+        return 1
+
+    # 🚪 EXIT LONG (-2)
+    # Exit a long position if the RSI moves above 50
+    exit_long_rsi_condition = current_candle['RSI'] > 50
+    if exit_long_rsi_condition:
+        return -2
+
+    # 🚪 EXIT SHORT (-1)
+    # Exit a short position if the RSI moves below 50
+    exit_short_rsi_condition = current_candle['RSI'] < 50
+    if exit_short_rsi_condition:
+        return -1
+
+    # ⏸️ HOLD (0)
+    return 0
+
 def t_indicators_combined_signal(df, current_candle):
     """
     Combines signals from various candlestick strategies, excluding itself.
@@ -399,6 +463,188 @@ def t_indicators_combined_signal(df, current_candle):
     else:
         return 0  # No strong signal
 
+def mixed_signal_strategy(df, current_p):
+    """
+    Generates trading signals by combining RSI, Stochastic, and Moving Averages.
+
+    Args:
+        df (pandas.DataFrame): DataFrame with the specified columns.
+        current_p (int): Index of the current data point.
+
+    Returns:
+        int: Trading signal (2 = Buy, 1 = Sell Short, 0 = Hold, -1 = Exit Short, -2 = Exit Long).
+    """
+
+    current_pos = df.index.get_loc(current_p)
+
+    # Ensure there is a previous data point for comparison
+    if current_pos < 1:
+        return 0
+
+    close = df['Close'].iloc[current_pos]
+    rsi = df['RSI'].iloc[current_pos]
+    stoch_k = df['STOCHk_14_3_3'].iloc[current_pos]
+    stoch_d = df['STOCHd_14_3_3'].iloc[current_pos]
+    sma_short = df['SMA_short'].iloc[current_pos]
+    sma_long = df['SMA_long'].iloc[current_pos]
+    bb_lower = df['BB_Lower'].iloc[current_pos]
+    bb_upper = df['BB_Upper'].iloc[current_pos]
+
+    # Conditions to confirm the trend
+    bullish_trend = sma_short > sma_long
+    bearish_trend = sma_short < sma_long
+
+    # 📈 LONG SIGNAL (2)
+    # Enter if the trend is bullish AND momentum indicators are in an oversold zone
+    if bullish_trend and (rsi < 30 or (stoch_k < 20 and stoch_d < 20)) and close < bb_lower:
+        return 2
+
+    # 📉 SHORT SIGNAL (1)
+    # Enter if the trend is bearish AND momentum indicators are in an overbought zone
+    if bearish_trend and (rsi > 70 or (stoch_k > 80 and stoch_d > 80)) and close > bb_upper:
+        return 1
+
+    # 🚪 EXIT LONG (-2)
+    # Exit a long position if the trend reverses or momentum is overbought
+    if bearish_trend or (rsi > 70 and close > bb_upper):
+        return -2
+
+    # 🚪 EXIT SHORT (-1)
+    # Exit a short position if the trend reverses or momentum is oversold
+    if bullish_trend or (rsi < 30 and close < bb_lower):
+        return -1
+
+    # ⏸️ HOLD (0)
+    return 0
+
+
+def pinbar_macd_strategy(df, current_p):
+    """
+    Generates trading signals based on Pin Bars, MACD, and Moving Averages.
+
+    Args:
+        df (pandas.DataFrame): DataFrame with the specified columns.
+        current_p (int): Index of the current data point.
+
+    Returns:
+        int: Trading signal (2 = Buy, 1 = Sell Short, 0 = Hold, -1 = Exit Short, -2 = Exit Long).
+    """
+
+    current_pos = df.index.get_loc(current_p)
+
+    # Ensure there is a previous data point for comparison
+    if current_pos < 1:
+        return 0
+
+    close = df['Close'].iloc[current_pos]
+    open_p = df['Open'].iloc[current_pos]
+    high = df['High'].iloc[current_pos]
+    low = df['Low'].iloc[current_pos]
+
+    # Previous data for SMA and MACD crosses
+    sma_short_prev = df['SMA_short'].iloc[current_pos - 1]
+    sma_long_prev = df['SMA_long'].iloc[current_pos - 1]
+    macd_prev = df['MACD'].iloc[current_pos - 1]
+    macd_signal_prev = df['MACD_Signal'].iloc[current_pos - 1]
+
+    sma_short = df['SMA_short'].iloc[current_pos]
+    sma_long = df['SMA_long'].iloc[current_pos]
+    macd = df['MACD'].iloc[current_pos]
+    macd_signal = df['MACD_Signal'].iloc[current_pos]
+
+    # Conditions to identify a Bullish Pin Bar
+    body_size = abs(open_p - close)
+    lower_shadow = min(open_p, close) - low
+    upper_shadow = high - max(open_p, close)
+
+    is_bullish_pinbar = (
+            lower_shadow > 2 * body_size and
+            upper_shadow < body_size
+    )
+
+    # Conditions to identify a Bearish Pin Bar
+    is_bearish_pinbar = (
+            upper_shadow > 2 * body_size and
+            lower_shadow < body_size
+    )
+
+    # Bullish SMA cross (trend)
+    bullish_sma_cross = (sma_short_prev < sma_long_prev) and (sma_short > sma_long)
+
+    # Bearish SMA cross (trend)
+    bearish_sma_cross = (sma_short_prev > sma_long_prev) and (sma_short < sma_long)
+
+    # Bullish MACD cross (momentum)
+    bullish_macd_cross = (macd_prev < macd_signal_prev) and (macd > macd_signal)
+
+    # Bearish MACD cross (momentum)
+    bearish_macd_cross = (macd_prev > macd_signal_prev) and (macd < macd_signal)
+
+    # 📈 LONG SIGNAL (2)
+    # Enter long if a bullish Pin Bar is present AND there's a bullish cross in trend or momentum
+    if is_bullish_pinbar and (bullish_sma_cross or bullish_macd_cross):
+        return 2
+
+    # 📉 SHORT SIGNAL (1)
+    # Enter short if a bearish Pin Bar is present AND there's a bearish cross in trend or momentum
+    if is_bearish_pinbar and (bearish_sma_cross or bearish_macd_cross):
+        return 1
+
+    # 🚪 EXIT LONG (-2)
+    # Exit a long position if the MACD turns bearish or there's a bearish SMA cross
+    if bearish_sma_cross or bearish_macd_cross:
+        return -2
+
+    # 🚪 EXIT SHORT (-1)
+    # Exit a short position if the MACD turns bullish or there's a bullish SMA cross
+    if bullish_sma_cross or bullish_macd_cross:
+        return -1
+
+    # ⏸️ HOLD (0)
+    return 0
+
+def doji_rsi_simplified(df, current_p):
+    """
+    Generates trading signals based on a Doji and RSI.
+
+    Args:
+        df (pandas.DataFrame): DataFrame with OHLC and RSI data.
+        current_p (int): Index of the current data point.
+
+    Returns:
+        int: Trading signal (2 = Buy, 1 = Sell Short, 0 = Hold, -1 = Exit Short, -2 = Exit Long).
+    """
+    current_pos = df.index.get_loc(current_p)
+
+    if current_pos < 1:
+        return 0
+
+    current_candle = df.iloc[current_pos]
+    rsi = current_candle['RSI']
+
+    # Condition to identify a Doji (small body)
+    is_doji = abs(current_candle['Open'] - current_candle['Close']) < (current_candle['High'] - current_candle['Low']) * 0.1
+
+    # 📈 Long Entry
+    if is_doji and rsi < 30:
+        return 2
+
+    # 📉 Short Entry
+    if is_doji and rsi > 70:
+        return 1
+
+    # 🚪 Exit a Long position
+    # If RSI moves above 50, it indicates momentum is now in your favor.
+    if rsi > 50:
+        return -2
+
+    # 🚪 Exit a Short position
+    # If RSI moves below 50, it indicates momentum is now in your favor.
+    if rsi < 50:
+        return -1
+
+    # ⏸️ Hold
+    return 0
 
 indicators_strategy =[
     bollinger_bands_mean_reversion_sma,
@@ -409,5 +655,9 @@ indicators_strategy =[
     rsi_bollinger_macd_total_signal_v1,
     rsi_bollinger_macd_total_signal_v2,
     mean_reversion_signal_v1,
+    rsi_engulfing_signals,
+    mixed_signal_strategy,
+    pinbar_macd_strategy,
+    doji_rsi_simplified,
     t_indicators_combined_signal
 ]

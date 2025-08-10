@@ -318,6 +318,58 @@ def inverted_hammer_signal(df, current_candle):
 
     return 0
 
+
+def doji_signal_strategy_v1(df, current_p, trend_period=5):
+    """
+    Generates trading signals based on a Doji and the preceding trend,
+    using the difference between closing prices.
+
+    Args:
+        df (pandas.DataFrame): DataFrame with OHLC data.
+        current_p (int): Index of the current data point.
+        trend_period (int): Number of candles to consider for the trend.
+
+    Returns:
+        int: Trading signal (2 = Buy, 1 = Sell Short, 0 = Hold, -1 = Exit Short, -2 = Exit Long).
+    """
+    current_pos = df.index.get_loc(current_p)
+
+    if current_pos < trend_period:
+        return 0
+
+    current_candle = df.iloc[current_pos]
+
+    # Closing prices for the period
+    first_close = df.iloc[current_pos - trend_period]['Close']
+    last_close = df.iloc[current_pos - 1]['Close']  # Use the close of the candle before the Doji
+
+    # Trend definition based on the difference between closing prices
+    is_uptrend = last_close > first_close
+    is_downtrend = last_close < first_close
+
+    # Condition to identify a Doji
+    is_doji = abs(current_candle['Open'] - current_candle['Close']) < (
+                current_candle['High'] - current_candle['Low']) * 0.1
+
+    # 📈 Long Entry Signal (Buy)
+    if is_doji and is_downtrend:
+        return 2
+
+    # 📉 Short Entry Signal (Sell)
+    if is_doji and is_uptrend:
+        return 1
+
+    # 🚪 Exit Signals
+    # Exit logic can be more complex, but for this basic strategy,
+    # we exit if the trend reverses.
+    if is_uptrend:
+        return -2  # Exit a short position
+
+    if is_downtrend:
+        return -1  # Exit a long position
+
+    return 0  # Hold
+
 def combined_signal(df, current_candle):
     """
     Combines signals from various candlestick strategies, excluding itself.
@@ -378,5 +430,6 @@ candlestick_strategies = [
     shooting_star_hammer_signal,
     hammer_signal,
     inverted_hammer_signal,
+    doji_signal_strategy_v1,
     combined_signal
 ]
