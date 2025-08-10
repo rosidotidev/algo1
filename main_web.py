@@ -56,7 +56,7 @@ def generate_best_matrix(win_rate, ret, trades):
     return result_df
 
 def run_long_process(optimize=False):
-    bu.reset_df_cache()
+    #bu.reset_df_cache()
     result_string=trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"],optimize=optimize)
     updated_files = bu.get_csv_files("../results/")
     return result_string, gr.update(choices=updated_files)
