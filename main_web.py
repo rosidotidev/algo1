@@ -50,7 +50,6 @@ def generate_best_matrix(win_rate, ret, trades):
     selected_tickers = set(selected['Ticker'].unique())
     missing = all_tickers - selected_tickers
     missing_df = pd.DataFrame([{'Ticker': t, 'strategy': 'NO_STRATEGY'} for t in missing])
-
     result_df = pd.concat([selected, missing_df], ignore_index=True).sort_values('Ticker')
     result_df.to_csv("../data/best_matrix.csv", index=False)
     return result_df
