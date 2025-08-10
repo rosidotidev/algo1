@@ -106,7 +106,7 @@ def is_valid_strategy(ticker: str, strategy: str, best_matrix: pd.DataFrame) -> 
 def run_backtest_DaxPattern(data_path,slperc=0.04,tpperc=0.02,capital_allocation=1,show_plot=False,target_strategy=cs.dax_total_signal,add_indicators=True):
     '''
     Commenting this code because this kind of approach with caching doesn't work as expected
-    May be increase memory drops performance
+    May be increase memory drops performance.
 
 
     dtype=""
