@@ -129,7 +129,7 @@ def ticker_exists(ticker: str, dtype: str) -> bool:
 def add_df_to_cache(ticker: str, df: pd.DataFrame, dtype: str='base'):
     """
     Add a DataFrame to cache with key ticker_dtype.
-    Overwrites if key already exists.
+    Overwrites if key already exists. check on max length
     """
     if "df" not in bu.cache:
         bu.cache["df"] = {}
