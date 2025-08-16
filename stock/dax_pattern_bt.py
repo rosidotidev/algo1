@@ -155,6 +155,9 @@ def run_backtest_DaxPattern(data_path,slperc=0.04,tpperc=0.02,capital_allocation
         bt.plot(filename=None)
     for key, value in ctx.items():
         results[key] = bu.format_value(value)
+    #Used to solve issue on single backtest
+    if False:
+        bu.debug_if_contains("DRS",data_path,ctx,results);
     #return cerebro.broker.getvalue()
     return results
 
@@ -328,7 +331,7 @@ def exec_analysis_and_save_results(base_path='../', slperc=0.15, tpperc=1.0, par
     return summary
 
 def test0():
-    run_backtest_DaxPattern("../../data/GS.csv",slperc=0.15,tpperc=0.02,capital_allocation=1000000,show_plot=True)
+    run_backtest_DaxPattern("../../data/DRS.csv",slperc=0.15,tpperc=0.40,target_strategy=cs.hammer_signal,capital_allocation=10000,show_plot=True)
 
 
 def test1():
@@ -362,4 +365,4 @@ def test1():
 def test2():
     exec_analysis_and_save_results(parallel=True,optimize=False,base_path="../")
 if __name__ == "__main__":
-    test2()
+    test0()

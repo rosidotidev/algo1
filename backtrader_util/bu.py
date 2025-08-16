@@ -147,7 +147,18 @@ def get_df_from_cache(ticker: str, dtype: str) -> pd.DataFrame | None:
     key = f"{ticker}_{dtype}"
     return bu.cache["df"].get(key)
 
-
+def debug_if_contains(target:str,data: str, ctx: dict, results: pd.Series):
+    if target in data.upper():  # case-insensitive
+        print("=" * 40)
+        print(f"data path {data}")
+        print("=" * 40)
+        print("CTX:")
+        for k, v in ctx.items():
+            print(f"  {k}: {v}")
+        print("-" * 40)
+        print("RESULTS:")
+        print(results.to_string())  # stampa la Series in formato leggibile
+        print("=" * 40)
 
 if __name__ == "__main__":
     print(format_value(2.333))
