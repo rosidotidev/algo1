@@ -2,8 +2,8 @@ import warnings
 import gradio as gr
 import pandas as pd
 import stock.dax_pattern_bt as trades
-import stock.indicators_signal as ins
-import stock.candle_signal as cs
+import stock.indicators_signal_vec as ins_vec
+import stock.candle_signal_vec as cs_vec
 import stock.ticker as ti
 import backtrader_util.bu as bu
 
@@ -19,14 +19,14 @@ def save_cache(stop_loss, take_profit):
 def run_backtest(ticker, function_name):
     function_name = function_name.replace(" ", "_")
 
-    merged_functions_list = cs.candlestick_strategies + ins.indicators_strategy
+    merged_functions_list = cs_vec.candlestick_strategies + ins_vec.indicators_strategy
     functions_dict = {func.__name__: func for func in merged_functions_list}
     func = functions_dict[function_name]
 
     # True se la funzione appartiene agli indicator strategy
-    add_indicators = func in ins.indicators_strategy
+    add_indicators = func in ins_vec.indicators_strategy
 
-    res = trades.run_backtest_DaxPattern(
+    res = trades.run_backtest_DaxPattern_vec(
         f"../data/{ticker}.csv",
         slperc=bu.cache["stop_loss"],
         tpperc=bu.cache["take_profit"],
@@ -185,7 +185,7 @@ df[
                 tickers = ti.read_tickers_from_file("../data/tickers.txt")
                 with gr.Row():
                     ticker_dropdown = gr.Dropdown(choices=tickers, label="Select Ticker")
-                    backtesting_functions = ins.indicators_strategy + cs.candlestick_strategies
+                    backtesting_functions = ins_vec.indicators_strategy + cs_vec.candlestick_strategies
                     algorithm_choices = [f.__name__.replace("_", " ") for f in backtesting_functions]
                     algorithm_dropdown = gr.Dropdown(choices=algorithm_choices, label="Select Algorithm")
                 backtest_output = gr.Textbox(label="Backtesting Results")
