@@ -202,21 +202,33 @@ def count_tickers_in_best_matrix(matrix_data_path="../../data/best_matrix.csv",f
         print("Error: The file best_matrix.csv was not found.")
         return pd.DataFrame({'Ticker': [], 'Count': []})
 
-    # Filter the best_matrix DataFrame to only include tickers from your file
-    filtered_df = best_matrix_df[best_matrix_df['Ticker'].isin(tickers_from_file)]
-    # Further filter to exclude rows where the 'Strategy' is 'NO_STRATEGY'
-    filtered_df = filtered_df[filtered_df['strategy'] != 'NO_STRATEGY']
+    # Filter the matrix to exclude rows where the 'Strategy' is 'NO_STRATEGY'
+    valid_strategies_df = best_matrix_df[best_matrix_df['strategy'] != 'NO_STRATEGY']
 
-    # Count the occurrences of each ticker
-    ticker_counts = filtered_df['Ticker'].value_counts().reset_index()
+    # Identify tickers that have a valid strategy in the matrix
+    tickers_in_matrix_with_strategy = set(valid_strategies_df['Ticker'].unique())
 
-    # Rename columns for clarity
+    # Find tickers that are in the file but NOT in the matrix with a valid strategy
+    tickers_not_in_matrix = tickers_from_file.difference(tickers_in_matrix_with_strategy)
+
+    # Create DataFrames for the two groups
+    # 1. Tickers with valid strategies
+    ticker_counts = valid_strategies_df['Ticker'].value_counts().reset_index()
     ticker_counts.columns = ['Ticker', 'Count']
 
-    # Sort the results by count in descending order
-    ticker_counts = ticker_counts.sort_values(by='Count', ascending=False)
+    # 2. Tickers without a valid strategy
+    tickers_not_present_df = pd.DataFrame({
+        'Ticker': sorted(list(tickers_not_in_matrix)),
+        'Count': 0  # Assign a count of 0 for these tickers
+    })
 
-    return ticker_counts
+    # Combine the two DataFrames
+    final_df = pd.concat([ticker_counts, tickers_not_present_df], ignore_index=True)
+
+    # Sort the results by Ticker for a clean output
+    final_df = final_df.sort_values(by='Count', ascending=False).reset_index(drop=True)
+
+    return final_df
 
 # Example usage
 if __name__ == "__main__":
