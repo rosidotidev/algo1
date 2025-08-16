@@ -128,7 +128,8 @@ def top_strategies(file_name='report.csv', metric='Return [%]', top_n=10):
 
     grouped = grouped.sort_values(by=sort_col, ascending=False).head(top_n)
     return grouped
-
+def fill_ticker_count():
+    return ti.count_tickers_in_best_matrix("../data/best_matrix.csv","../data/tickers.txt")
 
 
 def main():
@@ -191,11 +192,19 @@ df[
                 backtest_button = gr.Button("Run Backtest")
                 backtest_button.click(run_backtest, inputs=[ticker_dropdown, algorithm_dropdown], outputs=backtest_output)
 
-            with gr.TabItem("Load Tickers"):
+            with gr.TabItem("Manage Tickers"):
                 gr.Markdown("### Fetch and store recent historical data for all tickers.")
-                tickers_output = gr.Textbox(label="Loaded Tickers")
-                load_button = gr.Button("Load Tickers")
-                load_button.click(load_all_tickers, outputs=tickers_output)
+                with gr.Row():
+                    with gr.Column(scale=1):
+                        tickers_output = gr.Textbox(label="Loaded Tickers")
+                        load_button = gr.Button("Read Tickers OHLC Data")
+                        load_button.click(load_all_tickers, outputs=tickers_output)
+                    with gr.Column(scale=1):
+                        gr.Markdown("### Ticker Frequency in Best Matrix")
+                        count_tickers_button = gr.Button("Count Ticker Frequency")
+                        ticker_count_output = gr.Dataframe(label="Ticker Frequency")
+                        count_tickers_button.click(fn=fill_ticker_count, outputs=ticker_count_output)
+
 
             with gr.TabItem("Process all strategies"):
                 gr.Markdown("### Run all strategies across all tickers and generate daily reports.")

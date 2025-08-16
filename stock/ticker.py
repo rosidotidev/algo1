@@ -179,9 +179,49 @@ def read_tickers_from_file(filepath="../../data/tickers.txt"):
         return ["Tickers file not found."]
     except Exception as e:
         return [f"Error reading file: {str(e)}"]
+
+
+import pandas as pd
+
+
+def count_tickers_in_best_matrix(matrix_data_path="../../data/best_matrix.csv",file_tickers_path="../../data/tickers.txt"):
+    """
+    Counts the frequency of each ticker from the file in the best_matrix.csv.
+
+    Returns:
+        A pandas DataFrame with 'Ticker' and 'Count' columns.
+    """
+
+    # Read tickers from your existing function and convert to a set
+    tickers_from_file = set(read_tickers_from_file(file_tickers_path))
+
+    # Read the best_matrix.csv file
+    try:
+        best_matrix_df = pd.read_csv(matrix_data_path)
+    except FileNotFoundError:
+        print("Error: The file best_matrix.csv was not found.")
+        return pd.DataFrame({'Ticker': [], 'Count': []})
+
+    # Filter the best_matrix DataFrame to only include tickers from your file
+    filtered_df = best_matrix_df[best_matrix_df['Ticker'].isin(tickers_from_file)]
+    # Further filter to exclude rows where the 'Strategy' is 'NO_STRATEGY'
+    filtered_df = filtered_df[filtered_df['strategy'] != 'NO_STRATEGY']
+
+    # Count the occurrences of each ticker
+    ticker_counts = filtered_df['Ticker'].value_counts().reset_index()
+
+    # Rename columns for clarity
+    ticker_counts.columns = ['Ticker', 'Count']
+
+    # Sort the results by count in descending order
+    ticker_counts = ticker_counts.sort_values(by='Count', ascending=False)
+
+    return ticker_counts
+
 # Example usage
 if __name__ == "__main__":
     # https://github.com/ranaroussi/yfinance/issues/2422
-    fetch_and_save_ticker_data("../../data/tickers.txt","../../data/","3y")
+    #fetch_and_save_ticker_data("../../data/tickers.txt","../../data/","3y")
     #print(read_pandas_ticker("MB.MI"))
+    print(count_tickers_in_best_matrix())
 
