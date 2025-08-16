@@ -175,6 +175,19 @@ def add_total_signal(df, total_signal_function):
         df.loc[:, 'TotalSignal'] = 0
     df.loc[:, 'TotalSignal'] = [total_signal_function(df, idx) for idx in df.index]
     return df
+
+def add_total_signal_vec(df, total_signal_function):
+    if 'TotalSignal' not in df.columns:
+        df.loc[:, 'TotalSignal'] = 0
+    """
+    Adds the 'TotalSignal' column to the DataFrame by applying a vectorized
+    signal function.
+    """
+    # Simply call the vectorized signal function and assign its result directly to the column.
+    # The function itself handles all the calculations for the entire DataFrame.
+    df.loc[:, 'TotalSignal'] = total_signal_function(df)
+
+    return df
 # Function to read tickers from the file
 def read_tickers_from_file(filepath="../../data/tickers.txt"):
     try:
