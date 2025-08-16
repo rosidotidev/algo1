@@ -160,7 +160,7 @@ def fetch_and_save_ticker_data(ticker_file="tickers.txt", output_directory="hist
     print("Data fetching complete.")
     return output_string
 
-def add_total_signal(df,total_signal_function):
+def add_total_signal_old(df,total_signal_function):
     """
     Adds the 'TotalSignal' column to the DataFrame without using progress_apply.
     """
@@ -168,6 +168,12 @@ def add_total_signal(df,total_signal_function):
         df.loc[:, 'TotalSignal'] = 0  # Default value if missing
 
     df.loc[:, 'TotalSignal'] = df.apply(lambda row: total_signal_function(df, row.name), axis=1)
+    return df
+
+def add_total_signal(df, total_signal_function):
+    if 'TotalSignal' not in df.columns:
+        df.loc[:, 'TotalSignal'] = 0
+    df.loc[:, 'TotalSignal'] = [total_signal_function(df, idx) for idx in df.index]
     return df
 # Function to read tickers from the file
 def read_tickers_from_file(filepath="../../data/tickers.txt"):

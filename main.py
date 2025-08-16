@@ -2,7 +2,7 @@ from stock import ticker as t
 from stock import plot
 from dotenv import load_dotenv
 import matplotlib.pyplot as plt
-from stock.rsi_bb_macd_mid import run_backtest_for_all_tickers
+from stock.dax_pattern_bt import run_backtest_for_all_tickers
 def main1():
     load_dotenv()
     print("Hello world")
