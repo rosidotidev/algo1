@@ -1,0 +1,556 @@
+import pandas as pd
+
+
+def dax_total_signal_vectorized(df):
+    """
+    Generates a Series of trading signals for the entire DataFrame using a
+    vectorized approach.
+
+    Args:
+        df (pd.DataFrame): The DataFrame with historical data.
+
+    Returns:
+        pd.Series: A Series of trading signals (2 for Buy, 1 for Sell, 0 for Hold).
+    """
+    # Create temporary columns for previous values using .shift()
+    df['High_prev1'] = df['High'].shift(1)
+    df['High_prev2'] = df['High'].shift(2)
+    df['High_prev3'] = df['High'].shift(3)
+    df['Low_prev1'] = df['Low'].shift(1)
+    df['Low_prev2'] = df['Low'].shift(2)
+    df['Low_prev3'] = df['Low'].shift(3)
+
+    # Buy signal conditions
+    buy_condition = (df['High'] > df['High_prev1']) & \
+                    (df['High_prev1'] > df['Low_prev1']) & \
+                    (df['Low_prev1'] > df['High_prev2']) & \
+                    (df['High_prev2'] > df['Low_prev2']) & \
+                    (df['Low_prev2'] > df['High_prev3']) & \
+                    (df['High_prev3'] > df['Low_prev3']) & \
+                    (df['Low_prev3'] > df['Low_prev2'])
+
+    # Sell signal conditions (symmetrical to buy)
+    sell_condition = (df['Low'] < df['Low_prev1']) & \
+                     (df['Low_prev1'] < df['High_prev1']) & \
+                     (df['High_prev1'] < df['Low_prev2']) & \
+                     (df['Low_prev2'] < df['High_prev2']) & \
+                     (df['High_prev2'] < df['Low_prev3']) & \
+                     (df['Low_prev3'] < df['High_prev3']) & \
+                     (df['High_prev3'] < df['High_prev2'])
+
+    # Initialize a signal Series with a default value of 0 (Hold)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply signals based on the boolean masks
+    signals[buy_condition] = 2  # Buy signal
+    signals[sell_condition] = 1  # Sell signal
+
+    # Remove temporary columns to keep the DataFrame clean
+    df.drop(columns=['High_prev1', 'High_prev2', 'High_prev3',
+                     'Low_prev1', 'Low_prev2', 'Low_prev3'],
+            inplace=True)
+
+    return signals
+
+def dax_momentum_signal_vectorized(df):
+    """
+    Generates a Series of trading signals for the entire DataFrame
+    using a vectorized approach based on momentum rules.
+
+    Returns:
+        A pandas Series of trading signals (2 for Buy, 1 for Sell, 0 for Hold).
+    """
+    # Create temporary columns for previous values using .shift()
+    df['High_prev1'] = df['High'].shift(1)
+    df['Low_prev1'] = df['Low'].shift(1)
+    df['High_prev2'] = df['High'].shift(2)
+    df['Low_prev2'] = df['Low'].shift(2)
+
+    # Calculate range-based conditions
+    df['Range'] = df['High'] - df['Low']
+    buy_threshold = df['Low'] + df['Range'] * 0.7
+    sell_threshold = df['High'] - df['Range'] * 0.7
+
+    # Create boolean masks for each signal
+    # Buy signal conditions
+    buy_condition = (df['High'] > df['High_prev1']) & \
+                    (df['Low_prev1'] > df['Low_prev2']) & \
+                    (df['Close'] > buy_threshold)
+
+    # Sell signal conditions
+    sell_condition = (df['Low'] < df['Low_prev1']) & \
+                     (df['High_prev1'] < df['High_prev2']) & \
+                     (df['Close'] < sell_threshold)
+
+    # Initialize a signal Series with a default value of 0 (Hold)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply signals using vectorized assignment
+    signals[buy_condition] = 2  # Buy signal
+    signals[sell_condition] = 1  # Sell signal
+
+    # Cleanup: remove temporary columns to keep DataFrame clean
+    df.drop(columns=['High_prev1', 'Low_prev1', 'High_prev2', 'Low_prev2', 'Range'], inplace=True)
+
+    return signals
+
+
+def inside_bar_breakout_signal_vectorized(df):
+    """
+    Generates a Series of trading signals for the entire DataFrame based on a
+    correctly implemented vectorized Inside Bar Breakout strategy.
+
+    Args:
+        df (pd.DataFrame): The DataFrame with historical data.
+
+    Returns:
+        pd.Series: A Series of trading signals (2 for Buy, 1 for Sell, 0 for Hold).
+    """
+    # 1. Creazione di colonne temporanee per i dati passati.
+    #    Questo sostituisce le chiamate .iloc[current_pos - 1] e .iloc[current_pos - 2]
+    #    della versione non vettoriale.
+    df['High_prev1'] = df['High'].shift(1)
+    df['Low_prev1'] = df['Low'].shift(1)
+    df['High_prev2'] = df['High'].shift(2)
+    df['Low_prev2'] = df['Low'].shift(2)
+
+    # 2. Condizione per identificare l'Inside Bar.
+    #    La candela precedente (prev1) deve avere un massimo inferiore e un minimo superiore
+    #    rispetto alla candela che la precede (prev2).
+    #    Corrisponde a "if prev_high > df['High'].iloc[current_pos - 2] and prev_low < df['Low'].iloc[current_pos - 2]"
+    #    nella versione originale.
+    is_inside_bar = (df['High_prev1'] > df['High_prev2']) & (df['Low_prev1'] < df['Low_prev2'])
+
+    # 3. Condizioni per il breakout sulla candela attuale.
+    #    Queste condizioni corrispondono a "if current_high > prev_high" e "if current_low < prev_low".
+    #    Ora usiamo i valori vettorializzati invece di quelli a singola riga.
+    buy_breakout = (df['High'] > df['High_prev1'])
+    sell_breakout = (df['Low'] < df['Low_prev1'])
+
+    # 4. Combinazione delle condizioni per i segnali finali.
+    #    Il segnale di Buy è generato solo se la candela precedente era un'Inside Bar E se il
+    #    breakout rialzista si verifica sulla candela attuale. Questo replica la logica
+    #    del tuo codice originale ("if is_inside_bar: ... if current_high > prev_high:").
+    buy_signal_condition = is_inside_bar & buy_breakout
+    sell_signal_condition = is_inside_bar & sell_breakout
+
+    # 5. Inizializzazione e assegnazione dei segnali.
+    #    Si crea una Series di default a 0 (Hold) e si usano le maschere booleane
+    #    per assegnare i valori 2 (Buy) o 1 (Sell). Questo è il cuore dell'ottimizzazione
+    #    rispetto ai return condizionali del tuo codice.
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[sell_signal_condition] = 1  # Segnale di Sell
+    signals[buy_signal_condition] = 2  # Segnale di Buy
+
+
+    # 6. Pulizia delle colonne temporanee.
+    #    Questo passo non esiste nella versione originale perché le variabili sono locali
+    #    alla funzione. Qui, invece, dobbiamo rimuovere le colonne che abbiamo aggiunto
+    #    al DataFrame.
+    df.drop(columns=['High_prev1', 'Low_prev1', 'High_prev2', 'Low_prev2'], inplace=True)
+
+    return signals
+
+def three_bar_reversal_signal_vectorized(df):
+    """
+    Generates a Series of trading signals for the entire DataFrame based on a
+    vectorized Three Bar Reversal strategy.
+
+    Args:
+        df (pd.DataFrame): The DataFrame with historical data.
+
+    Returns:
+        pd.Series: A Series of trading signals (2 for Buy, 1 for Sell, 0 for Hold).
+    """
+    # Create temporary columns for previous values using .shift()
+    df['open_prev1'] = df['Open'].shift(1)
+    df['close_prev1'] = df['Close'].shift(1)
+    df['high_prev1'] = df['High'].shift(1)
+    df['low_prev1'] = df['Low'].shift(1)
+
+    df['open_prev2'] = df['Open'].shift(2)
+    df['close_prev2'] = df['Close'].shift(2)
+    df['high_prev2'] = df['High'].shift(2)
+    df['low_prev2'] = df['Low'].shift(2)
+
+    # --- Bullish Reversal Conditions ---
+    buy_condition = (df['close_prev2'] < df['open_prev2']) & \
+                    (df['low_prev1'] < df['low_prev2']) & \
+                    (df['high_prev1'] > df['high_prev2']) & \
+                    (df['Close'] > df['Open']) & \
+                    (df['Close'] > df['open_prev2'])
+
+    # --- Bearish Reversal Conditions ---
+    sell_condition = (df['close_prev2'] > df['open_prev2']) & \
+                     (df['high_prev1'] > df['high_prev2']) & \
+                     (df['low_prev1'] < df['low_prev2']) & \
+                     (df['Close'] < df['Open']) & \
+                     (df['Close'] < df['open_prev2'])
+
+    # Initialize a signal Series with a default value of 0 (Hold)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply signals using vectorized assignment
+    signals[buy_condition] = 2  # Buy signal
+    signals[sell_condition] = 1  # Sell signal
+
+    # Remove temporary columns to keep the DataFrame clean
+    df.drop(columns=['open_prev1', 'close_prev1', 'high_prev1', 'low_prev1',
+                     'open_prev2', 'close_prev2', 'high_prev2', 'low_prev2'],
+            inplace=True)
+
+    return signals
+
+def engulfing_pattern_signal_vectorized(df):
+    """
+    Identifies Engulfing Patterns for buy (2) or sell (1) signals
+    using a vectorized approach.
+
+    Args:
+        df (pd.DataFrame): The DataFrame with historical data.
+
+    Returns:
+        pd.Series: A Series of trading signals (2 for Buy, 1 for Sell, 0 for Hold).
+    """
+
+    # Create temporary columns for previous values using .shift()
+    df['prev_open'] = df['Open'].shift(1)
+    df['prev_close'] = df['Close'].shift(1)
+
+    # Bullish Engulfing conditions
+    bullish_engulfing_condition = (df['prev_close'] < df['prev_open']) & \
+                                  (df['Close'] > df['Open']) & \
+                                  (df['Close'] > df['prev_open']) & \
+                                  (df['Open'] < df['prev_close'])
+
+    # Bearish Engulfing conditions
+    bearish_engulfing_condition = (df['prev_close'] > df['prev_open']) & \
+                                  (df['Close'] < df['Open']) & \
+                                  (df['Close'] < df['prev_open']) & \
+                                  (df['Open'] > df['prev_close'])
+
+    # Initialize a signal Series with a default value of 0 (Hold)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply signals using vectorized assignment
+    signals[bullish_engulfing_condition] = 2  # Buy Signal
+    signals[bearish_engulfing_condition] = 1  # Sell Signal
+
+    # Remove temporary columns to keep the DataFrame clean
+    df.drop(columns=['prev_open', 'prev_close'], inplace=True)
+
+    return signals
+
+def pin_bar_signal_vectorized(df):
+    """
+    Identifies Pin Bars using a vectorized approach to generate buy (2) or sell (1) signals.
+
+    Args:
+        df (pd.DataFrame): The DataFrame with historical data.
+
+    Returns:
+        pd.Series: A Series of trading signals (2 for Buy, 1 for Sell, 0 for Hold).
+    """
+    # Vectorized calculation of candle body and wicks
+    df['candle_body'] = abs(df['Close'] - df['Open'])
+    df['upper_wick'] = df['High'] - df[['Open', 'Close']].max(axis=1)
+    df['lower_wick'] = df[['Open', 'Close']].min(axis=1) - df['Low']
+
+    # Vectorized criteria for Pin Bars
+    # Bullish Pin Bar (Hammer) - Long Lower Wick
+    bullish_pin_bar_condition = (df['lower_wick'] >= df['candle_body'] * 2) & \
+                                (df['upper_wick'] <= df['candle_body'] * 0.5) & \
+                                (df['Close'] > df['Open'])
+
+    # Bearish Pin Bar (Shooting Star) - Long Upper Wick
+    bearish_pin_bar_condition = (df['upper_wick'] >= df['candle_body'] * 2) & \
+                                (df['lower_wick'] <= df['candle_body'] * 0.5) & \
+                                (df['Close'] < df['Open'])
+
+    # Initialize a signal Series with a default value of 0 (Hold)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply signals using vectorized assignment
+    signals[bullish_pin_bar_condition] = 2  # Buy Signal
+    signals[bearish_pin_bar_condition] = 1  # Sell Signal
+
+    # Remove temporary columns to keep the DataFrame clean
+    df.drop(columns=['candle_body', 'upper_wick', 'lower_wick'], inplace=True)
+
+    return signals
+
+def morning_evening_star_signal_vectorized(df):
+    """
+    Identifies Morning Star (Buy - 2) and Evening Star (Sell - 1) patterns
+    using a vectorized approach.
+
+    Args:
+        df (pd.DataFrame): The DataFrame with historical data.
+
+    Returns:
+        pd.Series: A Series of trading signals (2 for Buy, 1 for Sell, 0 for Hold).
+    """
+
+    # Create temporary columns for previous values using .shift()
+    df['first_open'] = df['Open'].shift(2)
+    df['first_close'] = df['Close'].shift(2)
+    df['second_open'] = df['Open'].shift(1)
+    df['second_close'] = df['Close'].shift(1)
+
+    # Bullish Morning Star conditions
+    morning_star_condition = (df['first_close'] < df['first_open']) & \
+                             (df['Close'] > df['Open']) & \
+                             (df['Close'] > (df['first_open'] + df['first_close']) / 2)
+
+    # Bearish Evening Star conditions
+    evening_star_condition = (df['first_close'] > df['first_open']) & \
+                             (df['Close'] < df['Open']) & \
+                             (df['Close'] < (df['first_open'] + df['first_close']) / 2)
+
+    # Initialize a signal Series with a default value of 0 (Hold)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply signals using vectorized assignment
+    signals[morning_star_condition] = 2  # Buy Signal
+    signals[evening_star_condition] = 1  # Sell Signal
+
+    # Remove temporary columns to keep the DataFrame clean
+    df.drop(columns=['first_open', 'first_close', 'second_open', 'second_close'], inplace=True)
+
+    return signals
+
+def shooting_star_hammer_signal_vectorized(df):
+    """
+    Identifies Shooting Star and Hammer patterns using a vectorized approach.
+
+    Args:
+        df (pd.DataFrame): The DataFrame with historical data.
+
+    Returns:
+        pd.Series: A Series of trading signals (1 for sell, 2 for buy, 0 for no signal).
+    """
+
+    # Vectorized calculation of candle body and wicks
+    df['candle_body'] = abs(df['Close'] - df['Open'])
+    df['upper_wick'] = df['High'] - df[['Open', 'Close']].max(axis=1)
+    df['lower_wick'] = df[['Open', 'Close']].min(axis=1) - df['Low']
+
+    # --- Shooting Star (Bearish) conditions ---
+    shooting_star_condition = (df['upper_wick'] >= df['candle_body'] * 2) & \
+                              (df['lower_wick'] <= df['candle_body'] * 0.3) & \
+                              (df['Close'] < df['Open'])
+
+    # --- Hammer (Bullish) conditions ---
+    hammer_condition = (df['lower_wick'] >= df['candle_body'] * 2) & \
+                       (df['upper_wick'] <= df['candle_body'] * 0.3) & \
+                       (df['Close'] > df['Open'])
+
+    # Initialize a signal Series with a default value of 0 (no signal)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply signals using vectorized assignment
+    signals[shooting_star_condition] = 1  # SELL signal
+    signals[hammer_condition] = 2  # BUY signal
+
+    # Remove temporary columns to keep the DataFrame clean
+    df.drop(columns=['candle_body', 'upper_wick', 'lower_wick'], inplace=True)
+
+    return signals
+
+def hammer_signal_vectorized(df):
+    """
+    Identifies a Hammer pattern using a vectorized approach to generate buy (2) or sell (1) signals.
+
+    Args:
+        df (pd.DataFrame): The DataFrame with historical data.
+
+    Returns:
+        pd.Series: A Series of trading signals (1 for sell, 2 for buy, 0 for no signal).
+    """
+
+    # Vectorized calculation of candle body and wicks
+    df['body'] = abs(df['Close'] - df['Open'])
+    df['lower_wick'] = df[['Open', 'Close']].min(axis=1) - df['Low']
+    df['upper_wick'] = df['High'] - df[['Open', 'Close']].max(axis=1)
+
+    # --- Bullish Hammer conditions ---
+    hammer_condition = (df['lower_wick'] > 2 * df['body']) & \
+                       (df['upper_wick'] < 0.3 * df['body'])
+
+    # --- Bearish Exit (Sell) condition ---
+    # This condition is typically handled by backtesting logic, not a signal function.
+    # We'll vectorize it here as a direct translation of your code.
+    bearish_exit_condition = (df['Close'] < df['Low'])
+
+    # Initialize a signal Series with a default value of 0 (no signal)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply signals using vectorized assignment
+    signals[hammer_condition] = 2  # BUY signal
+    signals[bearish_exit_condition] = 1  # SELL signal
+
+    # Remove temporary columns to keep the DataFrame clean
+    df.drop(columns=['body', 'lower_wick', 'upper_wick'], inplace=True)
+
+    return signals
+
+def inverted_hammer_signal_vectorized(df):
+    """
+    Identifies Inverted Hammer patterns using a vectorized approach to generate buy (2) signals.
+
+    Args:
+        df (pd.DataFrame): The DataFrame with historical data.
+
+    Returns:
+        pd.Series: A Series of trading signals (2 for Buy, 0 for no signal).
+    """
+
+    # Vectorized calculation of candle body and wicks
+    df['body'] = abs(df['Close'] - df['Open'])
+    df['upper_wick'] = df['High'] - df[['Open', 'Close']].max(axis=1)
+    df['lower_wick'] = df[['Open', 'Close']].min(axis=1) - df['Low']
+
+    # --- Inverted Hammer conditions ---
+    inverted_hammer_condition = (df['upper_wick'] > 2 * df['body']) & \
+                                (df['lower_wick'] < 0.3 * df['body'])
+
+    # Initialize a signal Series with a default value of 0 (no signal)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply signals using vectorized assignment
+    signals[inverted_hammer_condition] = 2  # BUY signal
+
+    # Remove temporary columns to keep the DataFrame clean
+    df.drop(columns=['body', 'upper_wick', 'lower_wick'], inplace=True)
+
+    return signals
+
+
+import pandas as pd
+import numpy as np
+
+
+def doji_signal_strategy_v1_vectorized(df, trend_period=5):
+    """
+    Generates trading signals based on a Doji and the preceding trend
+    using a vectorized approach.
+
+    Args:
+        df (pd.DataFrame): DataFrame with OHLC data.
+        trend_period (int): Number of candles to consider for the trend.
+
+    Returns:
+        pd.Series: Trading signal Series (2 = Buy, 1 = Sell, -1 = Exit Short, -2 = Exit Long, 0 = Hold).
+    """
+
+    # Calculate trend using .shift() to compare closing prices
+    # with the closing price from 'trend_period' candles ago.
+    df['first_close'] = df['Close'].shift(trend_period)
+    df['prev_close'] = df['Close'].shift(1)
+
+    is_uptrend = df['prev_close'] > df['first_close']
+    is_downtrend = df['prev_close'] < df['first_close']
+
+    # Identify Doji candles using a vectorized calculation
+    is_doji = abs(df['Open'] - df['Close']) < (df['High'] - df['Low']) * 0.1
+
+    # Initialize a signal Series with a default value of 0 (Hold)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply entry signals using vectorized assignment
+    signals[is_doji & is_downtrend] = 2  # Buy signal
+    signals[is_doji & is_uptrend] = 1  # Sell signal
+
+    # Apply exit signals based on trend.
+    # NOTE: In backtesting, this logic is usually more complex
+    # and managed by the backtest engine, not the signal function.
+    # This is a direct translation of your original code's logic.
+    signals[is_uptrend] = -2  # Exit a short position
+    signals[is_downtrend] = -1  # Exit a long position
+
+    # Override any conflicting signals:
+    # A Doji entry signal takes priority over an exit signal
+    signals[is_doji & is_downtrend] = 2
+    signals[is_doji & is_uptrend] = 1
+
+    # Clean up temporary columns
+    df.drop(columns=['first_close', 'prev_close'], inplace=True)
+
+    return signals
+
+def combined_signal_vectorized(df):
+    """
+    Combines signals from multiple vectorized candlestick strategies.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing candlestick data.
+        candlestick_strategies (list): List of vectorized candlestick strategy functions.
+
+    Returns:
+        pd.Series: A Series with the combined signal (2 for buy, 1 for sell, 0 for no signal).
+    """
+
+    # 1. Run each vectorized strategy function and store the signals.
+    # We pass a copy of the DataFrame to each function to avoid conflicts
+    # if they add temporary columns.
+    signal_series_list = [func(df.copy()) for func in candlestick_strategies if func != combined_signal_vectorized]
+
+    # 2. Combine signals into a single DataFrame.
+    # The .T (transpose) aligns the Series correctly.
+    combined_signals_df = pd.DataFrame(signal_series_list).T
+
+    # 3. Count buy and sell signals for each candle.
+    # This replaces the individual counts (signals.count(2)) for each candle.
+    buy_counts = (combined_signals_df == 2).sum(axis=1)
+    sell_counts = (combined_signals_df == 1).sum(axis=1)
+
+    # 4. Initialize the final signal Series.
+    # This replaces the default 'return 0' at the end of the original function.
+    final_signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # 5. Apply the combination logic using vectorized operations.
+    # This replaces the if/elif/else block for each candle.
+    # Buy signals take priority if they outnumber sell signals and exceed the threshold.
+    final_signals[(buy_counts > sell_counts) & (buy_counts > 2)] = 2
+
+    # Sell signals take priority if they outnumber buy signals and exceed the threshold.
+    final_signals[(sell_counts > buy_counts) & (sell_counts > 2)] = 1
+
+    return final_signals
+
+
+def aaa():
+    """
+
+    hammer_signal,
+    inverted_hammer_signal
+    """
+    q=1
+
+
+"""
+dax_total_signal,
+    dax_momentum_signal,
+    inside_bar_breakout_signal,
+    three_bar_reversal_signal,
+    engulfing_pattern_signal,
+    pin_bar_signal,
+    morning_evening_star_signal,
+    shooting_star_hammer_signal,
+    hammer_signal,
+"""
+
+# List of all signal functions
+candlestick_strategies = [
+    dax_momentum_signal_vectorized,
+    inside_bar_breakout_signal_vectorized,
+    three_bar_reversal_signal_vectorized,
+    engulfing_pattern_signal_vectorized,
+    pin_bar_signal_vectorized,
+    morning_evening_star_signal_vectorized,
+    shooting_star_hammer_signal_vectorized,
+    hammer_signal_vectorized,
+    inverted_hammer_signal_vectorized,
+    doji_signal_strategy_v1_vectorized,
+    combined_signal_vectorized
+]
