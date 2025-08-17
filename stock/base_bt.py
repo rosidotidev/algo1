@@ -39,6 +39,7 @@ class BaseStrategyBT(Strategy):
         if current_date in self.df.index:
             current_df=self.df.loc[current_date]
         return current_df
+
     def get_total_signal(self):
         current_date = self.data.index[-1]
         total_signal = 0

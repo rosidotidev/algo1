@@ -640,6 +640,73 @@ def doji_rsi_simplified_vectorized(df):
 
     return signals
 
+
+import pandas as pd
+import numpy as np
+
+
+def bollinger_bands_adx_simple_vectorized(df, adx_entry_threshold=25, adx_exit_threshold=20):
+    """
+    Generates trading signals for the entire DataFrame based on the
+    Bollinger Bands and ADX strategy, now including DMP and DMN for
+    trend direction confirmation.
+
+    The strategy looks for a breakout of the Bollinger Bands confirmed by a
+    strong ADX and the directional indicators (DMP/DMN). An exit is
+    triggered when the trend weakens, signaled by both a price crossover
+    of the middle band and a drop in ADX.
+
+    Args:
+        df (pd.DataFrame): DataFrame with pre-calculated prices and indicators.
+                          It must contain the following columns:
+                          'Close' (closing price),
+                          'BB_Upper' (upper Bollinger band),
+                          'BB_Middle' (middle Bollinger band),
+                          'BB_Lower' (lower Bollinger band),
+                          'ADX_14' (ADX value),
+                          'DMP_14' (Positive Directional Indicator),
+                          'DMN_14' (Negative Directional Indicator).
+        adx_entry_threshold (int): The ADX value required to confirm a trend for entry signals.
+        adx_exit_threshold (int): The ADX value at which a trend is considered to be weakening,
+                                   triggering an exit signal.
+
+    Returns:
+        pd.Series: A Series of trading signals (2 for Buy, 1 for Sell, -1 for Exit Short, -2 for Exit Long, 0 for Hold).
+    """
+    # Create boolean masks for entry and exit conditions.
+    # This vectorized logic is much more efficient than for loops.
+
+    # Entry conditions: Price breaks out of a band with a strong ADX,
+    # and the directional indicators confirm the trend's direction.
+    buy_condition = (df['Close'] > df['BB_Upper']) & (df['ADX_14'] >= adx_entry_threshold) & (
+                df['DMP_14'] > df['DMN_14'])
+    sell_condition = (df['Close'] < df['BB_Lower']) & (df['ADX_14'] >= adx_entry_threshold) & (
+                df['DMN_14'] > df['DMP_14'])
+
+    # Exit conditions: Price crosses the middle band AND ADX drops below the exit threshold.
+    # Exit long when price drops below the middle band AND ADX falls below the exit threshold.
+    exit_long_condition = (df['Close'] < df['BB_Middle']) & (df['ADX_14'] < adx_exit_threshold)
+    # Exit short when price rises above the middle band AND ADX falls below the exit threshold.
+    exit_short_condition = (df['Close'] > df['BB_Middle']) & (df['ADX_14'] < adx_exit_threshold)
+
+    # Initialize a signals Series with a default value of 0 (Hold).
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply signals using vectorized assignment.
+    # We apply exits last to ensure they override entries if conditions overlap,
+    # which is a safe approach.
+
+    # Apply entry signals
+    signals[buy_condition] = 2  # 2 for Buy
+    signals[sell_condition] = 1  # 1 for Sell
+
+    # Apply exit signals
+    signals[exit_long_condition] = -2  # -2 to Exit Long
+    signals[exit_short_condition] = -1  # -1 to Exit Short
+
+    return signals
+
+
 indicators_strategy =[
     bollinger_bands_mean_reversion_sma_vectorized,
     sma_stoch_close_strategy_vectorized,
@@ -655,5 +722,6 @@ indicators_strategy =[
     mixed_signal_strategy_vectorized,
     pinbar_macd_strategy_vectorized,
     doji_rsi_simplified_vectorized,
+    bollinger_bands_adx_simple_vectorized,
     t_indicators_combined_signal_vectorized
 ]

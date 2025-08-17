@@ -138,6 +138,7 @@ def run_backtest_DaxPattern_vec(data_path,slperc=0.04,tpperc=0.02,capital_alloca
         df=de.add_rsi_macd_bb(df)
         df=de.add_smas_long_short(df)
         df=de.add_stoch(df)
+        df=de.add_adx_column(df)
     df = ti.add_total_signal_vec(df,target_strategy)
 
     bt = Backtest(df.dropna(), DaxPatternBT,

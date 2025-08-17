@@ -16,7 +16,9 @@ def add_rsi_column(df, length=14):
 
 def add_adx_column(df, length=14):
     # Calculate ADX
-    df['ADX'] = ta.adx(df['High'], df['Low'], df['Close'],length = 14)[f'ADX_{length}']
+    dax = ta.adx(df['High'], df['Low'], df['Close'], length=14)
+    df = df.join(dax)
+    #df['ADX'] = ta.adx(df['High'], df['Low'], df['Close'],length = 14)[f'ADX_{length}']
     return df
 
 
@@ -183,5 +185,6 @@ if __name__ == "__main__":
     df=add_macd_columns(df).dropna()
 
     print(df.head())  # Show the first few rows
+    print(df.columns)
 
 
