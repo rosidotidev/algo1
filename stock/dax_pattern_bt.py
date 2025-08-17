@@ -1,9 +1,7 @@
 from backtesting import Backtest
 import stock.ticker as ti
 from backtrader_util import bu
-import stock.candle_signal as cs
 import stock.candle_signal_vec as cs_vec
-import stock.indicators_signal as ins
 import stock.indicators_signal_vec as ins_vec
 import data.data_enricher as de
 import pandas as pd
@@ -105,65 +103,7 @@ def is_valid_strategy(ticker: str, strategy: str, best_matrix: pd.DataFrame) -> 
 
 
 
-def run_backtest_DaxPattern(data_path,slperc=0.04,tpperc=0.02,capital_allocation=1,show_plot=False,target_strategy=cs.dax_total_signal,add_indicators=True):
-    '''
-    Commenting this code because this kind of approach with caching doesn't work as expected
-    May be increase memory drops performance.
-
-
-    dtype=""
-    if add_indicators:
-        dtype="enriched"
-    else:
-        dtype="base"
-    _ticker=ti.get_ticker_from_file_path(data_path)
-    df=None
-    #with(lock):
-
-        if(bu.ticker_exists(_ticker,dtype)):
-            df=bu.get_df_from_cache(_ticker,dtype)
-            #print(f"[{threading.current_thread().name}] [{target_strategy}] using {_ticker}_{dtype} from cache")
-        else:
-            df=ti.read_from_csv(data_path)
-            df=bu.norm_date_time(df)
-            if add_indicators:
-                df=de.add_rsi_macd_bb(df)
-                df=de.add_smas_long_short(df)
-                df=de.add_stoch(df)
-            bu.add_df_to_cache(_ticker,df,dtype)
-            #print(f"[{threading.current_thread().name}] [{target_strategy}] added {_ticker}_{dtype} to cache")
-    df = ti.add_total_signal(df,target_strategy)
-    '''
-    df=ti.read_from_csv(data_path)
-    df=bu.norm_date_time(df)
-    if add_indicators:
-        df=de.add_rsi_macd_bb(df)
-        df=de.add_smas_long_short(df)
-        df=de.add_stoch(df)
-    df = ti.add_total_signal(df,target_strategy)
-
-    bt = Backtest(df.dropna(), DaxPatternBT,
-                  cash=10000,
-                  finalize_trades=True,
-                  exclusive_orders=True,
-                  commission=.002)
-
-    # Esegui il backtest
-    ctx={}
-    results = bt.run(slperc=slperc,tpperc=tpperc,df=df,ctx=ctx)
-    ctx.update(results.to_dict())
-    #print(f" ctx {results}")
-    if show_plot:
-        bt.plot(filename=None)
-    for key, value in ctx.items():
-        results[key] = bu.format_value(value)
-    #Used to solve issue on single backtest
-    if False:
-        bu.debug_if_contains("DRS",data_path,ctx,results);
-    #return cerebro.broker.getvalue()
-    return results
-
-def run_backtest_DaxPattern_vec(data_path,slperc=0.04,tpperc=0.02,capital_allocation=1,show_plot=False,target_strategy=cs.dax_total_signal,add_indicators=True):
+def run_backtest_DaxPattern_vec(data_path,slperc=0.04,tpperc=0.02,capital_allocation=1,show_plot=False,target_strategy=cs_vec.dax_total_signal_vectorized,add_indicators=True):
     '''
     Commenting this code because this kind of approach with caching doesn't work as expected
     May be increase memory drops performance.
@@ -392,14 +332,8 @@ def exec_analysis_and_save_results(base_path='../', slperc=0.15, tpperc=1.0, par
     return summary
 
 def test0():
-    s1=run_backtest_DaxPattern("../../data/DRS.csv", slperc=0.15, tpperc=0.40, target_strategy=ins.mixed_signal_strategy,
-                                 capital_allocation=10000, show_plot=False,add_indicators=True)
     s2 = run_backtest_DaxPattern_vec("../../data/DRS.csv", slperc=0.15, tpperc=0.40, target_strategy=ins_vec.mixed_signal_strategy_vectorized,
                                  capital_allocation=10000, show_plot=False,add_indicators=True)
-
-    print(s1.__str__()==s2.__str__())
-
-
 def test1():
     # run_backtest_DaxPattern("../../data/GS.csv",slperc=0.15,tpperc=0.02,capital_allocation=1,show_plot=True)
     # run_backtest_DaxPattern("../../data/SBUX.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,
