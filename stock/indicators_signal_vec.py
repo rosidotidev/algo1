@@ -706,6 +706,15 @@ def bollinger_bands_adx_simple_vectorized(df, adx_entry_threshold=25, adx_exit_t
 
     return signals
 
+def bollinger_bands_adx_simple_25_20_vectorized(df):
+    return bollinger_bands_adx_simple_vectorized(df, adx_entry_threshold=25, adx_exit_threshold=20)
+
+def bollinger_bands_adx_simple_35_20_vectorized(df):
+    return bollinger_bands_adx_simple_vectorized(df, adx_entry_threshold=35, adx_exit_threshold=20)
+
+def bollinger_bands_adx_simple_45_25_vectorized(df):
+    return bollinger_bands_adx_simple_vectorized(df, adx_entry_threshold=45, adx_exit_threshold=25)
+
 
 indicators_strategy =[
     bollinger_bands_mean_reversion_sma_vectorized,
@@ -722,6 +731,8 @@ indicators_strategy =[
     mixed_signal_strategy_vectorized,
     pinbar_macd_strategy_vectorized,
     doji_rsi_simplified_vectorized,
-    bollinger_bands_adx_simple_vectorized,
+    bollinger_bands_adx_simple_35_20_vectorized,
+    bollinger_bands_adx_simple_25_20_vectorized,
+    bollinger_bands_adx_simple_45_25_vectorized,
     t_indicators_combined_signal_vectorized
 ]

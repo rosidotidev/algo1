@@ -147,7 +147,7 @@ def main():
                         win_rate_slider = gr.Slider(minimum=0, maximum=100, value=80, label="Min Win Rate [%]")
                         return_slider = gr.Slider(minimum=0, maximum=500, value=50, label="Min Return [%]")
                         trades_slider = gr.Slider(minimum=0, maximum=100, value=1, label="Min # Trades")
-                        last_action_check = gr.CheckboxGroup([1, 2,0,-1,-2], label="Last Action values to include")
+                        last_action_check = gr.CheckboxGroup([1, 2,0,-1,-2], label="Last Action values to include",value=[1, 2, -1, -2])
 
                         filter_button = gr.Button("Apply Filter")
 
