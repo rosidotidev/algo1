@@ -6,14 +6,16 @@ import stock.indicators_signal_vec as ins_vec
 import stock.candle_signal_vec as cs_vec
 import stock.ticker as ti
 import backtrader_util.bu as bu
+import stock.biz_logic as biz
 
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 def save_cache(stop_loss, take_profit):
-    bu.cache["stop_loss"] = stop_loss
-    bu.cache["take_profit"] = take_profit
-    return "Values saved!"
+    return biz.save_cache(stop_loss, take_profit)
+
+def get_strategy_names():
+    return biz.get_strategy_names()
 
 
 def run_backtest(ticker, function_name):
@@ -46,27 +48,7 @@ def toggle_strategy_filter(full_matrix, only_valid):
         return full_matrix
 
 def generate_best_matrix(win_rate, ret, trades):
-    df = pd.read_csv("../results/report.csv")
-
-    query = (
-        f"df[(df['Win Rate [%]'] > {win_rate}) & "
-        f"(df['Return [%]'] > {ret}) & "
-        f"(df['# Trades'] >= {trades})]"
-    )
-
-    try:
-        filtered = eval(query, {"df": df, "pd": pd})
-        selected = filtered[['Ticker', 'strategy','Win Rate [%]','Return [%]','# Trades']].copy()
-    except Exception as e:
-        selected = pd.DataFrame({"Error": [str(e)]})
-
-    all_tickers = set(df['Ticker'].unique())
-    selected_tickers = set(selected['Ticker'].unique())
-    missing = all_tickers - selected_tickers
-    missing_df = pd.DataFrame([{'Ticker': t, 'strategy': 'NO_STRATEGY'} for t in missing])
-    result_df = pd.concat([selected, missing_df], ignore_index=True).sort_values('Ticker')
-    result_df.to_csv("../data/best_matrix.csv", index=False)
-    return result_df
+    return biz.generate_best_matrix(win_rate, ret, trades)
 
 def run_long_process(optimize=False):
     #bu.reset_df_cache()
@@ -245,6 +227,14 @@ df[
                         trades_input = gr.Slider(minimum=0, maximum=100, value=3, label="Min # Trades")
                         generate_button = gr.Button("Generate Matrix")
                         show_only_valid_strategies = gr.Checkbox(label="Show only valid strategies", value=True)
+
+                        strategy_choices = get_strategy_names()
+                        strategy_filter = gr.CheckboxGroup(
+                            label="Filter by Strategy",
+                            choices=strategy_choices,
+                            value=strategy_choices
+                        )
+
                     with gr.Column(scale=2):
                         matrix_output = gr.Dataframe(label="Best Matrix")
 
