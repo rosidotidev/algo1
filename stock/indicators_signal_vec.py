@@ -241,6 +241,83 @@ def rsi_bollinger_macd_total_signal_v5_vectorized(df, tolerance_percent=5):
 
     return signals
 
+def x_rsi_bollinger_macd_total_signal_5_70_30_vectorized(df):
+    return x_rsi_bollinger_macd_total_signal_base_vectorized(df,tolerance_percent=5,up_rsi_bound=70,low_rsi_bound=30)
+
+def x_rsi_bollinger_macd_total_signal_15_65_35_vectorized(df):
+    return x_rsi_bollinger_macd_total_signal_base_vectorized(df,tolerance_percent=15,up_rsi_bound=65,low_rsi_bound=35)
+
+def x_rsi_bollinger_macd_total_signal_10_70_30_vectorized(df):
+    return x_rsi_bollinger_macd_total_signal_base_vectorized(df, tolerance_percent=10, up_rsi_bound=70,
+                                                             low_rsi_bound=30)
+
+
+def x_rsi_bollinger_macd_total_signal_base_vectorized(df, tolerance_percent=5,up_rsi_bound=70,low_rsi_bound=30):
+    """
+    Generates trading signals based on RSI, Bollinger Bands, and MACD
+    using a vectorized approach.
+
+    Args:
+        df (pandas.DataFrame): DataFrame containing OHLC data and indicators
+                               ('RSI', 'BB_Lower', 'BB_Middle', 'BB_Upper', 'MACD', 'MACD_Signal').
+        tolerance_percent (int): Percentage tolerance for "near" (e.g., 5).
+
+    Returns:
+        pandas.Series: A Series of trading signals (2 = Buy, 1 = Sell, 0 = Hold,
+                       -1 = Exit Short, -2 = Exit Long).
+    """
+
+    # Vettorializzazione del calcolo delle tolleranze
+    tolerance = tolerance_percent / 100
+
+    # Buy (Long Entry) Conditions
+    rsi_condition = df['RSI'] < low_rsi_bound
+    lower_tolerance_min = df['BB_Lower'] * (1 - tolerance)
+    lower_tolerance_max = df['BB_Lower'] * (1 + tolerance)
+    bollinger_lower_condition = (df['Close'] > lower_tolerance_min) & (df['Close'] < lower_tolerance_max)
+    macd_condition = df['MACD'] > df['MACD_Signal']
+
+    # Complete Buy Condition
+    buy_condition = rsi_condition & bollinger_lower_condition & macd_condition
+
+    # Sell (Short Entry) Conditions
+    rsi_sell_condition = df['RSI'] > up_rsi_bound
+    upper_tolerance_min = df['BB_Upper'] * (1 - tolerance)
+    upper_tolerance_max = df['BB_Upper'] * (1 + tolerance)
+    bollinger_middle_condition = (df['Close'] > upper_tolerance_min) & (df['Close'] < upper_tolerance_max)
+    macd_sell_condition = df['MACD'] < df['MACD_Signal']
+
+    # Complete Sell Condition
+    sell_condition = rsi_sell_condition & bollinger_middle_condition & macd_sell_condition
+
+    # Exit Long Condition
+    exit_long_rsi = df['RSI'] > up_rsi_bound
+    exit_long_bollinger = df['Close'] >= df['BB_Upper']
+    exit_long_condition = exit_long_rsi | exit_long_bollinger
+
+    # Exit Short Condition
+    exit_short_rsi = df['RSI'] < low_rsi_bound
+    exit_short_bollinger = df['Close'] <= df['BB_Lower']
+    exit_short_condition = exit_short_rsi | exit_short_bollinger
+
+    # Initialize a signal Series with a default value of 0 (Hold)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply signals using vectorized assignment, prioritizing entry signals
+    # over exit signals if they occur on the same candle.
+    signals[buy_condition] = 2
+    signals[sell_condition] = 1
+
+    # Apply exit signals
+    signals[exit_long_condition] = -2
+    signals[exit_short_condition] = -1
+
+    # Re-apply entry signals to ensure they take precedence
+    signals[buy_condition] = 2
+    signals[sell_condition] = 1
+
+    return signals
+
 
 def rsi_bollinger_macd_total_signal_v1_vectorized(df):
     """
@@ -734,5 +811,8 @@ indicators_strategy =[
     bollinger_bands_adx_simple_35_20_vectorized,
     bollinger_bands_adx_simple_25_20_vectorized,
     bollinger_bands_adx_simple_45_25_vectorized,
+    x_rsi_bollinger_macd_total_signal_5_70_30_vectorized,
+    x_rsi_bollinger_macd_total_signal_10_70_30_vectorized,
+    x_rsi_bollinger_macd_total_signal_15_65_35_vectorized,
     t_indicators_combined_signal_vectorized
 ]

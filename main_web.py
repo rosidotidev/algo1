@@ -17,27 +17,8 @@ def save_cache(stop_loss, take_profit):
 def get_strategy_names():
     return biz.get_strategy_names()
 
-
 def run_backtest(ticker, function_name):
-    function_name = function_name.replace(" ", "_")
-
-    merged_functions_list = cs_vec.candlestick_strategies + ins_vec.indicators_strategy
-    functions_dict = {func.__name__: func for func in merged_functions_list}
-    func = functions_dict[function_name]
-
-    # True se la funzione appartiene agli indicator strategy
-    add_indicators = func in ins_vec.indicators_strategy
-
-    res = trades.run_backtest_DaxPattern_vec(
-        f"../data/{ticker}.csv",
-        slperc=bu.cache["stop_loss"],
-        tpperc=bu.cache["take_profit"],
-        capital_allocation=1,
-        show_plot=True,
-        target_strategy=func,
-        add_indicators=add_indicators
-    )
-    return res
+    return biz.run_backtest(ticker, function_name)
 
 
 def toggle_strategy_filter(full_matrix, only_valid):
