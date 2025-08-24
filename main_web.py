@@ -47,8 +47,8 @@ def toggle_strategy_filter(full_matrix, only_valid):
     else:
         return full_matrix
 
-def generate_best_matrix(win_rate, ret, trades):
-    return biz.generate_best_matrix(win_rate, ret, trades)
+def generate_best_matrix(win_rate, ret, trades,strategies):
+    return biz.generate_best_matrix(win_rate, ret, trades,strategies)
 
 def run_long_process(optimize=False):
     #bu.reset_df_cache()
@@ -240,7 +240,7 @@ df[
 
                 generate_button.click(
                     fn=generate_best_matrix,
-                    inputs=[win_rate_input, return_input, trades_input],
+                    inputs=[win_rate_input, return_input, trades_input,strategy_filter],
                     outputs=matrix_output
                 ).then(
                     fn=toggle_strategy_filter,

@@ -27,9 +27,31 @@ def save_cache(stop_loss, take_profit):
     bu.cache["take_profit"] = take_profit
     return "Values saved!"
 
-def generate_best_matrix(win_rate, ret, trades):
-    df = pd.read_csv("../results/report.csv")
+import pandas as pd
 
+import pandas as pd
+
+def generate_best_matrix(win_rate, ret, trades, strategies):
+    """
+    Generate the best strategy matrix based on filters and selected strategies.
+
+    Args:
+        win_rate (float): Minimum win rate threshold.
+        ret (float): Minimum return threshold.
+        trades (int): Minimum number of trades.
+        strategies (list[str]): List of selected strategies to consider.
+
+    Returns:
+        pd.DataFrame: Filtered and annotated strategy matrix with Skip column.
+    """
+    # Replace spaces with underscores in strategy names
+    strategies = [s.replace(" ", "_") for s in strategies]
+
+    # Load the report
+    df = pd.read_csv("../results/report.csv")
+    print("Selected strategies:", strategies)
+
+    # Filter based on thresholds
     query = (
         f"df[(df['Win Rate [%]'] > {win_rate}) & "
         f"(df['Return [%]'] > {ret}) & "
@@ -38,14 +60,29 @@ def generate_best_matrix(win_rate, ret, trades):
 
     try:
         filtered = eval(query, {"df": df, "pd": pd})
-        selected = filtered[['Ticker', 'strategy','Win Rate [%]','Return [%]','# Trades']].copy()
+        selected = filtered[['Ticker', 'strategy', 'Win Rate [%]', 'Return [%]', '# Trades']].copy()
     except Exception as e:
         selected = pd.DataFrame({"Error": [str(e)]})
 
+    # Identify tickers missing from filtered results
     all_tickers = set(df['Ticker'].unique())
     selected_tickers = set(selected['Ticker'].unique())
     missing = all_tickers - selected_tickers
+
+    # Create placeholder rows with NO_STRATEGY
     missing_df = pd.DataFrame([{'Ticker': t, 'strategy': 'NO_STRATEGY'} for t in missing])
+
+    # Merge results
     result_df = pd.concat([selected, missing_df], ignore_index=True).sort_values('Ticker')
+
+    # --- NEW: Add Skip column ---
+    # Initialize Skip = False
+    result_df['Skip'] = False
+    # Set Skip = True for rows whose strategy is not in the selected list and is not NO_STRATEGY
+    mask = (~result_df['strategy'].isin(strategies)) & (result_df['strategy'] != 'NO_STRATEGY')
+    result_df.loc[mask, 'Skip'] = True
+
+    # Save the final matrix
     result_df.to_csv("../data/best_matrix.csv", index=False)
     return result_df
+

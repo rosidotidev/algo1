@@ -94,7 +94,8 @@ def is_valid_strategy(ticker: str, strategy: str, best_matrix: pd.DataFrame) -> 
     # Verifica se esiste almeno una riga con strategy uguale e diversa da NO_STRATEGY
     match = ticker_rows[
         (ticker_rows['strategy'] == strategy) &
-        (ticker_rows['strategy'] != 'NO_STRATEGY')
+        (ticker_rows['strategy'] != 'NO_STRATEGY') &
+        (ticker_rows['Skip'] != True)
     ]
 
     result = not match.empty
