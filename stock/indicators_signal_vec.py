@@ -241,54 +241,56 @@ def rsi_bollinger_macd_total_signal_v5_vectorized(df, tolerance_percent=5):
 
     return signals
 
-def x_rsi_bollinger_macd_total_signal_5_70_30_vectorized(df):
-    return x_rsi_bollinger_macd_total_signal_base_vectorized(df,tolerance_percent=5,up_rsi_bound=70,low_rsi_bound=30)
+def x_bollinger_macd_total_signal_5_70_30_vectorized(df):
+    return x_rsi_bollinger_macd_total_signal_base_vectorized(df,tolerance_percent=5,up_rsi_bound=70,low_rsi_bound=30,rsi_enabled=False)
 
-def x_rsi_bollinger_macd_total_signal_15_65_35_vectorized(df):
-    return x_rsi_bollinger_macd_total_signal_base_vectorized(df,tolerance_percent=15,up_rsi_bound=65,low_rsi_bound=35)
+def x_rsi_bollinger_total_signal_15_65_35_vectorized(df):
+    return x_rsi_bollinger_macd_total_signal_base_vectorized(df,tolerance_percent=15,up_rsi_bound=65,low_rsi_bound=35,macd_enabled=False)
 
-def x_rsi_bollinger_macd_total_signal_10_70_30_vectorized(df):
+def x_rsi_bollinger_total_signal_10_70_30_vectorized(df):
     return x_rsi_bollinger_macd_total_signal_base_vectorized(df, tolerance_percent=10, up_rsi_bound=70,
-                                                             low_rsi_bound=30)
+                                                             low_rsi_bound=30,macd_enabled=False)
 
 
-def x_rsi_bollinger_macd_total_signal_base_vectorized(df, tolerance_percent=5,up_rsi_bound=70,low_rsi_bound=30):
-    """
-    Generates trading signals based on RSI, Bollinger Bands, and MACD
-    using a vectorized approach.
+def x_rsi_bollinger_macd_total_signal_base_vectorized(df, tolerance_percent=5,up_rsi_bound=70,low_rsi_bound=30,macd_enabled=True,rsi_enabled=True):
 
-    Args:
-        df (pandas.DataFrame): DataFrame containing OHLC data and indicators
-                               ('RSI', 'BB_Lower', 'BB_Middle', 'BB_Upper', 'MACD', 'MACD_Signal').
-        tolerance_percent (int): Percentage tolerance for "near" (e.g., 5).
-
-    Returns:
-        pandas.Series: A Series of trading signals (2 = Buy, 1 = Sell, 0 = Hold,
-                       -1 = Exit Short, -2 = Exit Long).
-    """
-
-    # Vettorializzazione del calcolo delle tolleranze
     tolerance = tolerance_percent / 100
 
     # Buy (Long Entry) Conditions
-    rsi_condition = df['RSI'] < low_rsi_bound
+    rsi_condition= None
+    if rsi_enabled:
+        rsi_condition = df['RSI'] < low_rsi_bound
+    else:
+        rsi_condition = df['RSI'] < 1000
     lower_tolerance_min = df['BB_Lower'] * (1 - tolerance)
     lower_tolerance_max = df['BB_Lower'] * (1 + tolerance)
     bollinger_lower_condition = (df['Close'] > lower_tolerance_min) & (df['Close'] < lower_tolerance_max)
-    macd_condition = df['MACD'] > df['MACD_Signal']
 
+    macd_condition= None
+    if macd_enabled:
+        macd_condition = df['MACD'] > df['MACD_Signal']
+    else:
+        macd_condition = df['MACD'] < 10000
     # Complete Buy Condition
     buy_condition = rsi_condition & bollinger_lower_condition & macd_condition
 
     # Sell (Short Entry) Conditions
-    rsi_sell_condition = df['RSI'] > up_rsi_bound
+    rsi_sell_condition= None
+    if rsi_enabled:
+        rsi_sell_condition = df['RSI'] > up_rsi_bound
+    else:
+        rsi_sell_condition = df['RSI'] > 1000
+
     upper_tolerance_min = df['BB_Upper'] * (1 - tolerance)
     upper_tolerance_max = df['BB_Upper'] * (1 + tolerance)
-    bollinger_middle_condition = (df['Close'] > upper_tolerance_min) & (df['Close'] < upper_tolerance_max)
-    macd_sell_condition = df['MACD'] < df['MACD_Signal']
-
+    bollinger_upper_condition = (df['Close'] > upper_tolerance_min) & (df['Close'] < upper_tolerance_max)
+    macd_sell_condition= None
+    if macd_enabled:
+        macd_sell_condition = df['MACD'] < df['MACD_Signal']
+    else:
+        macd_sell_condition = df['MACD'] <10000
     # Complete Sell Condition
-    sell_condition = rsi_sell_condition & bollinger_middle_condition & macd_sell_condition
+    sell_condition = rsi_sell_condition & bollinger_upper_condition & macd_sell_condition
 
     # Exit Long Condition
     exit_long_rsi = df['RSI'] > up_rsi_bound
@@ -811,8 +813,8 @@ indicators_strategy =[
     bollinger_bands_adx_simple_35_20_vectorized,
     bollinger_bands_adx_simple_25_20_vectorized,
     bollinger_bands_adx_simple_45_25_vectorized,
-    x_rsi_bollinger_macd_total_signal_5_70_30_vectorized,
-    x_rsi_bollinger_macd_total_signal_10_70_30_vectorized,
-    x_rsi_bollinger_macd_total_signal_15_65_35_vectorized,
+    x_bollinger_macd_total_signal_5_70_30_vectorized,
+    x_rsi_bollinger_total_signal_15_65_35_vectorized,
+    x_rsi_bollinger_total_signal_10_70_30_vectorized,
     t_indicators_combined_signal_vectorized
 ]
