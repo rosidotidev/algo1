@@ -1,6 +1,7 @@
 import stock.indicators_signal_vec as ins_vec
 import stock.candle_signal_vec as cs_vec
 import backtrader_util.bu as bu
+import stock.dax_pattern_bt as trades
 import pandas as pd
 from typing import List
 
