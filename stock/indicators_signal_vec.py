@@ -241,8 +241,11 @@ def rsi_bollinger_macd_total_signal_v5_vectorized(df, tolerance_percent=5):
 
     return signals
 
-def x_bollinger_macd_total_signal_5_70_30_vectorized(df):
+def x_bollinger_macd_total_signal_5_vectorized(df):
     return x_rsi_bollinger_macd_total_signal_base_vectorized(df,tolerance_percent=5,up_rsi_bound=70,low_rsi_bound=30,rsi_enabled=False)
+
+def x_bollinger_macd_total_signal_10_vectorized(df):
+    return x_rsi_bollinger_macd_total_signal_base_vectorized(df,tolerance_percent=10,up_rsi_bound=70,low_rsi_bound=30,rsi_enabled=False)
 
 def x_rsi_bollinger_total_signal_15_65_35_vectorized(df):
     return x_rsi_bollinger_macd_total_signal_base_vectorized(df,tolerance_percent=15,up_rsi_bound=65,low_rsi_bound=35,macd_enabled=False)
@@ -813,7 +816,8 @@ indicators_strategy =[
     bollinger_bands_adx_simple_35_20_vectorized,
     bollinger_bands_adx_simple_25_20_vectorized,
     bollinger_bands_adx_simple_45_25_vectorized,
-    x_bollinger_macd_total_signal_5_70_30_vectorized,
+    x_bollinger_macd_total_signal_5_vectorized,
+    x_bollinger_macd_total_signal_10_vectorized,
     x_rsi_bollinger_total_signal_15_65_35_vectorized,
     x_rsi_bollinger_total_signal_10_70_30_vectorized,
     t_indicators_combined_signal_vectorized
