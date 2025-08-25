@@ -1,5 +1,34 @@
 import pandas as pd
 
+def count_hammers(df):
+    df['body'] = abs(df['Close'] - df['Open'])
+    df['lower_wick'] = df[['Open', 'Close']].min(axis=1) - df['Low']
+    df['upper_wick'] = df['High'] - df[['Open', 'Close']].max(axis=1)
+
+    hammer_condition = (df['lower_wick'] > 2 * df['body']) & \
+                       (df['upper_wick'] < 0.3 * df['body'])
+    return  hammer_condition.sum()
+
+def count_inverted_hammers(df):
+    # Vectorized calculation of candle body and wicks
+    df['body'] = abs(df['Close'] - df['Open'])
+    df['upper_wick'] = df['High'] - df[['Open', 'Close']].max(axis=1)
+    df['lower_wick'] = df[['Open', 'Close']].min(axis=1) - df['Low']
+
+    # --- Inverted Hammer conditions ---
+    inverted_hammer_condition = (df['upper_wick'] > 2 * df['body']) & \
+                                (df['lower_wick'] < 0.3 * df['body'])
+    return inverted_hammer_condition.sum()
+
+def count_hammers_in_ticker(ticker):
+    path_file=f"../../data/{ticker}.csv"
+    df = pd.read_csv(path_file)
+    return count_hammers(df)
+
+def count_inverted_hammers_in_ticker(ticker):
+    path_file=f"../../data/{ticker}.csv"
+    df = pd.read_csv(path_file)
+    return count_inverted_hammers(df)
 
 def dax_total_signal_vectorized(df):
     """
@@ -426,10 +455,6 @@ def inverted_hammer_signal_vectorized(df):
     return signals
 
 
-import pandas as pd
-import numpy as np
-
-
 def doji_signal_strategy_v1_vectorized(df, trend_period=5):
     """
     Generates trading signals based on a Doji and the preceding trend
@@ -554,3 +579,6 @@ candlestick_strategies = [
     doji_signal_strategy_v1_vectorized,
     combined_signal_vectorized
 ]
+if __name__ == "__main__":
+    print(count_hammers_in_ticker("GE"))
+    print(count_inverted_hammers_in_ticker("GE"))

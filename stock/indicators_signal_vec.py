@@ -2,6 +2,26 @@
 import pandas as pd
 import numpy as np
 
+def hammers(df):
+    df['body'] = abs(df['Close'] - df['Open'])
+    df['lower_wick'] = df[['Open', 'Close']].min(axis=1) - df['Low']
+    df['upper_wick'] = df['High'] - df[['Open', 'Close']].max(axis=1)
+
+    hammer_condition_ = (df['lower_wick'] > 2 * df['body']) & \
+                       (df['upper_wick'] < 0.3 * df['body'])
+    return  hammer_condition_
+
+def inverted_hammers(df):
+    # Vectorized calculation of candle body and wicks
+    df['body'] = abs(df['Close'] - df['Open'])
+    df['upper_wick'] = df['High'] - df[['Open', 'Close']].max(axis=1)
+    df['lower_wick'] = df[['Open', 'Close']].min(axis=1) - df['Low']
+
+    # --- Inverted Hammer conditions ---
+    inverted_hammer_condition_ = (df['upper_wick'] > 2 * df['body']) & \
+                                (df['lower_wick'] < 0.3 * df['body'])
+    return inverted_hammer_condition_
+
 def bollinger_bands_mean_reversion_sma_vectorized(df):
     """
     Generates trading signals for the entire DataFrame based on the
@@ -323,6 +343,30 @@ def x_rsi_bollinger_macd_total_signal_base_vectorized(df, tolerance_percent=5,up
 
     return signals
 
+def rsi_hammer_70_30_vectorized(df):
+    return rsi_hammer_vectorized(df,70,30)
+def rsi_hammer_65_35_vectorized(df):
+    return rsi_hammer_vectorized(df,65,35)
+def rsi_hammer_80_20_vectorized(df):
+    return rsi_hammer_vectorized(df,80,20)
+
+def rsi_hammer_vectorized(df, up_rsi_bound=70,low_rsi_bound=30):
+    hammer_cond = hammers(df) | inverted_hammers(df)
+    rsi_buy_condition = df['RSI'] < low_rsi_bound
+    buy_condition = rsi_buy_condition & hammer_cond
+
+    rsi_sell_condition = df['RSI'] > up_rsi_bound
+    # Complete Sell Condition
+    sell_condition = rsi_sell_condition & hammer_cond
+
+    # Initialize a signal Series with a default value of 0 (Hold)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Re-apply entry signals to ensure they take precedence
+    signals[buy_condition] = 2
+    signals[sell_condition] = 1
+
+    return signals
 
 def rsi_bollinger_macd_total_signal_v1_vectorized(df):
     """
@@ -803,9 +847,12 @@ indicators_strategy =[
     sma_stoch_close_strategy_vectorized,
     stochastic_oscillator_signal_vectorized,
     moving_average_crossover_signal_vectorized,
-    rsi_bollinger_macd_total_signal_v5_vectorized,
-    rsi_bollinger_macd_total_signal_v1_vectorized,
-    rsi_bollinger_macd_total_signal_v2_vectorized,
+    #rsi_bollinger_macd_total_signal_v5_vectorized,
+    #rsi_bollinger_macd_total_signal_v1_vectorized,
+    #rsi_bollinger_macd_total_signal_v2_vectorized,
+    rsi_hammer_70_30_vectorized,
+    rsi_hammer_65_35_vectorized,
+    rsi_hammer_80_20_vectorized,
     mean_reversion_signal_v1_vectorized,
     mean_reversion_signal_v2_vectorized,
     mean_reversion_signal_v3_vectorized,
@@ -822,3 +869,4 @@ indicators_strategy =[
     x_rsi_bollinger_total_signal_10_70_30_vectorized,
     t_indicators_combined_signal_vectorized
 ]
+
