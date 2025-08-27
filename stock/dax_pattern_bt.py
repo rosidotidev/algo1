@@ -334,8 +334,8 @@ def exec_analysis_and_save_results(base_path='../', slperc=0.15, tpperc=1.0, par
     return summary
 
 def test0():
-    s2 = run_backtest_DaxPattern_vec("../../data/DRS.csv", slperc=0.15, tpperc=0.40, target_strategy=ins_vec.mixed_signal_strategy_vectorized,
-                                 capital_allocation=10000, show_plot=False,add_indicators=True)
+    s2 = run_backtest_DaxPattern_vec("../../data/DRS.csv", slperc=0.15, tpperc=0.40, target_strategy=ins_vec.weekly_breakout_vectorized,
+                                 capital_allocation=10000, show_plot=True,add_indicators=True)
 def test1():
     # run_backtest_DaxPattern("../../data/GS.csv",slperc=0.15,tpperc=0.02,capital_allocation=1,show_plot=True)
     # run_backtest_DaxPattern("../../data/SBUX.csv", slperc=0.15, tpperc=0.02, capital_allocation=1, show_plot=True,

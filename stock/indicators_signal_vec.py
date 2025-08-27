@@ -2,6 +2,47 @@
 import pandas as pd
 import numpy as np
 
+def weekly_breakout_vectorized(df, price_col="Close", lookback_weeks=1):
+    """
+    Generates trading signals based on a weekly breakout strategy.
+
+    Logic:
+        - Long signal (2) on Tuesday if Monday's close > high of previous N weeks
+        - Short signal (1) on Tuesday if Monday's close < low of previous N weeks
+        - Hold (0) otherwise
+
+    Args:
+        df (pd.DataFrame): DataFrame with a DatetimeIndex and at least 'Close' column
+        price_col (str): Column used for breakout calculation (default "Close")
+        lookback_weeks (int): Number of weeks to consider for high/low (default 1)
+
+    Returns:
+        pd.Series: Trading signals (2 = Buy, 1 = Short, 0 = Hold)
+    """
+    # Compute weekly highs and lows
+    weekly = df.groupby(df.index.to_period("W"))[price_col].agg(["max", "min"])
+    weekly["high"] = weekly["max"].rolling(lookback_weeks).max().shift(1)
+    weekly["low"] = weekly["min"].rolling(lookback_weeks).min().shift(1)
+
+    # Map previous highs/lows back to daily index
+    prev_high = df.index.to_period("W").map(weekly["high"])
+    prev_low = df.index.to_period("W").map(weekly["low"])
+
+    # Day of the week (0=Mon, 1=Tue, ..., 4=Fri)
+    dow = df.index.dayofweek
+
+    # Entry conditions
+    long_condition = (dow == 1) & (df[price_col].shift(1) > prev_high)
+    short_condition = (dow == 1) & (df[price_col].shift(1) < prev_low)
+
+    # Initialize signals
+    signals = pd.Series(0, index=df.index, dtype="int8")
+    signals[long_condition] = 2
+    signals[short_condition] = 1
+
+    return signals
+
+
 def hammers(df):
     df['body'] = abs(df['Close'] - df['Open'])
     df['lower_wick'] = df[['Open', 'Close']].min(axis=1) - df['Low']
@@ -867,6 +908,7 @@ indicators_strategy =[
     x_bollinger_macd_total_signal_10_vectorized,
     x_rsi_bollinger_total_signal_15_65_35_vectorized,
     x_rsi_bollinger_total_signal_10_70_30_vectorized,
+    weekly_breakout_vectorized,
     t_indicators_combined_signal_vectorized
 ]
 
