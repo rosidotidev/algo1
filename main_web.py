@@ -7,6 +7,7 @@ import stock.candle_signal_vec as cs_vec
 import stock.ticker as ti
 import backtrader_util.bu as bu
 import stock.biz_logic as biz
+import stock.strategy_repo as s_repo
 
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -93,6 +94,10 @@ def top_strategies(file_name='report.csv', metric='Return [%]', top_n=10):
     return grouped
 def fill_ticker_count():
     return ti.count_tickers_in_best_matrix("../data/best_matrix.csv","../data/tickers.txt")
+
+
+def get_all_strategy_names():
+    s_repo.get_strategy_names()
 
 
 def main():
@@ -234,6 +239,32 @@ df[
                     inputs=[matrix_output, show_only_valid_strategies],
                     outputs=matrix_output
                 )
+            with gr.TabItem("Strategy DB"):
+                gr.Markdown("# Gestore Strategie di Backtesting")
+
+                with gr.Row():
+                    # Pannello di controllo
+                    with gr.Column(scale=1):
+                        gr.Markdown("## Controlli")
+
+                        # Pulsante per inizializzare il database
+                        init_btn = gr.Button("1. Inizializza Database")
+                        init_btn.click(
+                            fn=s_repo.init_strategy_db()
+                        )
+                        gr.Markdown("---")
+                        gr.Markdown("### Abilita/Disabilita Strategie")
+
+                        # CheckboxGroup per selezionare le strategie (visualizzazione orizzontale)
+                        strategy_choices = get_strategy_names()
+                        strategy_filter_ = gr.CheckboxGroup(
+                            label="Filter by Strategy",
+                            choices=strategy_choices,
+                            value=strategy_choices
+                        )
+
+
+
 
     demo.launch(share=True)
 

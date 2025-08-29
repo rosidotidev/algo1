@@ -1,8 +1,231 @@
 
 import pandas as pd
-import numpy as np
 
-def weekly_breakout_vectorized(df, price_col="Close", lookback_weeks=1):
+
+def adx_sma_tf_20_50_25(df) -> pd.Series:
+    return adx_sma_trend_following(df, 20, 50, 25)
+
+
+def adx_sma_tf_10_30_25(df) -> pd.Series:
+    return adx_sma_trend_following(df, 10, 30, 25)
+
+
+def adx_sma_tf_15_40_35(df) -> pd.Series:
+    return adx_sma_trend_following(df, 15, 40, 35)
+
+
+def adx_sma_tf_10_30_35(df) -> pd.Series:
+    return adx_sma_trend_following(df, 10, 30, 25)
+
+
+def adx_sma_trend_following(df, short_window: int = 20, long_window: int = 50, adx_threshold: float = 25) -> pd.Series:
+    """
+    Generates trading signals based on ADX + SMA Trend Following strategy.
+
+    Buy (2): if short SMA > long SMA and ADX > adx_threshold
+    Sell (1): if short SMA < long SMA and ADX > adx_threshold
+    Hold (0): otherwise
+
+    Args:
+        df (pd.DataFrame): Must contain columns ['Close', 'ADX']
+        short_window (int): Lookback for short SMA (default 20)
+        long_window (int): Lookback for long SMA (default 50)
+        adx_threshold (float): Minimum ADX to confirm trend (default 25)
+
+    Returns:
+        pd.Series: Trading signals (2=Buy, 1=Sell, 0=Hold)
+    """
+
+    # Calculate moving averages
+    sma_short = df['Close'].rolling(window=short_window, min_periods=1).mean()
+    sma_long = df['Close'].rolling(window=long_window, min_periods=1).mean()
+
+    # Conditions for buy/sell
+    buy_condition = (sma_short > sma_long) & (df['ADX_14'] > adx_threshold)
+    sell_condition = (sma_short < sma_long) & (df['ADX_14'] > adx_threshold)
+
+    # Initialize signals
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[buy_condition] = 2
+    signals[sell_condition] = 1
+
+    return signals
+
+
+def adx_trend_breakout_20_25(df) -> pd.Series:
+    return adx_trend_breakout(df, 20, 25)
+
+
+def adx_trend_breakout_10_40(df) -> pd.Series:
+    return adx_trend_breakout(df, 10, 40)
+
+
+def adx_trend_breakout_10_35(df) -> pd.Series:
+    return adx_trend_breakout(df, 10, 35)
+
+
+def adx_trend_breakout(df, lookback: int = 20, adx_threshold: float = 25) -> pd.Series:
+    """
+    Generates trading signals based on ADX Trend Filter + Breakout strategy.
+
+    Buy (2): if Close > highest high of last `lookback` days and ADX > `adx_threshold`
+    Sell (1): if Close < lowest low of last `lookback` days and ADX > `adx_threshold`
+    Hold (0): otherwise
+
+    Args:
+        df (pd.DataFrame): Must contain columns ['High', 'Low', 'Close', 'ADX']
+        lookback (int): Period for breakout levels (default 20)
+        adx_threshold (float): Minimum ADX to confirm trend (default 25)
+
+    Returns:
+        pd.Series: Trading signals (2=Buy, 1=Sell, 0=Hold)
+    """
+
+    # Calculate rolling breakout levels
+    highest_high = df['High'].rolling(window=lookback, min_periods=1).max().shift(1)
+    lowest_low = df['Low'].rolling(window=lookback, min_periods=1).min().shift(1)
+
+    # Conditions for buy/sell
+    buy_condition = (df['Close'] > highest_high) & (df['ADX_14'] > adx_threshold)
+    sell_condition = (df['Close'] < lowest_low) & (df['ADX_14'] > adx_threshold)
+
+    # Initialize signals
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[buy_condition] = 2
+    signals[sell_condition] = 1
+
+    return signals
+
+def donchian_breakout_with_ma_20_50(df):
+    return donchian_breakout_with_ma_filter(df, lookback=20, ma_window=50)
+
+def donchian_breakout_with_ma_10_30(df):
+    return donchian_breakout_with_ma_filter(df, lookback=10, ma_window=30)
+
+def donchian_breakout_with_ma_15_40(df):
+    return donchian_breakout_with_ma_filter(df, lookback=10, ma_window=30)
+
+def donchian_breakout_with_ma_filter(df, lookback=20, ma_window=50):
+    """
+    Generates trading signals based on a Donchian Channel breakout
+    with a long-term moving average trend filter.
+
+    Logic:
+        - Buy (2) when Close > Donchian high AND Close > long MA
+        - Sell (1) when Close < Donchian low AND Close < long MA
+        - Hold (0) otherwise
+
+    Args:
+        df (pd.DataFrame): DataFrame with a DatetimeIndex and 'Close' column
+        lookback (int): Lookback window for Donchian channel (default 20)
+        ma_window (int): Window for long moving average (default 50)
+
+    Returns:
+        pd.Series: Trading signals (2 = Buy, 1 = Sell, 0 = Hold)
+    """
+    # Donchian Channel
+    rolling_high = df["Close"].rolling(lookback, min_periods=1).max().shift(1)
+    rolling_low = df["Close"].rolling(lookback, min_periods=1).min().shift(1)
+
+    # Long-term moving average
+    long_ma = df["Close"].rolling(ma_window, min_periods=1).mean()
+
+    # Conditions
+    buy_condition = (df["Close"] > rolling_high) & (df["Close"] > long_ma)
+    sell_condition = (df["Close"] < rolling_low) & (df["Close"] < long_ma)
+
+    # Signals
+    signals = pd.Series(0, index=df.index, dtype="int8")
+    signals[buy_condition] = 2
+    signals[sell_condition] = 1
+
+    return signals
+
+
+def keltner_channel_vectorized(df: pd.DataFrame, lookback_periods: int = 20, atr_multiplier: float = 2.0) -> pd.Series:
+    """
+    Generates trading signals based on the Keltner Channel breakout strategy.
+
+    Args:
+        df (pd.DataFrame): DataFrame with a DatetimeIndex and 'High', 'Low', 'Close' columns.
+        lookback_periods (int): The number of periods to use for the moving average and ATR.
+        atr_multiplier (float): The multiplier for the ATR to set the channel width.
+
+    Returns:
+        pd.Series: Trading signals (2 = Long, 1 = Short, 0 = No position).
+    """
+    # Calculate True Range (TR)
+    # TR is the greatest of:
+    # 1. Current High minus Current Low
+    # 2. Absolute value of Current High minus Previous Close
+    # 3. Absolute value of Current Low minus Previous Close
+    high_low = df['High'] - df['Low']
+    high_close = abs(df['High'] - df['Close'].shift(1))
+    low_close = abs(df['Low'] - df['Close'].shift(1))
+    true_range = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
+
+    # Calculate Average True Range (ATR)
+    # The ATR is the rolling mean of the True Range.
+    atr = true_range.rolling(lookback_periods).mean()
+
+    # Calculate the moving average (center line of the channel)
+    center_line = df['Close'].rolling(lookback_periods).mean()
+
+    # Calculate the upper and lower Keltner Channels
+    upper_channel = center_line + (atr * atr_multiplier)
+    lower_channel = center_line - (atr * atr_multiplier)
+
+    # Initialize a signals Series with a default value of 0 (no position)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Generate long signals (2): if the price breaks above the upper channel
+    long_condition = df['Close'] > upper_channel
+    signals[long_condition] = 2
+
+    # Generate short signals (1): if the price breaks below the lower channel
+    short_condition = df['Close'] < lower_channel
+    signals[short_condition] = 1
+
+    return signals
+
+
+def donchian_channel_vectorized(df: pd.DataFrame, lookback_periods: int = 20) -> pd.Series:
+    """
+    Generates trading signals based on the Donchian Channel breakout strategy.
+
+    Logic:
+        - A long signal (2) is generated when the price breaks above the N-period high.
+        - A short signal (1) is generated when the price breaks below the N-period low.
+
+    Args:
+        df (pd.DataFrame): DataFrame with a DatetimeIndex and at least 'High', 'Low', 'Close' columns.
+        lookback_periods (int): Number of periods (e.g., days) to consider for the high/low calculation.
+
+    Returns:
+        pd.Series: Trading signals (2 = Long, 1 = Short, 0 = No position).
+    """
+    # Calculate the upper and lower Donchian Channels
+    # The upper channel is the highest high over the lookback period
+    df['upper_channel'] = df['High'].rolling(lookback_periods).max().shift(1)
+
+    # The lower channel is the lowest low over the lookback period
+    df['lower_channel'] = df['Low'].rolling(lookback_periods).min().shift(1)
+
+    # Initialize a signals Series with a default value of 0 (no position)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Generate long signals: if the current closing price breaks above the upper channel
+    long_condition = df['Close'] > df['upper_channel']
+    signals[long_condition] = 2
+
+    # Generate short signals: if the current closing price breaks below the lower channel
+    short_condition = df['Close'] < df['lower_channel']
+    signals[short_condition] = 1
+
+    return signals
+
+
+def weekly_breakout_vectorized(df, lookback_weeks=1):
     """
     Generates trading signals based on a weekly breakout strategy.
 
@@ -13,12 +236,14 @@ def weekly_breakout_vectorized(df, price_col="Close", lookback_weeks=1):
 
     Args:
         df (pd.DataFrame): DataFrame with a DatetimeIndex and at least 'Close' column
-        price_col (str): Column used for breakout calculation (default "Close")
         lookback_weeks (int): Number of weeks to consider for high/low (default 1)
 
     Returns:
         pd.Series: Trading signals (2 = Buy, 1 = Short, 0 = Hold)
     """
+    # Use "Close" as the fixed price column
+    price_col = "Close"
+
     # Compute weekly highs and lows
     weekly = df.groupby(df.index.to_period("W"))[price_col].agg(["max", "min"])
     weekly["high"] = weekly["max"].rolling(lookback_weeks).max().shift(1)
@@ -32,8 +257,8 @@ def weekly_breakout_vectorized(df, price_col="Close", lookback_weeks=1):
     dow = df.index.dayofweek
 
     # Entry conditions
-    long_condition = (dow == 1) & (df[price_col].shift(1) > prev_high)
-    short_condition = (dow == 1) & (df[price_col].shift(1) < prev_low)
+    long_condition = (dow == 0) & (df[price_col] > prev_high)
+    short_condition = (dow == 0) & (df[price_col] < prev_low)
 
     # Initialize signals
     signals = pd.Series(0, index=df.index, dtype="int8")
@@ -908,7 +1133,16 @@ indicators_strategy =[
     x_bollinger_macd_total_signal_10_vectorized,
     x_rsi_bollinger_total_signal_15_65_35_vectorized,
     x_rsi_bollinger_total_signal_10_70_30_vectorized,
-    weekly_breakout_vectorized,
+    adx_sma_tf_20_50_25,
+    adx_sma_tf_10_30_25,
+    adx_sma_tf_15_40_35,
+    adx_sma_tf_10_30_35,
+    adx_trend_breakout_20_25,
+    adx_trend_breakout_10_40,
+    adx_trend_breakout_10_35,
+    #keltner_channel_vectorized,
+    #donchian_channel_vectorized,
+    #weekly_breakout_vectorized,
     t_indicators_combined_signal_vectorized
 ]
 
