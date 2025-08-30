@@ -7,7 +7,7 @@ import stock.candle_signal_vec as cs_vec
 import stock.ticker as ti
 import backtrader_util.bu as bu
 import stock.biz_logic as biz
-import stock.strategy_repo as s_repo
+from stock.strategy_repo import StrategyRepo
 
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -94,10 +94,6 @@ def top_strategies(file_name='report.csv', metric='Return [%]', top_n=10):
     return grouped
 def fill_ticker_count():
     return ti.count_tickers_in_best_matrix("../data/best_matrix.csv","../data/tickers.txt")
-
-
-def get_all_strategy_names():
-    s_repo.get_strategy_names()
 
 
 def main():
@@ -239,32 +235,90 @@ df[
                     inputs=[matrix_output, show_only_valid_strategies],
                     outputs=matrix_output
                 )
-            with gr.TabItem("Strategy DB"):
-                gr.Markdown("# Gestore Strategie di Backtesting")
+            with gr.TabItem("Manage Strategies"):
+                gr.Markdown("### Initialize and enable/disable strategies in the repository")
 
+                # Instantiate the StrategyRepo
+                from stock.strategy_repo import StrategyRepo
+                repo = StrategyRepo()
+
+                def get_df_for_display():
+                    df = repo.get_all_strategies().copy()
+                    if "function_ref" in df.columns:
+                        df = df.drop(columns=["function_ref"])
+                    return df
                 with gr.Row():
-                    # Pannello di controllo
+                    # Left column: actions
                     with gr.Column(scale=1):
-                        gr.Markdown("## Controlli")
+                        # Initialize Repo
+                        init_button = gr.Button("Initialize Repository")
 
-                        # Pulsante per inizializzare il database
-                        init_btn = gr.Button("1. Inizializza Database")
-                        init_btn.click(
-                            fn=s_repo.init_strategy_db()
-                        )
-                        gr.Markdown("---")
-                        gr.Markdown("### Abilita/Disabilita Strategie")
-
-                        # CheckboxGroup per selezionare le strategie (visualizzazione orizzontale)
-                        strategy_choices = get_strategy_names()
-                        strategy_filter_ = gr.CheckboxGroup(
-                            label="Filter by Strategy",
-                            choices=strategy_choices,
-                            value=strategy_choices
+                        strategy_dropdown = gr.Dropdown(
+                            choices=repo.get_all_strategies_as_list(),
+                            label="Select Strategy"
                         )
 
+                        enable_button = gr.Button("Enable Strategy")
+                        disable_button = gr.Button("Disable Strategy")
+                        save_button = gr.Button("Save Changes")
+                        message_output = gr.Textbox(label="Status Message")
 
+                    # Right column: display current DataFrame
+                    with gr.Column(scale=3):
+                        strategies_df = gr.Dataframe(
+                            value=get_df_for_display(),
+                            label="Current Strategies",
+                            interactive=True
+                        )
 
+                # --- Callback functions ---
+                def init_repo():
+                    repo.init_repo()
+                    return get_df_for_display(), repo.get_all_strategies_as_list(), "Repository initialized."
+
+                def enable_strategy(name):
+                    if not name:
+                        return repo.get_all_strategies(), "No strategy selected."
+                    repo.enable(name)
+                    return get_df_for_display(), f"Strategy '{name}' enabled."
+
+                def disable_strategy(name):
+                    if not name:
+                        return repo.get_all_strategies(), "No strategy selected."
+                    repo.disable(name)
+                    return get_df_for_display(), f"Strategy '{name}' disabled."
+
+                def save_changes_callback(df):
+                    df = df.copy()
+                    if "enabled" in df.columns:
+                        df["enabled"] = df["enabled"].astype(bool)
+                    if "score" in df.columns:
+                        df["score"] = pd.to_numeric(df["score"], errors="coerce")
+                    repo._df = df
+                    repo.save()
+                    return get_df_for_display(), "Changes saved."
+
+                save_button.click(
+                    save_changes_callback,
+                    inputs=[strategies_df],
+                    outputs=[strategies_df, message_output]
+                )
+                # --- Connect Buttons to Callbacks ---
+                init_button.click(
+                    init_repo,
+                    inputs=[],
+                    outputs=[strategies_df, strategy_dropdown, message_output]
+                )
+                enable_button.click(
+                    enable_strategy,
+                    inputs=[strategy_dropdown],
+                    outputs=[strategies_df, message_output]
+                )
+                disable_button.click(
+                    disable_strategy,
+                    inputs=[strategy_dropdown],
+                    outputs=[strategies_df, message_output]
+                )
 
     demo.launch(share=True)
 
