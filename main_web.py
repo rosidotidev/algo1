@@ -65,7 +65,14 @@ def filter_dataframe(query,file_name='report.csv'):
     except Exception as e:
         return pd.DataFrame({"Error": [str(e)]})
 
-def top_strategies(file_name='report.csv', metric='Return [%]', top_n=10):
+def top_strategies(
+    file_name='report.csv',
+    metric='Return [%]',
+    min_win_rate=0,
+    min_return=0,
+    min_trades=0,
+    top_n=2000
+):
     df = pd.read_csv(f"../results/{file_name}")
     df = df.dropna(subset=['Ticker', 'strategy', 'Return [%]', 'Win Rate [%]', '# Trades'])
 
@@ -88,10 +95,21 @@ def top_strategies(file_name='report.csv', metric='Return [%]', top_n=10):
     else:
         sort_col = metric
 
+    # Round metrics
     grouped[['Return [%]', 'Win Rate [%]', '# Trades']] = grouped[['Return [%]', 'Win Rate [%]', '# Trades']].round(2)
 
+    # --- Apply filters ---
+    grouped = grouped[
+        (grouped['Win Rate [%]'] >= min_win_rate) &
+        (grouped['Return [%]'] >= min_return) &
+        (grouped['# Trades'] >= min_trades)
+    ]
+
+    # Sort and limit
     grouped = grouped.sort_values(by=sort_col, ascending=False).head(top_n)
+
     return grouped
+
 def fill_ticker_count():
     return ti.count_tickers_in_best_matrix("../data/best_matrix.csv","../data/tickers.txt")
 
@@ -225,12 +243,29 @@ def main():
             with gr.TabItem("Strategy report"):
                 gr.Markdown("### Show best strategies using filters")
                 with gr.Row():
-                    with gr.Accordion( open=True):
-                        metric_selector = gr.Dropdown(choices=['Return [%]', 'Win Rate [%]', 'aggregate'],
-                                                      value='Return [%]', label="Select Metric")
-                        top_button = gr.Button("Show Top Strategies")
+                    # Colonna sinistra: filtro e pulsante
+                    with gr.Column(scale=1):
+                        with gr.Accordion(open=True):
+                            metric_selector = gr.Dropdown(
+                                choices=['Return [%]', 'Win Rate [%]', 'aggregate'],
+                                value='Return [%]',
+                                label="Select Metric"
+                            )
+                            win_rate_slider = gr.Slider(minimum=0, maximum=100, value=80, label="Min Win Rate [%]")
+                            return_slider = gr.Slider(minimum=0, maximum=500, value=50, label="Min Return [%]")
+                            trades_slider = gr.Slider(minimum=0, maximum=100, value=1, label="Min # Trades")
+                            top_button = gr.Button("Show Top Strategies")
+
+                    # Colonna destra: tabella risultati
+                    with gr.Column(scale=3):
                         top_output = gr.Dataframe(label="Top Strategies")
-                        top_button.click(top_strategies, inputs=[file_dropdown, metric_selector], outputs=top_output)
+
+                # Callback
+                top_button.click(
+                    top_strategies,
+                    inputs=[file_dropdown, metric_selector, win_rate_slider, return_slider, trades_slider],
+                    outputs=top_output
+                )
             with gr.TabItem("Generate Best Matrix"):
                 gr.Markdown("### Generate and Save Best Strategy Matrix")
                 matrix_output = gr.State()
