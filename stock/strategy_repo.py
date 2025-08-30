@@ -19,6 +19,19 @@ class StrategyRepo:
         except FileNotFoundError:
             print(f"File '{self.filename}' not found. Initializing new repo...")
             self.init_repo()
+    def enable_all(self) -> pd.DataFrame:
+        """Enable all strategies and return updated DataFrame."""
+        self._df["enabled"] = True
+        self.save()
+        print("All strategies have been enabled.")
+        return self._df
+
+    def disable_all(self) -> pd.DataFrame:
+        """Disable all strategies and return updated DataFrame."""
+        self._df["enabled"] = False
+        self.save()
+        print("All strategies have been disabled.")
+        return self._df
 
     def save(self):
         """Save repository to CSV."""

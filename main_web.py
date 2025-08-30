@@ -293,6 +293,9 @@ def main():
                         enable_button = gr.Button("Enable Strategy")
                         disable_button = gr.Button("Disable Strategy")
                         save_button = gr.Button("Save Changes")
+                        enable_all_button = gr.Button("Enable All Strategies")
+                        disable_all_button = gr.Button("Disable All Strategies")
+
                         message_output = gr.Textbox(label="Status Message")
 
                     # Right column: display current DataFrame
@@ -304,6 +307,14 @@ def main():
                         )
 
                 # --- Callback functions ---
+                def enable_all_callback():
+                    repo.enable_all()
+                    return get_df_for_display(), "All strategies enabled."
+
+                def disable_all_callback():
+                    repo.disable_all()
+                    return get_df_for_display(), "All strategies disabled."
+
                 def init_repo():
                     repo.init_repo()
                     return get_df_for_display(), repo.get_all_strategies_as_list(), "Repository initialized."
@@ -329,6 +340,16 @@ def main():
                     repo._df = df
                     repo.save()
                     return get_df_for_display(), "Changes saved."
+                enable_all_button.click(
+                    enable_all_callback,
+                    inputs=[],
+                    outputs=[strategies_df, message_output]
+                )
+                disable_all_button.click(
+                    disable_all_callback,
+                    inputs=[],
+                    outputs=[strategies_df, message_output]
+                )
 
                 save_button.click(
                     save_changes_callback,

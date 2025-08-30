@@ -12,6 +12,7 @@ import datetime
 import os
 import threading
 from stock.base_bt import BaseStrategyBT
+from stock.strategy_repo import StrategyRepo
 
 lock = threading.Lock()
 
@@ -79,6 +80,29 @@ def load_best_matrix(path: str) -> pd.DataFrame:
             return pd.DataFrame()
     else:
         return pd.DataFrame()
+
+def is_valid_strategy_in_repo(strategy_name: str, strategies_df: pd.DataFrame) -> bool:
+    """
+    Check if a strategy exists in the repository and is enabled.
+
+    Args:
+        strategy_name (str): Name of the strategy to check.
+        strategies_df (pd.DataFrame): DataFrame returned by repo.get_all_strategies().
+
+    Returns:
+        bool: True if the strategy exists and is enabled, False otherwise.
+    """
+    if strategies_df.empty:
+        return False
+
+    # Filtra per il nome della strategia
+    match = strategies_df[
+        (strategies_df['strategy_name'] == strategy_name) &
+        (strategies_df['enabled'] == True)
+    ]
+
+    return not match.empty
+
 
 def is_valid_strategy(ticker: str, strategy: str, best_matrix: pd.DataFrame) -> bool:
     #print(f"[TRACE] Called is_valid_strategy with:\n  Ticker: {ticker}\n  Strategy: {strategy}")
@@ -237,21 +261,36 @@ def exec_analysis_parallel(base_path="../", slperc=0.15, tpperc=1.0, optimize=Fa
     tickers_file = f'{base_path}../data/tickers.txt'
     data_dir = f'{base_path}../data/'
 
+    # Instantiate repo
+    repo = StrategyRepo()
+    strategies_df = repo.get_all_strategies()  # recupera tutte le strategie attuali
+
     with concurrent.futures.ProcessPoolExecutor(max_workers=6) as executor:
-        # Candlestick strategies
+        futures = []
+
+        # --- Candlestick strategies ---
         for strategy in cs_vec.candlestick_strategies:
-            futures.append(executor.submit(
-                run_backtest_for_all_tickers,
-                tickers_file, data_dir, slperc, tpperc, strategy, False,optimize
-            ))
+            strategy_name = strategy.__name__.replace("_", " ")
+            if is_valid_strategy_in_repo(strategy_name, strategies_df):
+                futures.append(executor.submit(
+                    run_backtest_for_all_tickers,
+                    tickers_file, data_dir, slperc, tpperc, strategy, False, optimize
+                ))
+            else:
+                print(f"Skipping disabled strategy: {strategy_name}")
 
-        # Indicator strategies
+        # --- Indicator strategies ---
         for strategy in ins_vec.indicators_strategy:
-            futures.append(executor.submit(
-                run_backtest_for_all_tickers,
-                tickers_file, data_dir, slperc, tpperc, strategy, True,optimize
-            ))
+            strategy_name = strategy.__name__.replace("_", " ")
+            if is_valid_strategy_in_repo(strategy_name, strategies_df):
+                futures.append(executor.submit(
+                    run_backtest_for_all_tickers,
+                    tickers_file, data_dir, slperc, tpperc, strategy, True, optimize
+                ))
+            else:
+                print(f"Skipping disabled strategy: {strategy_name}")
 
+        # --- Collect results ---
         for future in concurrent.futures.as_completed(futures):
             try:
                 df1 = future.result()
@@ -324,10 +363,10 @@ def exec_analysis_and_save_results(base_path='../', slperc=0.15, tpperc=1.0, par
             "\n" + "*" * 60 + "\n" +
             "*           Backtest Execution Completed            *\n" +
             "*" * 60 + "\n" +
-            f"* Mode:       {'Parallel' if parallel else 'Sequential':<42}*\n" +
-            f"* Stop Loss:  {slperc:<42}*\n" +
-            f"* Take Profit:{tpperc:<42}*\n" +
-            f"* Duration:   {elapsed_time:.2f} seconds{'':<29}*\n" +
+            f"* Mode:       {'Parallel' if parallel else 'Sequential':<42}\n" +
+            f"* Stop Loss:  {slperc:<42}\n" +
+            f"* Take Profit:{tpperc:<42}\n" +
+            f"* Duration:   {elapsed_time:.2f} seconds{'':<29}\n" +
             "*" * 60 + "\n"
     )
     print(summary)  # Optional: print to console
