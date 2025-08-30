@@ -103,58 +103,90 @@ def main():
         with gr.Tabs():
             with gr.TabItem("Results Inspector"):
                 gr.Markdown("### Use this section to filter CSV results based on conditions")
+
+                files = bu.get_csv_files("../results/")
+
                 with gr.Row():
+                    # --- Left column: filters + query + buttons ---
                     with gr.Column(scale=1):
-                        files = bu.get_csv_files("../results/")
                         file_dropdown = gr.Dropdown(files, label="Select CSV File")
 
                         win_rate_slider = gr.Slider(minimum=0, maximum=100, value=80, label="Min Win Rate [%]")
                         return_slider = gr.Slider(minimum=0, maximum=500, value=50, label="Min Return [%]")
                         trades_slider = gr.Slider(minimum=0, maximum=100, value=1, label="Min # Trades")
-                        last_action_check = gr.CheckboxGroup([1, 2,0,-1,-2], label="Last Action values to include",value=[1, 2, -1, -2])
-
+                        last_action_check = gr.CheckboxGroup([1, 2, 0, -1, -2], label="Last Action values to include",
+                                                             value=[1, 2, -1, -2])
                         filter_button = gr.Button("Apply Filter")
 
-                    with gr.Column(scale=4):
+
+
+                    # --- Right column: output DataFrame ---
+                    with gr.Column(scale=5):
+                        df_output = gr.Dataframe(label="Filtered DataFrame")
+                        # Query input
+                        gr.Markdown("### Run pandas query using df as Dataframe variable.")
                         query_input = gr.Textbox(
                             lines=4,
                             placeholder='Enter a filter, e.g., df[(df["Close"] > 0)]',
                             label="Query",
-                            value="""
-df[
+                            value="""df[
     (df['Win Rate [%]'] > 80) &
     (df['Return [%]'] > 50) &
     (df['Last Action'].isin([1, 2,0,-1,-2])) &
     (df['# Trades'] > 0)
 ]"""
                         )
-                        df_output = gr.Dataframe(label="Filtered DataFrame")
-
-                        def build_query_and_filter(file_name, win_rate, ret, trades, actions):
-                            if not actions:
-                                actions = [1, 2]
-                            query = f"""df[(df['Win Rate [%]'] > {win_rate}) & (df['Return [%]'] > {ret}) & (df['# Trades'] >= {trades}) & (df['Last Action'].isin({actions}))]"""
-                            return filter_dataframe(query, file_name)
-
-                        filter_button.click(build_query_and_filter, inputs=[file_dropdown, win_rate_slider, return_slider, trades_slider, last_action_check], outputs=df_output)
 
                         execute_query_button = gr.Button("Execute Query")
-                        execute_query_button.click(fn=filter_dataframe, inputs=[query_input, file_dropdown], outputs=df_output)
+                # --- Callbacks ---
+                def build_query_and_filter(file_name, win_rate, ret, trades, actions):
+                    if not actions:
+                        actions = [1, 2]
+                    query = f"""df[(df['Win Rate [%]'] > {win_rate}) & (df['Return [%]'] > {ret}) & (df['# Trades'] >= {trades}) & (df['Last Action'].isin({actions}))]"""
+                    return filter_dataframe(query, file_name)
 
-                        file_dropdown.change(fn=filter_dataframe, inputs=[query_input, file_dropdown], outputs=df_output)
+                filter_button.click(
+                    build_query_and_filter,
+                    inputs=[file_dropdown, win_rate_slider, return_slider, trades_slider, last_action_check],
+                    outputs=df_output
+                )
 
+                execute_query_button.click(
+                    fn=filter_dataframe,
+                    inputs=[query_input, file_dropdown],
+                    outputs=df_output
+                )
+
+                file_dropdown.change(
+                    fn=filter_dataframe,
+                    inputs=[query_input, file_dropdown],
+                    outputs=df_output
+                )
 
             with gr.TabItem("Backtesting"):
                 gr.Markdown("### Run a backtest on a specific ticker with a selected trading strategy.")
+
                 tickers = ti.read_tickers_from_file("../data/tickers.txt")
+                backtesting_functions = ins_vec.indicators_strategy + cs_vec.candlestick_strategies
+                algorithm_choices = [f.__name__.replace("_", " ") for f in backtesting_functions]
+
                 with gr.Row():
-                    ticker_dropdown = gr.Dropdown(choices=tickers, label="Select Ticker")
-                    backtesting_functions = ins_vec.indicators_strategy + cs_vec.candlestick_strategies
-                    algorithm_choices = [f.__name__.replace("_", " ") for f in backtesting_functions]
-                    algorithm_dropdown = gr.Dropdown(choices=algorithm_choices, label="Select Algorithm")
-                backtest_output = gr.Textbox(label="Backtesting Results")
-                backtest_button = gr.Button("Run Backtest")
-                backtest_button.click(run_backtest, inputs=[ticker_dropdown, algorithm_dropdown], outputs=backtest_output)
+                    # --- Left column: filters and button ---
+                    with gr.Column(scale=1):
+                        ticker_dropdown = gr.Dropdown(choices=tickers, label="Select Ticker")
+                        algorithm_dropdown = gr.Dropdown(choices=algorithm_choices, label="Select Algorithm")
+                        backtest_button = gr.Button("Run Backtest")
+
+                    # --- Right column: output ---
+                    with gr.Column(scale=3):
+                        backtest_output = gr.Textbox(label="Backtesting Results")
+
+                # --- Connect button ---
+                backtest_button.click(
+                    run_backtest,
+                    inputs=[ticker_dropdown, algorithm_dropdown],
+                    outputs=backtest_output
+                )
 
             with gr.TabItem("Manage Tickers"):
                 gr.Markdown("### Fetch and store recent historical data for all tickers.")
