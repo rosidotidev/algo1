@@ -3,6 +3,28 @@ import pandas as pd
 from datetime import datetime
 import backtrader_util.bu as bu
 
+import pandas as pd
+
+
+def log_last_n_rows(df: pd.DataFrame, n: int = 5, file_path: str = "debug.log"):
+    """
+    Writes the last n rows of a pandas DataFrame to a log file.
+
+    Parameters:
+    df (pd.DataFrame): The DataFrame to log.
+    n (int): Number of rows to log (default 5).
+    file_path (str): Path to the log file.
+    """
+    if df is None or df.empty:
+        with open(file_path, "a", encoding="utf-8") as f:
+            f.write("DataFrame is empty or None.\n")
+        return
+
+    with open(file_path, "a", encoding="utf-8") as f:
+        f.write("\n=== Last {} rows ===\n".format(n))
+        f.write(df.tail(n).to_string(index=True))
+        f.write("\n")
+
 
 def get_timestamp():
     return datetime.now().strftime("%Y%m%d%H%M")
