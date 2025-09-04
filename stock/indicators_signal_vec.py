@@ -555,7 +555,7 @@ def x_rsi_bollinger_macd_total_signal_base_vectorized(df, tolerance_percent=5,up
     band_width = df['BB_Upper'] - df['BB_Lower']
     lower_tolerance_min = df['BB_Lower'] - band_width * tolerance
     lower_tolerance_max = df['BB_Lower'] + band_width * tolerance
-    bollinger_lower_condition = (df['Close'] >= lower_tolerance_min) & (df['Close'] <= lower_tolerance_max)
+    bollinger_lower_condition = (df['Close'] <= lower_tolerance_max)
 
     macd_condition= None
     if macd_enabled:
@@ -575,7 +575,7 @@ def x_rsi_bollinger_macd_total_signal_base_vectorized(df, tolerance_percent=5,up
     # Upper tolerance zone
     upper_tolerance_min = df['BB_Upper'] - band_width * tolerance
     upper_tolerance_max = df['BB_Upper'] + band_width * tolerance
-    bollinger_upper_condition = (df['Close'] >= upper_tolerance_min) & (df['Close'] <= upper_tolerance_max)
+    bollinger_upper_condition = (df['Close'] >= upper_tolerance_min)
     macd_sell_condition= None
     if macd_enabled:
         macd_sell_condition = df['MACD'] < df['MACD_Signal']
@@ -760,14 +760,14 @@ def mean_reversion_signal_generic_vectorized(df, tolerance_percent=5):
     band_width = df['BB_Upper'] - df['BB_Lower']
     lower_tolerance_min = df['BB_Lower'] - band_width * tolerance
     lower_tolerance_max = df['BB_Lower'] + band_width * tolerance
-    bollinger_lower_condition = (df['Close'] > lower_tolerance_min) & (df['Close'] < lower_tolerance_max)
+    bollinger_lower_condition = (df['Close'] <= lower_tolerance_max)
     buy_condition = bollinger_lower_condition & rsi_long_condition
 
     # Sell (Short Entry) Conditions
     rsi_short_condition = df['RSI'] > 70
     upper_tolerance_min = df['BB_Upper'] - band_width * tolerance
     upper_tolerance_max = df['BB_Upper'] + band_width * tolerance
-    bollinger_upper_condition = (df['Close'] > upper_tolerance_min) & (df['Close'] < upper_tolerance_max)
+    bollinger_upper_condition = (df['Close'] >= upper_tolerance_min)
     sell_condition = bollinger_upper_condition & rsi_short_condition
 
     # Exit Long Conditions
