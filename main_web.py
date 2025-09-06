@@ -48,14 +48,14 @@ def filter_dataframe(query,file_name='report.csv'):
     selected_columns = [
         'Ticker',
         'Last Action',
+        'strategy',
         'BobIndex',
         'Equity Final [$]',
         'Return [%]',
         'Buy & Hold Return [%]',
         '# Trades',
-        'Win Rate [%]',
-        '_strategy',
-        'strategy'
+        'Win Rate [%]'
+
     ]
     try:
         filtered_df = eval(query, {"df": df, "pd": pd})

@@ -188,44 +188,140 @@ def keltner_channel_vectorized(df: pd.DataFrame, lookback_periods: int = 20, atr
 
     return signals
 
+def donchian_channel_20_10_10(df):
+    return donchian_channel_vectorized(df,20,10,10)
 
-def donchian_channel_vectorized(df: pd.DataFrame, lookback_periods: int = 20) -> pd.Series:
+def donchian_channel_10_5_5(df):
+    return donchian_channel_vectorized(df,10,5,5)
+
+def donchian_channel_20_5_5(df):
+    return donchian_channel_vectorized(df,20,5,5)
+
+def donchian_channel_vectorized(df: pd.DataFrame,
+                            lookback_entry: int = 20,
+                            lookback_exit_long: int = 10,
+                            lookback_exit_short: int = 10) -> pd.Series:
     """
-    Generates trading signals based on the Donchian Channel breakout strategy.
+    Donchian Channel strategy with stable exits.
+
+    Entry:
+        - Long (2) if Close > N-period high
+        - Short (1) if Close < N-period low
+    Exit:
+        - Exit Long (-2) if Close < min of lookback_exit_long periods
+        - Exit Short (-1) if Close > max of lookback_exit_short periods
+    """
+    # Entry channels
+    upper_channel = df['High'].rolling(lookback_entry).max().shift(1)
+    lower_channel = df['Low'].rolling(lookback_entry).min().shift(1)
+
+    # Exit levels
+    min_exit_long  = df['Low'].rolling(lookback_exit_long).min().shift(1)
+    max_exit_short = df['High'].rolling(lookback_exit_short).max().shift(1)
+
+    # Entry signals
+    long_entry  = df['Close'] > upper_channel
+    short_entry = df['Close'] < lower_channel
+
+    # Initialize signals
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[long_entry]  = 2
+    signals[short_entry] = 1
+
+    # Previous position state
+    prev_long  = signals.shift(1) == 2
+    prev_short = signals.shift(1) == 1
+
+    # Exit conditions
+    exit_long  = prev_long & (df['Close'] < min_exit_long)
+    exit_short = prev_short & (df['Close'] > max_exit_short)
+
+    # Assign exits only where no new entry
+    signals[(exit_long) & (signals == 0)]  = -2
+    signals[(exit_short) & (signals == 0)] = -1
+
+    return signals
+
+import pandas as pd
+
+import pandas as pd
+
+def weekly_breakout_1_1(df):
+    return weekly_breakout_vectorized(df,1,1)
+
+def weekly_breakout_2_1(df):
+    return weekly_breakout_vectorized(df,2,1)
+
+def weekly_breakout_1_2(df):
+    return weekly_breakout_vectorized(df,1,2)
+
+def weekly_breakout_2_2(df):
+    return weekly_breakout_vectorized(df,2,2)
+
+def weekly_breakout_1_3(df):
+    return weekly_breakout_vectorized(df,1,3)
+
+def weekly_breakout_2_3(df):
+    return weekly_breakout_vectorized(df,2,3)
+
+import pandas as pd
+import numpy as np
+
+def weekly_breakout_vectorized(df, lookback_weeks=1, entry_day=1):
+    """
+    Fully vectorized weekly breakout strategy with correct handling of long and short positions.
 
     Logic:
-        - A long signal (2) is generated when the price breaks above the N-period high.
-        - A short signal (1) is generated when the price breaks below the N-period low.
-
-    Args:
-        df (pd.DataFrame): DataFrame with a DatetimeIndex and at least 'High', 'Low', 'Close' columns.
-        lookback_periods (int): Number of periods (e.g., days) to consider for the high/low calculation.
-
-    Returns:
-        pd.Series: Trading signals (2 = Long, 1 = Short, 0 = No position).
+        - On entry_day (default Tuesday = 1):
+            - 2 (Buy)  if previous day's close > previous N weeks' high
+            - 1 (Sell) if previous day's close < previous N weeks' low
+        - Exit signals:
+            - -2 (Exit Buy)  if previously long and no new long
+            - -1 (Exit Sell) if previously short and no new short
+        - 0 otherwise
     """
-    # Calculate the upper and lower Donchian Channels
-    # The upper channel is the highest high over the lookback period
-    df['upper_channel'] = df['High'].rolling(lookback_periods).max().shift(1)
+    price_col = "Close"
 
-    # The lower channel is the lowest low over the lookback period
-    df['lower_channel'] = df['Low'].rolling(lookback_periods).min().shift(1)
+    # 1. Compute weekly highs and lows
+    weekly = df.groupby(df.index.to_period("W"))[price_col].agg(["max", "min"])
+    weekly["high"] = weekly["max"].rolling(lookback_weeks).max().shift(1)
+    weekly["low"] = weekly["min"].rolling(lookback_weeks).min().shift(1)
 
-    # Initialize a signals Series with a default value of 0 (no position)
-    signals = pd.Series(0, index=df.index, dtype='int8')
+    # 2. Map weekly levels to daily index
+    week_periods = df.index.to_period("W")
+    prev_high = week_periods.map(weekly["high"].to_dict())
+    prev_low = week_periods.map(weekly["low"].to_dict())
 
-    # Generate long signals: if the current closing price breaks above the upper channel
-    long_condition = df['Close'] > df['upper_channel']
-    signals[long_condition] = 2
+    # 3. Previous day's close for evaluating today's entry
+    prev_close = df[price_col].shift(1)
+    entry_flag = df.index.dayofweek == entry_day
 
-    # Generate short signals: if the current closing price breaks below the lower channel
-    short_condition = df['Close'] < df['lower_channel']
-    signals[short_condition] = 1
+    # 4. Vectorized entry signals
+    long_entry  = entry_flag & (prev_close > prev_high)
+    short_entry = entry_flag & (prev_close < prev_low)
+
+    # 5. Initialize signal series
+    signals = pd.Series(0, index=df.index, dtype="int8")
+    signals[long_entry]  = 2
+    signals[short_entry] = 1
+
+    # 6. Track previous position state separately for long and short
+    # Create boolean masks
+    prev_long  = signals.shift(1) == 2
+    prev_short = signals.shift(1) == 1
+
+    # 7. Exit conditions (only where no new entry is present)
+    exit_long  = entry_flag & prev_long & (~long_entry)
+    exit_short = entry_flag & prev_short & (~short_entry)
+
+    signals[exit_long & (signals == 0)]   = -2
+    signals[exit_short & (signals == 0)]  = -1
 
     return signals
 
 
-def weekly_breakout_vectorized(df, lookback_weeks=1):
+
+def weekly_breakout_vectorized_old(df, lookback_weeks=1):
     """
     Generates trading signals based on a weekly breakout strategy.
 
@@ -1077,9 +1173,20 @@ indicators_strategy =[
     adx_trend_breakout_20_25,
     adx_trend_breakout_10_40,
     adx_trend_breakout_10_35,
+    donchian_breakout_with_ma_20_50,
+    donchian_breakout_with_ma_10_30,
+    donchian_breakout_with_ma_15_40,
     #keltner_channel_vectorized,
     #donchian_channel_vectorized,
-    #weekly_breakout_vectorized,
+    weekly_breakout_1_1,
+    weekly_breakout_1_2,
+    weekly_breakout_2_1,
+    weekly_breakout_2_2,
+    weekly_breakout_1_3,
+    weekly_breakout_2_3,
+    donchian_channel_20_10_10,
+    donchian_channel_10_5_5,
+    donchian_channel_20_5_5,
     t_indicators_combined_signal_vectorized
 ]
 
