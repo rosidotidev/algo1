@@ -124,8 +124,8 @@ def get_csv_files(directory):
 
 
 cache = {
-    "stop_loss": 0.10,
-    "take_profit": 0.15,
+    "stop_loss": 0.05,
+    "take_profit": 0.08,
     "df": {}
 }
 

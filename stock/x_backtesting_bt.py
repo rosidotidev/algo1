@@ -16,7 +16,7 @@ from stock.strategy_repo import StrategyRepo
 
 lock = threading.Lock()
 
-class DaxPatternBT(BaseStrategyBT):
+class XBacktestingBT(BaseStrategyBT):
     slperc= 0.05
     tpperc= 1.00
     def init(self):
@@ -166,7 +166,7 @@ def run_backtest_DaxPattern_vec(data_path,slperc=0.04,tpperc=0.02,capital_alloca
         df=de.add_adx_column(df)
     df = ti.add_total_signal_vec(df,target_strategy)
 
-    bt = Backtest(df.dropna(), DaxPatternBT,
+    bt = Backtest(df.dropna(), XBacktestingBT,
                   cash=10000,
                   finalize_trades=True,
                   exclusive_orders=True,
