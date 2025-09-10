@@ -235,10 +235,10 @@ def run_backtest_for_all_tickers(tickers_file, data_directory,slperc=0.15,tpperc
 
 def exec_analysis(base_path="../",slperc=0.15, tpperc=1.0, optimize=False):
     df = None
-    for strategy in cs.candlestick_strategies:
+    for strategy in cs_vec.candlestick_strategies:
         df1 = run_backtest_for_all_tickers(f'{base_path}../data/tickers.txt', f'{base_path}../data/', slperc=slperc,tpperc=tpperc,candle_strategy=strategy,optimize=optimize)
         df = bu.append_df(df, df1)
-    for strategy in ins.indicators_strategy:
+    for strategy in ins_vec.indicators_strategy:
         df1 = run_backtest_for_all_tickers(f'{base_path}../data/tickers.txt', f'{base_path}../data/', slperc=slperc,tpperc=tpperc,candle_strategy=strategy,
                                            add_indicators=True,optimize=optimize)
         df = bu.append_df(df, df1)
