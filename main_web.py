@@ -48,7 +48,7 @@ def filter_dataframe(query,file_name='report.csv'):
     df=ti.calculate_performance_index(df)
     selected_columns = [
         'Ticker',
-        'Last Action'
+        'Last Action',
         '# Trades',
         'Win Rate [%]',
         'strategy',
