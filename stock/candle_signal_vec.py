@@ -350,7 +350,7 @@ def morning_evening_star_signal_vectorized(df):
 
 def shooting_star_hammer_signal_vectorized(df):
     """
-    Identifies Shooting Star and Hammer patterns using a vectorized approach.
+    Identifies Shooting Star and Hammer patterns using a vectorized approach
 
     Args:
         df (pd.DataFrame): The DataFrame with historical data.
