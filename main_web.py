@@ -1,13 +1,14 @@
 import warnings
 import gradio as gr
 import pandas as pd
-import stock.x_backtesting_bt as trades
+import stock.x_trades_bt as trades
 import stock.indicators_signal_vec as ins_vec
 import stock.candle_signal_vec as cs_vec
 import stock.ticker as ti
 import backtrader_util.bu as bu
 import stock.biz_logic as biz
 from stock.strategy_repo import StrategyRepo
+
 
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -47,14 +48,15 @@ def filter_dataframe(query,file_name='report.csv'):
     df=ti.calculate_performance_index(df)
     selected_columns = [
         'Ticker',
-        'Last Action',
+        'Last Action'
+        '# Trades',
+        'Win Rate [%]'
         'strategy',
         'BobIndex',
         'Equity Final [$]',
         'Return [%]',
-        'Buy & Hold Return [%]',
-        '# Trades',
-        'Win Rate [%]'
+        'Buy & Hold Return [%]'
+
 
     ]
     try:
@@ -306,7 +308,7 @@ def main():
                 gr.Markdown("### Initialize and enable/disable strategies in the repository")
 
                 # Instantiate the StrategyRepo
-                from stock.strategy_repo import StrategyRepo
+
                 repo = StrategyRepo()
 
                 def get_df_for_display():
