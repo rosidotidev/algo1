@@ -50,7 +50,7 @@ def filter_dataframe(query,file_name='report.csv'):
         'Ticker',
         'Last Action'
         '# Trades',
-        'Win Rate [%]'
+        'Win Rate [%]',
         'strategy',
         'BobIndex',
         'Equity Final [$]',
