@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 def count_hammers(df):
     df['body'] = abs(df['Close'] - df['Open'])
@@ -409,7 +410,7 @@ def hammer_signal_vectorized(df):
     # --- Bearish Exit (Sell) condition ---
     # This condition is typically handled by backtesting logic, not a signal function.
     # We'll vectorize it here as a direct translation of your code.
-    bearish_exit_condition = (df['Close'] < df['Low'])
+    bearish_exit_condition = (df['Close'] < df['Low'].shift(1))
 
     # Initialize a signal Series with a default value of 0 (no signal)
     signals = pd.Series(0, index=df.index, dtype='int8')
@@ -442,17 +443,68 @@ def inverted_hammer_signal_vectorized(df):
     # --- Inverted Hammer conditions ---
     inverted_hammer_condition = (df['upper_wick'] > 2 * df['body']) & \
                                 (df['lower_wick'] < 0.3 * df['body'])
-
+    bearish_exit_condition = (df['Close'] < df['Low'].shift(1))
     # Initialize a signal Series with a default value of 0 (no signal)
     signals = pd.Series(0, index=df.index, dtype='int8')
 
     # Apply signals using vectorized assignment
     signals[inverted_hammer_condition] = 2  # BUY signal
+    signals[bearish_exit_condition] = 1  # BUY signal
 
     # Remove temporary columns to keep the DataFrame clean
     df.drop(columns=['body', 'upper_wick', 'lower_wick'], inplace=True)
 
     return signals
+
+def filled_bar_vectorized(df,ratio=0.9):
+    df["ratio"]=(df['Close']-df['Open'])/(df['High']-df['Low'])
+    df['prev_low']=df['Low'].shift(1)
+    bullish_signal = df["ratio"] > ratio
+    bearish_signal = df['Close'] < df['prev_low']
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply entry signals using vectorized assignment
+    signals[bullish_signal] = 2  # Buy signal
+    signals[bearish_signal] = 1  # Sell signal
+
+    # Clean up temporary columns
+    df.drop(columns=['ratio', 'prev_low'], inplace=True)
+
+    return signals
+
+
+
+def inverted_filled_bar_strategy(df, ratio=0.9):
+    """
+    Inverts the logic of the filled_bar_vectorized function to generate signals
+    for a short strategy.
+
+    A buy signal from the original function becomes a short entry signal (1).
+    A sell signal from the original function becomes a short exit signal (2).
+
+    Args:
+        df (pd.DataFrame): The DataFrame with historical OHLC data.
+        ratio (float): The threshold for the body-to-range ratio of the candle.
+
+    Returns:
+        pd.Series: A Series of inverted trading signals
+                   (1 for short entry, 2 for short exit, 0 for no signal).
+    """
+
+    # Call the original function to get the base signals.
+    # A copy of the DataFrame is passed to avoid modifying the original.
+    original_signals = filled_bar_vectorized(df.copy(), ratio)
+
+    # Invert the signals using np.where in a vectorized manner.
+    # If the original signal is 2 (buy), the new signal is 1 (short).
+    # If the original signal is 1 (sell), the new signal is 2 (buy to cover).
+    # If the original signal is 0, it remains 0.
+    inverted_signals = np.where(original_signals == 2, 1,
+                                np.where(original_signals == 1, 2, 0))
+
+    # Return a pandas Series with the correct index.
+    return pd.Series(inverted_signals, index=df.index, dtype='int8')
+
 
 
 def doji_signal_strategy_v1_vectorized(df, trend_period=5):
@@ -577,6 +629,8 @@ candlestick_strategies = [
     hammer_signal_vectorized,
     inverted_hammer_signal_vectorized,
     doji_signal_strategy_v1_vectorized,
+    filled_bar_vectorized,
+    inverted_filled_bar_strategy,
     combined_signal_vectorized
 ]
 if __name__ == "__main__":
