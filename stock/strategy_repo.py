@@ -36,19 +36,28 @@ class StrategyRepo:
     def save(self):
         """Save repository to CSV."""
         self._df.to_csv(self.filename, index=False)
+    @staticmethod
+    def get_all_available_strategy_functions():
+            return ins_vec.indicators_strategy + cs_vec.candlestick_strategies
 
     def init_repo(self) -> pd.DataFrame:
         """Initialize the repository with all available strategies."""
         backtesting_functions = ins_vec.indicators_strategy + cs_vec.candlestick_strategies
         strategy_data = []
+
         for i, f in enumerate(backtesting_functions):
+            # Determine enrich flag
+            enrich_flag = f in ins_vec.indicators_strategy
+
             strategy_data.append({
                 "id": i,
                 "strategy_name": f.__name__.replace("_", " "),
                 "function_ref": f.__name__,
                 "enabled": True,
-                "score": 10  # optional field for performance tracking
+                "score": 10,  # optional field for performance tracking
+                "enrich": enrich_flag
             })
+
         self._df = pd.DataFrame(strategy_data)
         self.save()
         print(f"Strategy repository initialized and saved to '{self.filename}'.")

@@ -1,12 +1,12 @@
 import warnings
 import gradio as gr
 import pandas as pd
-import stock.x_trades_bt as trades
+import strategy.xx_trades_bt as trades
 import stock.indicators_signal_vec as ins_vec
 import stock.candle_signal_vec as cs_vec
 import stock.ticker as ti
 import backtrader_util.bu as bu
-import stock.biz_logic as biz
+import biz.biz_logic as biz
 from stock.strategy_repo import StrategyRepo
 
 
@@ -24,7 +24,6 @@ def run_backtest(ticker, function_name):
 
 
 def toggle_strategy_filter(full_matrix, only_valid):
-    import pandas as pd
     if only_valid:
         return full_matrix[full_matrix["strategy"] != "NO_STRATEGY"].reset_index(drop=True)
     else:
@@ -273,9 +272,9 @@ def main():
                 matrix_output = gr.State()
                 with gr.Row():
                     with gr.Column(scale=1):
-                        win_rate_input = gr.Slider(minimum=0, maximum=100, value=80, label="Min Win Rate [%]")
-                        return_input = gr.Slider(minimum=0, maximum=500, value=60, label="Min Return [%]")
-                        trades_input = gr.Slider(minimum=0, maximum=100, value=3, label="Min # Trades")
+                        win_rate_input = gr.Slider(minimum=0, maximum=100, value=60, label="Min Win Rate [%]")
+                        return_input = gr.Slider(minimum=0, maximum=500, value=50, label="Min Return [%]")
+                        trades_input = gr.Slider(minimum=0, maximum=100, value=5, label="Min # Trades")
                         generate_button = gr.Button("Generate Matrix")
                         show_only_valid_strategies = gr.Checkbox(label="Show only valid strategies", value=True)
 
