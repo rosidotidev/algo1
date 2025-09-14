@@ -133,7 +133,6 @@ def run_x_backtest_DaxPattern_vec(data_path, slperc=0.04, tpperc=0.02, capital_a
             strategy_func=tsd["strategy_func"],
             params=tsd["params"]
         )
-        print("TickerStrategy created:", ts)
     else:
         ts = None
 
@@ -336,7 +335,8 @@ def execute_all_strategies_for_single_ticker(all_functions, best_matrix, data_di
                     # ticker_history_data = ti.read_from_csv(data_path)
                     # Run the backtest
 
-                    report = run_backtest_DaxPattern_vec(
+                    #report = run_backtest_DaxPattern_vec(
+                    report = run_x_backtest_DaxPattern_vec(
                         data_path,
                         slperc=slperc,
                         tpperc=tpperc,

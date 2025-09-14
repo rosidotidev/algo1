@@ -3,7 +3,9 @@ import numpy as np
 import itertools
 import pandas as pd
 from stock.my_yfinance import MyYFinance
+import stock.candle_signal_vec as scs
 import strategy.xx_trades_bt as trades
+from strategy.ticker_stategy_repo import TickerStrategyRepo
 
 
 # Importa la tua funzione di segnale
@@ -20,66 +22,54 @@ def filled_bar_vectorized(df, ratio=0.8):
 
 
 def main3():
-    start_time = time.perf_counter()
-    price = MyYFinance.fetch_by_period('AMZN', period='3y')
+
+    ticker="MS"
+    func=scs.retracement_rev_vectorized
+    price = MyYFinance.fetch_by_period(ticker, period='3y')
 
     # price.dropna(inplace=True)
     # Rimuovi le righe con prezzo di chiusura <= 0
     # price = price[price['Close'] > 0]
 
-    download_time = time.perf_counter()
-    print(f"Tempo di download dei dati: {download_time - start_time:.2f} secondi")
-
-    ratio_window = np.arange(0.7, 0.95, 0.05)
-    sl_window = np.arange(0.05, 0.20, 0.03)
-    tp_window = np.arange(0.08, 0.25, 0.03)
+    s_window = np.arange(2, 10, 1)
+    m_window = np.arange(5, 20, 2)
+    l_window = np.arange(15, 40, 5)
 
     all_portfolios = {}
+    tsp=TickerStrategyRepo("../../data/")
 
+    strategy = tsp.get_by_ticker_and_strategy(ticker, func.__name__)
     # Iterate through all combinations of fast and slow windows
-    for ratio_w, sl_w, tp_w in itertools.product(ratio_window, sl_window, tp_window):
-        my_signals = filled_bar_vectorized(price, ratio=ratio_w)
+    for s_w, m_w, l_w in itertools.product(s_window, m_window, l_window):
+        if s_w < m_w < l_w:
+            #strategy=tsp.get_by_ticker_and_strategy(ticker,scs.retracement_tf_vectorized.__name__)
+            tsp.update_ticker_strategy(strategy["ticker"],strategy["strategy_func"],{"short":int(s_w),"medium":int(m_w),"long":int(l_w)})
+            sl_w = 0.05
+            tp_w = 0.08
+            res=trades.run_x_backtest_DaxPattern_vec(f"../../data/{ticker}.csv", slperc=sl_w, tpperc=tp_w, capital_allocation=1, show_plot=False,
+                                    target_strategy=func, add_indicators=False)
 
-        # 2. Convert numerical signals to boolean Series for VectorBT
-        entries = (my_signals == 1)
-        exits = (my_signals == 2)
+            all_portfolios[(s_w, m_w, l_w)] = res
+            win_rate=res["Win Rate [%]"]
+            n_trades=res["# Trades"]
+            ret=res["Return [%]"]
 
-        trades.run_backtest_DaxPattern_vec_df(price, slperc=0.04, tpperc=0.02, capital_allocation=1, show_plot=False,
-                                    target_strategy=filled_bar_vectorized, add_indicators=True)
+            print(f'[{s_w},{m_w},{l_w}] win rate {win_rate}, n trades {n_trades}, ret {ret}')
 
-
-        # Store portfolio in a dictionary with the window pair as the key
-        all_portfolios[(ratio_w, sl_w, tp_w)] = portfolio
-        # ❗ Aggiungi queste righe per stampare i risultati parziali
-        current_return = portfolio.total_return()
-        current_trades = portfolio.trades.count()
-        print(f"Combinazione ({ratio_w},{sl_w},{tp_w}) - Rendimento: {current_return:.2%} - trades: {current_trades}")
-
-    backtest_time = time.perf_counter()
-    print(f"Tempo di backtesting: {backtest_time - download_time:.2f} secondi")
-
-    # Manually find the best portfolio by sorting returns
     best_return = -np.inf
     best_params = None
-
     for params, portfolio in all_portfolios.items():
-        current_return = portfolio.total_return()
-        if current_return > best_return:
+        current_return = float(portfolio["Win Rate [%]"])
+        if current_return > best_return and float(portfolio["# Trades"]) > 6:
             best_return = current_return
             best_params = params
 
+    tsp.update_ticker_strategy(ticker, func.__name__,
+                               {"short": int(best_params[0]), "medium": int(best_params[1]), "long": int(best_params[2])})
+
     best_portfolio = all_portfolios[best_params]
-
-    print("Migliore combinazione di parametri: ", best_params)
-    print("Miglior rendimento totale: ", best_return)
-
-    print("\nRisultati del backtest per la migliore combinazione:")
-    print(best_portfolio.stats())
-
-    fig = best_portfolio.plot()
-    fig.update_layout(title="Strategia MMA Ottimizzata su BTC-USD")
-    fig.show()
-
+    print(f' best parameters {best_params}')
+    print(best_portfolio)
 
 if __name__ == "__main__":
     main3()

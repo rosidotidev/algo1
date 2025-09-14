@@ -99,7 +99,7 @@ def run_backtest(ticker, function_name):
     # True se la funzione appartiene agli indicator strategy
     add_indicators = func in ins_vec.indicators_strategy
 
-    res = trades.run_backtest_DaxPattern_vec(
+    res = trades.run_x_backtest_DaxPattern_vec(
         f"../data/{ticker}.csv",
         slperc=bu.cache["stop_loss"],
         tpperc=bu.cache["take_profit"],

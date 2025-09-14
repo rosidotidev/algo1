@@ -1,10 +1,11 @@
 import pandas as pd
 from typing import Optional, List
+import json
 from stock.strategy_repo import StrategyRepo
 import stock.ticker as ti
 
 class TickerStrategyRepo:
-    def __init__(self, base_path: str = "../data/)"):
+    def __init__(self, base_path: str = "../data/"):
         self.base_path = base_path
         self.filename = f'{base_path}ticker_strategies.csv'
         self._df: Optional[pd.DataFrame] = None
@@ -15,15 +16,19 @@ class TickerStrategyRepo:
         try:
             self._df = pd.read_csv(self.filename)
             # Converts the string representation of the dictionary into an actual dictionary
-            self._df['params'] = self._df['params'].apply(eval)
+            #self._df['params'] = self._df['params'].apply(eval)
+            self._df['params'] = self._df['params'].apply(json.loads)
         except FileNotFoundError:
             print(f"File '{self.filename}' not found. Initializing a new repository...")
             self._df = pd.DataFrame(columns=['ticker', 'strategy_func', 'params'])
 
     def save(self):
         """Saves the repository to CSV."""
-        self._df.to_csv(self.filename, index=False)
-        print(f"Ticker strategy repository saved to '{self.filename}'.")
+        #self._df.to_csv(self.filename, index=False)
+        df_copy = self._df.copy()
+        df_copy['params'] = df_copy['params'].apply(json.dumps)
+        df_copy.to_csv(self.filename, index=False)
+        #print(f"Ticker strategy repository saved to '{self.filename}'.")
 
     def add_strategy(self, ticker: str, strategy_name: str, params: dict):
         """Adds a new strategy to the repository."""
