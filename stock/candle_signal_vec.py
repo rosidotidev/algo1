@@ -1,6 +1,72 @@
 import pandas as pd
 import numpy as np
 
+def retracement_tf_vectorized(df, short=5, medium=10, long=20):
+    """
+    Trend-following retracement strategy (TF).
+
+    Logic:
+        - Long (2) when short MMA < medium MMA and short MMA > long MMA (uptrend pullback)
+        - Short (1) when short MMA > medium MMA and short MMA < long MMA (downtrend pullback)
+        - Hold (0) otherwise
+
+    Args:
+        df (pd.DataFrame): Must contain 'Close' column
+        short (int): period for short moving average
+        medium (int): period for medium moving average
+        long (int): period for long moving average
+
+    Returns:
+        pd.Series: signals (2=Long, 1=Short, 0=Hold)
+    """
+    # Calculate moving averages
+    df['mma_short'] = df['Close'].rolling(short).mean()
+    df['mma_medium'] = df['Close'].rolling(medium).mean()
+    df['mma_long'] = df['Close'].rolling(long).mean()
+
+    # Define entry conditions
+    long_signal = (df['mma_short'] < df['mma_medium']) & (df['mma_short'] > df['mma_long'])
+    short_signal = (df['mma_short'] > df['mma_medium']) & (df['mma_short'] < df['mma_long'])
+
+    # Create signals series
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[long_signal] = 2
+    signals[short_signal] = 1
+
+    # Clean temporary columns
+    df.drop(columns=['mma_short', 'mma_medium', 'mma_long'], inplace=True)
+
+    return signals
+
+
+def retracement_rev_vectorized(df, short=5, medium=10, long=20):
+    """
+    Reversion retracement strategy (REVERSION).
+
+    Logic:
+        - Invert signals of the trend-following retracement strategy:
+            - Long becomes Short
+            - Short becomes Long
+        - Hold remains 0
+
+    Args:
+        df (pd.DataFrame): Must contain 'Close' column
+        short (int): period for short moving average
+        medium (int): period for medium moving average
+        long (int): period for long moving average
+
+    Returns:
+        pd.Series: signals (2=Long, 1=Short, 0=Hold)
+    """
+    # Get trend-following signals
+    tf_signals = retracement_tf_vectorized(df.copy(), short, medium, long)
+
+    # Invert the signals for reversion
+    reversion_signals = tf_signals.map({2: 1, 1: 2, 0: 0}).astype('int8')
+
+    return reversion_signals
+
+
 def count_hammers(df):
     df['body'] = abs(df['Close'] - df['Open'])
     df['lower_wick'] = df[['Open', 'Close']].min(axis=1) - df['Low']
@@ -631,7 +697,10 @@ candlestick_strategies = [
     doji_signal_strategy_v1_vectorized,
     filled_bar_vectorized,
     inverted_filled_bar_strategy,
-    combined_signal_vectorized
+    retracement_rev_vectorized,
+    retracement_tf_vectorized,
+
+    #combined_signal_vectorized
 ]
 if __name__ == "__main__":
     print(count_hammers_in_ticker("GE"))

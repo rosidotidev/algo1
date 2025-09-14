@@ -5,6 +5,12 @@ import strategy.xx_trades_bt as trades
 import pandas as pd
 from typing import List
 
+def run_long_process(optimize=False):
+
+    result_string=trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"],optimize=optimize)
+    updated_files = bu.get_csv_files("../results/")
+    return result_string, updated_files
+
 def get_strategy_names() -> List[str]:
     """
     Combines two predefined lists of strategy functions and returns their names

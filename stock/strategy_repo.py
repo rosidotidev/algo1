@@ -40,6 +40,17 @@ class StrategyRepo:
     def get_all_available_strategy_functions():
             return ins_vec.indicators_strategy + cs_vec.candlestick_strategies
 
+    @staticmethod
+    def get_strategy_function_by_name(name: str):
+        """
+        Returns the function object whose __name__ matches the given name.
+        Returns None if no match is found.
+        """
+        for func in StrategyRepo.get_all_available_strategy_functions():
+            if func.__name__ == name:
+                return func
+        return None
+
     def init_repo(self) -> pd.DataFrame:
         """Initialize the repository with all available strategies."""
         backtesting_functions = ins_vec.indicators_strategy + cs_vec.candlestick_strategies

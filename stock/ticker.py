@@ -66,6 +66,20 @@ def get_ticker_from_file_path(file_path):
     ticker = os.path.splitext(filename)[0]
     return ticker
 
+
+def get_data_path_from_file_path(file_path: str) -> str:
+    """
+    Given a file path, returns the directory path.
+
+    Example:
+        '../data/AAPL.csv' -> '../data/'
+    """
+    dir_path = os.path.dirname(file_path)
+    # Assicuriamoci che finisca con '/'
+    if not dir_path.endswith("/"):
+        dir_path += "/"
+    return dir_path
+
 def read_from_csv(file_path):
     return pd.read_csv(file_path)
 # Function to generate forward-looking labels for trading signals

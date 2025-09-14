@@ -4,7 +4,6 @@ from backtrader_util import bu
 import stock.candle_signal_vec as cs_vec
 import stock.indicators_signal_vec as ins_vec
 import data.data_enricher as de
-import concurrent.futures
 import time
 import datetime
 import os
@@ -13,6 +12,11 @@ from stock.x_backtesting_bt import XBacktestingBT
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import pandas as pd
 import traceback
+from strategy.ticker_stategy_repo import TickerStrategyRepo
+
+from strategy.ticker_strategy import TickerStrategy
+from strategy.x_strategy_bt import XStrategyBT
+
 
 def load_best_matrix(path: str) -> pd.DataFrame:
     if os.path.exists(path):
@@ -95,6 +99,53 @@ def run_backtest_DaxPattern_vec_df(df, slperc=0.04, tpperc=0.02, capital_allocat
     # Esegui il backtest
     ctx = {}
     results = bt.run(slperc=slperc, tpperc=tpperc, df=df, ctx=ctx)
+    ctx.update(results.to_dict())
+    # print(f" ctx {results}")
+    if show_plot:
+        bt.plot(filename=None)
+    for key, value in ctx.items():
+        results[key] = bu.format_value(value)
+    # Used to solve issue on single backtest
+    if False:
+        bu.debug_if_contains("DRS", data_path, ctx, results);
+    # return cerebro.broker.getvalue()
+    return results
+
+def run_x_backtest_DaxPattern_vec(data_path, slperc=0.04, tpperc=0.02, capital_allocation=1, show_plot=False,
+                                    target_strategy=cs_vec.dax_total_signal_vectorized, add_indicators=True):
+    df = ti.read_from_csv(data_path)
+    df = bu.norm_date_time(df.copy())
+    if add_indicators:
+        df = de.add_rsi_macd_bb(df)
+        df = de.add_smas_long_short(df)
+        df = de.add_stoch(df)
+        df = de.add_adx_column(df)
+
+    ticker=ti.get_ticker_from_file_path(data_path)
+    dir_path=ti.get_data_path_from_file_path(data_path)
+    tsr=TickerStrategyRepo(dir_path)
+
+    tsd=tsr.get_by_ticker_and_strategy(ticker,target_strategy.__name__)
+
+    if tsd:
+        ts = TickerStrategy(
+            ticker=tsd["ticker"],
+            strategy_func=tsd["strategy_func"],
+            params=tsd["params"]
+        )
+        print("TickerStrategy created:", ts)
+    else:
+        ts = None
+
+    bt = Backtest(df.dropna(), XStrategyBT,
+                  cash=10000,
+                  finalize_trades=True,
+                  exclusive_orders=True,
+                  commission=.002)
+
+    # Esegui il backtest
+    ctx = {}
+    results = bt.run(slperc=slperc, tpperc=tpperc, ts=ts,df=df, ctx=ctx)
     ctx.update(results.to_dict())
     # print(f" ctx {results}")
     if show_plot:
@@ -368,5 +419,9 @@ def test3():
 
     print(df)
     print(f"Data exec time: {exec_time - start_time:.2f} seconds")
+
+def test4():
+    s2 = run_x_backtest_DaxPattern_vec("../../data/DRS.csv", slperc=0.15, tpperc=0.40, target_strategy=cs_vec.filled_bar_vectorized,
+                                 capital_allocation=10000, show_plot=True,add_indicators=False)
 if __name__ == "__main__":
-    test2()
+    test4()

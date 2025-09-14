@@ -1187,6 +1187,6 @@ indicators_strategy =[
     donchian_channel_20_10_10,
     donchian_channel_10_5_5,
     donchian_channel_20_5_5,
-    t_indicators_combined_signal_vectorized
+    #t_indicators_combined_signal_vectorized
 ]
 

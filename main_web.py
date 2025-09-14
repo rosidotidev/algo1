@@ -1,7 +1,6 @@
 import warnings
 import gradio as gr
 import pandas as pd
-import strategy.xx_trades_bt as trades
 import stock.indicators_signal_vec as ins_vec
 import stock.candle_signal_vec as cs_vec
 import stock.ticker as ti
@@ -34,8 +33,8 @@ def generate_best_matrix(win_rate, ret, trades,strategies):
 
 def run_long_process(optimize=False):
     #bu.reset_df_cache()
-    result_string=trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"],optimize=optimize)
-    updated_files = bu.get_csv_files("../results/")
+    result_string, updated_files =biz.run_long_process(optimize=optimize)
+
     return result_string, gr.update(choices=updated_files)
 
 def load_all_tickers():
