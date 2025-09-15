@@ -1,29 +1,137 @@
 import time
 import numpy as np
 import itertools
-import pandas as pd
 from stock.my_yfinance import MyYFinance
 import stock.candle_signal_vec as scs
+import stock.indicators_signal_vec as si
 import strategy.xx_trades_bt as trades
 from strategy.ticker_stategy_repo import TickerStrategyRepo
+import json
+import pandas as pd
+
+def get_best_strategies(
+    df: pd.DataFrame,
+    top_n: int = 5,
+    min_trades: int = 6,
+    sort_by: str = "Win Rate [%]"
+) -> pd.DataFrame:
+    """
+    Estrae le migliori strategie da un dataframe di risultati di backtest.
+
+    Args:
+        df (pd.DataFrame): dataframe con colonne ['ticker', 'strategy', 'params', 'Win Rate [%]', '# Trades', 'Return [%]']
+        top_n (int): numero di strategie migliori da estrarre.
+        min_trades (int): filtro minimo sul numero di trades.
+        sort_by (str): metrica su cui ordinare (default = 'Win Rate [%]').
+
+    Returns:
+        pd.DataFrame: sottoinsieme con le top strategie.
+    """
+
+    # Assicura che params sia un dict
+    df = df.copy()
+    if df["params"].dtype == object:
+        try:
+            df["params"] = df["params"].apply(
+                lambda x: json.loads(x) if isinstance(x, str) else x
+            )
+        except Exception:
+            pass
+
+    # Applica filtro sui trades
+    df_filtered = df[df["# Trades"] >= min_trades]
+
+    # Ordina per la metrica scelta
+    df_sorted = df_filtered.sort_values(by=sort_by, ascending=False)
+
+    # Restituisci solo le top_n
+    return df_sorted.head(top_n)
 
 
-# Importa la tua funzione di segnale
-def filled_bar_vectorized(df, ratio=0.8):
-    df["ratio"] = (df['Close'] - df['Open']) / (df['High'] - df['Low'])
-    df['prev_low'] = df['Low'].shift(1)
-    bullish_signal = df["ratio"] > ratio
-    bearish_signal = df['Close'] < df['prev_low']
-    signals = pd.Series(0, index=df.index, dtype='int8')
-    signals[bullish_signal] = 2  # Buy signal
-    signals[bearish_signal] = 1  # Sell signal
-    df.drop(columns=['ratio', 'prev_low'], inplace=True)
-    return signals
+def test_weekly_breakout_vectorized():
+    ticker = "UCG.MI"
+    func = si.weekly_breakout_vectorized
+    price = MyYFinance.fetch_by_period(ticker, period='3y')
+
+    # lookback_weeks=1, entry_day=1
+    lbw_window = np.arange(1, 5, 1)
+    ed_window = np.arange(1, 4, 1)
 
 
-def main3():
+    all_portfolios = {}
+    results_list = []
+    tsp = TickerStrategyRepo("../../data/")
 
-    ticker="MS"
+    strategy = tsp.get_by_ticker_and_strategy(ticker, func.__name__)
+    # Iterate through all combinations of fast and slow windows
+    for lw, ew in itertools.product(lbw_window, ed_window):
+
+        # strategy=tsp.get_by_ticker_and_strategy(ticker,scs.retracement_tf_vectorized.__name__)
+        tsp.update_ticker_strategy(strategy["ticker"], strategy["strategy_func"],
+                                   {"lookback_weeks": int(lw), "entry_day": int(ew)})
+        sl_w = 0.05
+        tp_w = 0.08
+        res = trades.run_x_backtest_DaxPattern_vec(f"../../data/{ticker}.csv", slperc=sl_w, tpperc=tp_w,
+                                                   capital_allocation=1, show_plot=False,
+                                                   target_strategy=func, add_indicators=True)
+
+        all_portfolios[(lw, ew)] = res
+        win_rate = res["Win Rate [%]"]
+        n_trades = res["# Trades"]
+        ret = res["Return [%]"]
+        max_drawdown = res["Max. Drawdown [%]"]
+        # lookback_weeks=1, entry_day=1
+        results_list.append({
+            "ticker": ticker,
+            "strategy": func.__name__,
+            "Win Rate [%]": float(win_rate),
+            "# Trades": float(n_trades),
+            "Return [%]": float(ret),
+            "Max. Drawdown [%]": float(max_drawdown),
+            "params": {
+                "lookback_weeks": int(lw),
+                "entry_day": int(ew)
+            },
+        })
+
+        print(f'[{lw},{ew}] win rate {win_rate}, n trades {n_trades}, ret {ret}')
+
+    df_results = pd.DataFrame(results_list)
+    # Converto la colonna "params" in JSON string così resta leggibile nel CSV
+    df_results["params"] = df_results["params"].apply(json.dumps)
+
+    df_results.to_csv(
+        f"../../optimization/{ticker}_{func.__name__}_backtest_results.csv",
+        index=False
+    )
+
+    best_return = -np.inf
+    best_params = None
+    for params, portfolio in all_portfolios.items():
+        current_return = float(portfolio["Win Rate [%]"])
+        if current_return > best_return and float(portfolio["# Trades"]) > 6:
+            best_return = current_return
+            best_params = params
+
+    tsp.update_ticker_strategy(ticker, func.__name__,
+                               {"lookback_weeks": int(best_params[0]), "entry_day": int(best_params[1])})
+
+    best_portfolio = all_portfolios[best_params]
+    print(f' best parameters {best_params}')
+    print(best_portfolio)
+
+    # Esempio di utilizzo
+    # df_results = pd.read_csv("...")  # se già salvato
+    top_n = get_best_strategies(df_results, top_n=15)
+    pd.set_option("display.max_columns", None)
+    pd.set_option("display.width", None)
+    pd.set_option("display.max_colwidth", None)
+    print(top_n)
+
+
+def test_retracement_rev_vectorized():
+
+    ticker="SNOW"
     func=scs.retracement_rev_vectorized
     price = MyYFinance.fetch_by_period(ticker, period='3y')
 
@@ -36,6 +144,7 @@ def main3():
     l_window = np.arange(15, 40, 5)
 
     all_portfolios = {}
+    results_list = []
     tsp=TickerStrategyRepo("../../data/")
 
     strategy = tsp.get_by_ticker_and_strategy(ticker, func.__name__)
@@ -53,8 +162,32 @@ def main3():
             win_rate=res["Win Rate [%]"]
             n_trades=res["# Trades"]
             ret=res["Return [%]"]
+            max_drawdown=res["Max. Drawdown [%]"]
+
+            results_list.append({
+                "ticker": ticker,
+                "strategy": func.__name__,
+                "Win Rate [%]": float(win_rate),
+                "# Trades": float(n_trades),
+                "Return [%]": float(ret),
+                "Max. Drawdown [%]": float(max_drawdown),
+                "params": {
+                    "short": int(s_w),
+                    "medium": int(m_w),
+                    "long": int(l_w)
+                },
+            })
 
             print(f'[{s_w},{m_w},{l_w}] win rate {win_rate}, n trades {n_trades}, ret {ret}')
+
+    df_results = pd.DataFrame(results_list)
+    # Converto la colonna "params" in JSON string così resta leggibile nel CSV
+    df_results["params"] = df_results["params"].apply(json.dumps)
+
+    df_results.to_csv(
+        f"../../optimization/{ticker}_{func.__name__}_backtest_results.csv",
+        index=False
+    )
 
     best_return = -np.inf
     best_params = None
@@ -71,6 +204,15 @@ def main3():
     print(f' best parameters {best_params}')
     print(best_portfolio)
 
+    # Esempio di utilizzo
+    # df_results = pd.read_csv("...")  # se già salvato
+    top_n = get_best_strategies(df_results, top_n=15)
+    pd.set_option("display.max_columns", None)
+    pd.set_option("display.width", None)
+    pd.set_option("display.max_colwidth", None)
+    print(top_n)
+
 if __name__ == "__main__":
-    main3()
+    #test_retracement_rev_vectorized()
+    test_weekly_breakout_vectorized()
 

@@ -111,15 +111,15 @@ class TickerStrategyRepo:
 if __name__ == "__main__":
     repo = TickerStrategyRepo('../../data/')
     repo.init_repo()
+    if False:
+        # Test retrieval
+        test_result = repo.get_by_ticker_and_strategy("AAPL", "mean_reversion")
+        print("\nTest: get_by_ticker_and_strategy('AAPL', 'mean_reversion')")
+        print(test_result)
 
-    # Test retrieval
-    test_result = repo.get_by_ticker_and_strategy("AAPL", "mean_reversion")
-    print("\nTest: get_by_ticker_and_strategy('AAPL', 'mean_reversion')")
-    print(test_result)
-
-    # Test add_strategy
-    repo.add_strategy("GOOG", "custom_strategy", {"param1": 123, "param2": "abc"})
-    print("\nAdded custom strategy for GOOG")
-    print(repo.get_by_ticker_and_strategy("GOOG", "custom_strategy"))
-    repo.update_ticker_strategy("GOOG", "custom_strategy", {"param1": 124, "param2": "def"})
-    print(repo.get_by_ticker_and_strategy("GOOG", "custom_strategy"))
+        # Test add_strategy
+        repo.add_strategy("GOOG", "custom_strategy", {"param1": 123, "param2": "abc"})
+        print("\nAdded custom strategy for GOOG")
+        print(repo.get_by_ticker_and_strategy("GOOG", "custom_strategy"))
+        repo.update_ticker_strategy("GOOG", "custom_strategy", {"param1": 124, "param2": "def"})
+        print(repo.get_by_ticker_and_strategy("GOOG", "custom_strategy"))

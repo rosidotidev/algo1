@@ -2,10 +2,6 @@
 import pandas as pd
 import backtrader_util.bu as bu
 
-def adx_sma_tf_20_50_25(df) -> pd.Series:
-    return adx_sma_trend_following(df, 20, 50, 25)
-
-
 def adx_sma_tf_10_30_25(df) -> pd.Series:
     return adx_sma_trend_following(df, 10, 30, 25)
 
@@ -51,18 +47,12 @@ def adx_sma_trend_following(df, short_window: int = 20, long_window: int = 50, a
 
     return signals
 
-
-def adx_trend_breakout_20_25(df) -> pd.Series:
-    return adx_trend_breakout(df, 20, 25)
-
-
 def adx_trend_breakout_10_40(df) -> pd.Series:
     return adx_trend_breakout(df, 10, 40)
 
 
 def adx_trend_breakout_10_35(df) -> pd.Series:
     return adx_trend_breakout(df, 10, 35)
-
 
 def adx_trend_breakout(df, lookback: int = 20, adx_threshold: float = 25) -> pd.Series:
     """
@@ -95,9 +85,6 @@ def adx_trend_breakout(df, lookback: int = 20, adx_threshold: float = 25) -> pd.
     signals[sell_condition] = 1
 
     return signals
-
-def donchian_breakout_with_ma_20_50(df):
-    return donchian_breakout_with_ma_filter(df, lookback=20, ma_window=50)
 
 def donchian_breakout_with_ma_10_30(df):
     return donchian_breakout_with_ma_filter(df, lookback=10, ma_window=30)
@@ -188,9 +175,6 @@ def keltner_channel_vectorized(df: pd.DataFrame, lookback_periods: int = 20, atr
 
     return signals
 
-def donchian_channel_20_10_10(df):
-    return donchian_channel_vectorized(df,20,10,10)
-
 def donchian_channel_10_5_5(df):
     return donchian_channel_vectorized(df,10,5,5)
 
@@ -241,13 +225,6 @@ def donchian_channel_vectorized(df: pd.DataFrame,
     signals[(exit_short) & (signals == 0)] = -1
 
     return signals
-
-import pandas as pd
-
-import pandas as pd
-
-def weekly_breakout_1_1(df):
-    return weekly_breakout_vectorized(df,1,1)
 
 def weekly_breakout_2_1(df):
     return weekly_breakout_vectorized(df,2,1)
@@ -1134,9 +1111,6 @@ def bollinger_bands_adx_simple_vectorized(df, adx_entry_threshold=25, adx_exit_t
 
     return signals
 
-def bollinger_bands_adx_simple_25_20_vectorized(df):
-    return bollinger_bands_adx_simple_vectorized(df, adx_entry_threshold=25, adx_exit_threshold=20)
-
 def bollinger_bands_adx_simple_35_20_vectorized(df):
     return bollinger_bands_adx_simple_vectorized(df, adx_entry_threshold=35, adx_exit_threshold=20)
 
@@ -1160,31 +1134,31 @@ indicators_strategy =[
     pinbar_macd_strategy_vectorized,
     doji_rsi_simplified_vectorized,
     bollinger_bands_adx_simple_35_20_vectorized,
-    bollinger_bands_adx_simple_25_20_vectorized,
+    bollinger_bands_adx_simple_vectorized,
     bollinger_bands_adx_simple_45_25_vectorized,
     x_bollinger_macd_total_signal_5_vectorized,
     x_bollinger_macd_total_signal_10_vectorized,
     x_rsi_bollinger_total_signal_15_65_35_vectorized,
     x_rsi_bollinger_total_signal_10_70_30_vectorized,
-    adx_sma_tf_20_50_25,
+    adx_sma_trend_following,
     adx_sma_tf_10_30_25,
     adx_sma_tf_15_40_35,
     adx_sma_tf_10_30_35,
-    adx_trend_breakout_20_25,
+    adx_trend_breakout,
     adx_trend_breakout_10_40,
     adx_trend_breakout_10_35,
-    donchian_breakout_with_ma_20_50,
+    donchian_breakout_with_ma_filter,
     donchian_breakout_with_ma_10_30,
     donchian_breakout_with_ma_15_40,
     #keltner_channel_vectorized,
     #donchian_channel_vectorized,
-    weekly_breakout_1_1,
+    weekly_breakout_vectorized,
     weekly_breakout_1_2,
     weekly_breakout_2_1,
     weekly_breakout_2_2,
     weekly_breakout_1_3,
     weekly_breakout_2_3,
-    donchian_channel_20_10_10,
+    donchian_channel_vectorized,
     donchian_channel_10_5_5,
     donchian_channel_20_5_5,
     #t_indicators_combined_signal_vectorized
