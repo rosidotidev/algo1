@@ -7,10 +7,22 @@ import stock.ticker as ti
 import backtrader_util.bu as bu
 import biz.biz_logic as biz
 from stock.strategy_repo import StrategyRepo
+import json
+import numpy as np
+from strategy.strategy_optmizer import optimize_strategy
 
 
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
+
+def prefill_param_space(strategy_name):
+
+    param_space = bu.suggest_param_space(strategy_name)
+
+    # converte in JSON / dict leggibile
+    import json
+    return json.dumps(param_space, separators=(",", ":"), indent=None)
+
 
 def save_cache(stop_loss, take_profit):
     return biz.save_cache(stop_loss, take_profit)
@@ -310,110 +322,190 @@ def main():
                     outputs=matrix_output
                 )
             with gr.TabItem("Manage Strategies"):
-                gr.Markdown("### Initialize and enable/disable strategies in the repository")
+                with gr.Tabs():  # <-- contenitore dei sottotab
+                    with gr.TabItem("Strategy Enablement"):  # <-- il tuo primo sotto-tab
+                        # --- tutto il codice attuale qui dentro ---
 
-                # Instantiate the StrategyRepo
+                        repo = StrategyRepo()
 
-                repo = StrategyRepo()
+                        def get_df_for_display():
+                            df = repo.get_all_strategies().copy()
+                            if "function_ref" in df.columns:
+                                df = df.drop(columns=["function_ref"])
+                            return df
 
-                def get_df_for_display():
-                    df = repo.get_all_strategies().copy()
-                    if "function_ref" in df.columns:
-                        df = df.drop(columns=["function_ref"])
-                    return df
-                with gr.Row():
-                    # Left column: actions
-                    with gr.Column(scale=1):
-                        # Initialize Repo
-                        init_button = gr.Button("Initialize Repository")
+                        with gr.Row():
+                            # Left column: actions
+                            with gr.Column(scale=1):
+                                init_button = gr.Button("Initialize Repository")
 
-                        strategy_dropdown = gr.Dropdown(
-                            choices=repo.get_all_strategies_as_list(),
-                            label="Select Strategy"
+                                strategy_dropdown = gr.Dropdown(
+                                    choices=repo.get_all_strategies_as_list(),
+                                    label="Select Strategy"
+                                )
+
+                                enable_button = gr.Button("Enable Strategy")
+                                disable_button = gr.Button("Disable Strategy")
+                                save_button = gr.Button("Save Changes")
+                                enable_all_button = gr.Button("Enable All Strategies")
+                                disable_all_button = gr.Button("Disable All Strategies")
+
+                                message_output = gr.Textbox(label="Status Message")
+
+                            # Right column: display current DataFrame
+                            with gr.Column(scale=3):
+                                strategies_df = gr.Dataframe(
+                                    value=get_df_for_display(),
+                                    label="Current Strategies",
+                                    interactive=True
+                                )
+
+                        # --- Callback functions come prima ---
+                        def enable_all_callback():
+                            repo.enable_all()
+                            return get_df_for_display(), "All strategies enabled."
+
+                        def disable_all_callback():
+                            repo.disable_all()
+                            return get_df_for_display(), "All strategies disabled."
+
+                        def init_repo():
+                            init_repos(repo)
+                            return get_df_for_display(), repo.get_all_strategies_as_list(), "Repository initialized."
+
+                        def enable_strategy(name):
+                            if not name:
+                                return repo.get_all_strategies(), "No strategy selected."
+                            repo.enable(name)
+                            return get_df_for_display(), f"Strategy '{name}' enabled."
+
+                        def disable_strategy(name):
+                            if not name:
+                                return repo.get_all_strategies(), "No strategy selected."
+                            repo.disable(name)
+                            return get_df_for_display(), f"Strategy '{name}' disabled."
+
+                        def save_changes_callback(df):
+                            df = df.copy()
+                            if "enabled" in df.columns:
+                                df["enabled"] = df["enabled"].astype(bool)
+                            if "score" in df.columns:
+                                df["score"] = pd.to_numeric(df["score"], errors="coerce")
+                            repo._df = df
+                            repo.save()
+                            return get_df_for_display(), "Changes saved."
+
+                        enable_all_button.click(
+                            enable_all_callback,
+                            inputs=[],
+                            outputs=[strategies_df, message_output]
+                        )
+                        disable_all_button.click(
+                            disable_all_callback,
+                            inputs=[],
+                            outputs=[strategies_df, message_output]
+                        )
+                        save_button.click(
+                            save_changes_callback,
+                            inputs=[strategies_df],
+                            outputs=[strategies_df, message_output]
+                        )
+                        init_button.click(
+                            init_repo,
+                            inputs=[],
+                            outputs=[strategies_df, strategy_dropdown, message_output]
+                        )
+                        enable_button.click(
+                            enable_strategy,
+                            inputs=[strategy_dropdown],
+                            outputs=[strategies_df, message_output]
+                        )
+                        disable_button.click(
+                            disable_strategy,
+                            inputs=[strategy_dropdown],
+                            outputs=[strategies_df, message_output]
                         )
 
-                        enable_button = gr.Button("Enable Strategy")
-                        disable_button = gr.Button("Disable Strategy")
-                        save_button = gr.Button("Save Changes")
-                        enable_all_button = gr.Button("Enable All Strategies")
-                        disable_all_button = gr.Button("Disable All Strategies")
+                    with gr.TabItem("Optimization"):
+                        gr.Markdown("### Run parameter optimization for a specific ticker and strategy.")
 
-                        message_output = gr.Textbox(label="Status Message")
+                        tickers = ti.read_tickers_from_file("../data/tickers.txt")
+                        strategies = ins_vec.indicators_strategy + cs_vec.candlestick_strategies
+                        strategy_choices = [f.__name__.replace("_", " ") for f in strategies]
 
-                    # Right column: display current DataFrame
-                    with gr.Column(scale=3):
-                        strategies_df = gr.Dataframe(
-                            value=get_df_for_display(),
-                            label="Current Strategies",
-                            interactive=True
+                        with gr.Row():
+                            # --- Left column: inputs ---
+                            with gr.Column(scale=1):
+                                ticker_dropdown = gr.Dropdown(
+                                    choices=tickers,
+                                    label="Select Ticker"
+                                )
+                                strategy_dropdown = gr.Dropdown(
+                                    choices=strategy_choices,
+                                    label="Select Strategy"
+                                )
+
+                                # Prefilled param_space text area (editable)
+                                params_text = gr.Textbox(
+                                    label="Parameter Space (Python dict)",
+                                    lines=10,
+                                    value="{}"
+                                )
+
+                                optimize_button = gr.Button("Run Optimization")
+
+                            # --- Right column: results ---
+                            with gr.Column(scale=3):
+                                optimization_results = gr.Dataframe(
+                                    label="Optimization Results",
+                                    interactive=False
+                                )
+                                best_params_output = gr.Textbox(
+                                    label="Best Parameters"
+                                )
+
+                        # --- Callback ---
+                        def run_optimization_ui(ticker, strategy_name, params_text):
+                            # Recupera la funzione dalla lista delle strategie
+                            strategies = ins_vec.indicators_strategy + cs_vec.candlestick_strategies
+                            strategy_map = {f.__name__.replace("_", " "): f for f in strategies}
+                            func = strategy_map.get(strategy_name)
+                            if func is None:
+                                return {}, f"Strategy '{strategy_name}' not found."
+
+                            # Legge il JSON dalla Textbox
+                            try:
+                                param_dict = json.loads(params_text)
+                            except json.JSONDecodeError as e:
+                                return {}, f"Errore nel JSON: {e}"
+
+                            # Converte [min,max,step] in np.arange
+                            param_space = {}
+                            for k, v in param_dict.items():
+                                if isinstance(v, list) and len(v) == 3:
+                                    param_space[k] = np.arange(v[0], v[1], v[2])
+                                else:
+                                    return {}, f"Parametro '{k}' non valido: deve essere [min,max,step]"
+
+                            # Chiama la funzione di ottimizzazione
+                            df_results, best_portfolio = optimize_strategy(
+                                ticker=ticker,
+                                func=func,
+                                param_space=param_space
+                            )
+
+                            return df_results, str(best_portfolio)
+
+                        optimize_button.click(
+                            run_optimization_ui,
+                            inputs=[ticker_dropdown, strategy_dropdown, params_text],
+                            outputs=[optimization_results, best_params_output]
                         )
-
-                # --- Callback functions ---
-                def enable_all_callback():
-                    repo.enable_all()
-                    return get_df_for_display(), "All strategies enabled."
-
-                def disable_all_callback():
-                    repo.disable_all()
-                    return get_df_for_display(), "All strategies disabled."
-
-                def init_repo():
-                    init_repos(repo)
-                    return get_df_for_display(), repo.get_all_strategies_as_list(), "Repository initialized."
-
-                def enable_strategy(name):
-                    if not name:
-                        return repo.get_all_strategies(), "No strategy selected."
-                    repo.enable(name)
-                    return get_df_for_display(), f"Strategy '{name}' enabled."
-
-                def disable_strategy(name):
-                    if not name:
-                        return repo.get_all_strategies(), "No strategy selected."
-                    repo.disable(name)
-                    return get_df_for_display(), f"Strategy '{name}' disabled."
-
-                def save_changes_callback(df):
-                    df = df.copy()
-                    if "enabled" in df.columns:
-                        df["enabled"] = df["enabled"].astype(bool)
-                    if "score" in df.columns:
-                        df["score"] = pd.to_numeric(df["score"], errors="coerce")
-                    repo._df = df
-                    repo.save()
-                    return get_df_for_display(), "Changes saved."
-                enable_all_button.click(
-                    enable_all_callback,
-                    inputs=[],
-                    outputs=[strategies_df, message_output]
-                )
-                disable_all_button.click(
-                    disable_all_callback,
-                    inputs=[],
-                    outputs=[strategies_df, message_output]
-                )
-
-                save_button.click(
-                    save_changes_callback,
-                    inputs=[strategies_df],
-                    outputs=[strategies_df, message_output]
-                )
-                # --- Connect Buttons to Callbacks ---
-                init_button.click(
-                    init_repo,
-                    inputs=[],
-                    outputs=[strategies_df, strategy_dropdown, message_output]
-                )
-                enable_button.click(
-                    enable_strategy,
-                    inputs=[strategy_dropdown],
-                    outputs=[strategies_df, message_output]
-                )
-                disable_button.click(
-                    disable_strategy,
-                    inputs=[strategy_dropdown],
-                    outputs=[strategies_df, message_output]
-                )
+                        strategy_dropdown.change(
+                            prefill_param_space,  # funzione che calcola param_space
+                            inputs=[strategy_dropdown],  # input: nome della strategy selezionata
+                            outputs=[params_text]  # output: aggiorna la textbox
+                        )
 
     demo.launch(share=True)
 

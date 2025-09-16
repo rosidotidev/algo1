@@ -2,7 +2,9 @@ import os
 import pandas as pd
 from datetime import datetime
 import backtrader_util.bu as bu
-
+from stock.strategy_repo import StrategyRepo
+import json
+import inspect
 import pandas as pd
 
 
@@ -36,6 +38,55 @@ def append_df(df1,df2):
         return df1
     df_final = pd.concat([df1, df2], ignore_index=True)
     return df_final
+
+def suggest_param_space(func_name: str):
+    """
+    Generate a default param_space dictionary for a strategy function name.
+
+    Heuristics:
+        - int parameters -> [default-2, default+3, 1]
+        - float parameters -> [default*0.5, default*1.5, default/10]
+        - parameters without default -> [1, 5, 1]
+
+    The first parameter (usually 'df') is skipped.
+    Each parameter is represented as a 3-element array: [min, max, step].
+    """
+    strategies = StrategyRepo.get_all_available_strategy_functions()
+    strategy_map = {f.__name__: f for f in strategies}
+
+    # converte spazi in underscore
+    f_name = func_name.replace(" ", "_")
+    func = strategy_map.get(f_name)
+    if func is None:
+        raise ValueError(f"Strategy '{func_name}' not found in StrategyRepo")
+
+    sig = inspect.signature(func)
+    param_space = {}
+
+    keys = list(sig.parameters.keys())
+    for i, (name, param) in enumerate(sig.parameters.items()):
+        if i == 0:
+            continue  # scarta il primo parametro
+
+        default = param.default
+        if default is inspect._empty:
+            param_space[name] = [1, 5, 1]
+        elif isinstance(default, int):
+            param_space[name] = [max(1, default - 2), default + 3, 1]
+        elif isinstance(default, float):
+            step = round(default / 10, 3) if default > 0 else 0.1
+            param_space[name] = [round(default * 0.5, 3), round(default * 1.5, 3), step]
+        else:
+            param_space[name] = ["TODO_min", "TODO_max", "TODO_step"]
+
+    return param_space
+
+
+def get_prefill_param_space(strategy_name):
+    strategies=StrategyRepo.get_all_available_strategy_functions()
+    func_map = {f.__name__.replace("_", " "): f for f in strategies}
+    func = func_map[strategy_name]
+    return json.dumps(suggest_param_space(func), indent=2)
 
 def load_csv(input_file="backtest_results.csv"):
     """

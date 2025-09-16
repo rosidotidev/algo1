@@ -51,6 +51,11 @@ class StrategyRepo:
                 return func
         return None
 
+    @staticmethod
+    def get_add_indicators_flag(strategy):
+        return strategy in ins_vec.indicators_strategy
+
+
     def init_repo(self) -> pd.DataFrame:
         """Initialize the repository with all available strategies."""
         backtesting_functions = ins_vec.indicators_strategy + cs_vec.candlestick_strategies
@@ -58,7 +63,7 @@ class StrategyRepo:
 
         for i, f in enumerate(backtesting_functions):
             # Determine enrich flag
-            enrich_flag = f in ins_vec.indicators_strategy
+            enrich_flag = StrategyRepo.get_add_indicators_flag(f)
 
             strategy_data.append({
                 "id": i,
