@@ -47,6 +47,88 @@ def get_best_strategies(
     # Restituisci solo le top_n
     return df_sorted.head(top_n)
 
+def test_donchian_breakout_with_ma_filter(tick="TPR",strat=si.donchian_breakout_with_ma_filter):
+    ticker = tick
+    func = strat
+    price = MyYFinance.fetch_by_period(ticker, period='3y')
+
+    # lookback=20, ma_window=50
+    lbw_window = np.arange(10, 20, 2)
+    ma_window = np.arange(25, 55, 1)
+
+
+    all_portfolios = {}
+    results_list = []
+    tsp = TickerStrategyRepo("../../data/")
+
+    strategy = tsp.get_by_ticker_and_strategy(ticker, func.__name__)
+    # Iterate through all combinations of fast and slow windows
+    for lw, mw in itertools.product(lbw_window, ma_window):
+
+        # strategy=tsp.get_by_ticker_and_strategy(ticker,scs.retracement_tf_vectorized.__name__)
+        tsp.update_ticker_strategy(strategy["ticker"], strategy["strategy_func"],
+                                   {"lookback": int(lw), "ma_window": int(mw)})
+        sl_w = 0.05
+        tp_w = 0.08
+        res = trades.run_x_backtest_DaxPattern_vec(f"../../data/{ticker}.csv", slperc=sl_w, tpperc=tp_w,
+                                                   capital_allocation=1, show_plot=False,
+                                                   target_strategy=func, add_indicators=True)
+
+        all_portfolios[(lw, mw)] = res
+        win_rate = res["Win Rate [%]"]
+        n_trades = res["# Trades"]
+        ret = res["Return [%]"]
+        max_drawdown = res["Max. Drawdown [%]"]
+        # lookback_weeks=1, entry_day=1
+        results_list.append({
+            "ticker": ticker,
+            "strategy": func.__name__,
+            "Win Rate [%]": float(win_rate),
+            "# Trades": float(n_trades),
+            "Return [%]": float(ret),
+            "Max. Drawdown [%]": float(max_drawdown),
+            "params": {
+                "lookback": int(lw),
+                "ma_window": int(mw)
+            },
+        })
+
+        print(f'[{lw},{mw}] win rate {win_rate}, n trades {n_trades}, ret {ret}')
+
+    df_results = pd.DataFrame(results_list)
+    # Converto la colonna "params" in JSON string così resta leggibile nel CSV
+    df_results["params"] = df_results["params"].apply(json.dumps)
+
+    df_results.to_csv(
+        f"../../optimization/{ticker}_{func.__name__}_backtest_results.csv",
+        index=False
+    )
+
+    best_return = -np.inf
+    best_params = None
+    for params, portfolio in all_portfolios.items():
+        current_return = float(portfolio["Win Rate [%]"])
+        if current_return > best_return and float(portfolio["# Trades"]) > 6:
+            best_return = current_return
+            best_params = params
+
+    tsp.update_ticker_strategy(ticker, func.__name__,
+                               {"lookback_weeks": int(best_params[0]), "entry_day": int(best_params[1])})
+
+    best_portfolio = all_portfolios[best_params]
+    print(f' best parameters {best_params}')
+    print(best_portfolio)
+
+    # Esempio di utilizzo
+    # df_results = pd.read_csv("...")  # se già salvato
+    top_n = get_best_strategies(df_results, top_n=15)
+    pd.set_option("display.max_columns", None)
+    pd.set_option("display.width", None)
+    pd.set_option("display.max_colwidth", None)
+    print(top_n)
+
+
+
 
 def test_weekly_breakout_vectorized():
     ticker = "UCG.MI"
@@ -129,10 +211,10 @@ def test_weekly_breakout_vectorized():
     print(top_n)
 
 
-def test_retracement_rev_vectorized():
+def test_retracement_rev_vectorized(strat=scs.retracement_rev_vectorized):
 
     ticker="SNOW"
-    func=scs.retracement_rev_vectorized
+    func=strat
     price = MyYFinance.fetch_by_period(ticker, period='3y')
 
     # price.dropna(inplace=True)
@@ -213,6 +295,9 @@ def test_retracement_rev_vectorized():
     print(top_n)
 
 if __name__ == "__main__":
-    #test_retracement_rev_vectorized()
-    test_weekly_breakout_vectorized()
+    #test_retracement_rev_vectorized(strat=scs.retracement_rev_vectorized)
+    #test_retracement_rev_vectorized(strat=scs.retracement_tf_vectorized)
+    #test_weekly_breakout_vectorized()
+    #test_donchian_breakout_with_ma_filter(strat=si.donchian_breakout_with_ma_filter)
+    test_donchian_breakout_with_ma_filter(tick="BHP",strat=si.donchian_inv_with_ma_filter)
 

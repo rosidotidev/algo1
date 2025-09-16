@@ -128,9 +128,65 @@ def donchian_breakout_with_ma_filter(df, lookback=20, ma_window=50):
 
     return signals
 
+def donchian_inv_with_ma_10_30(df):
+    return donchian_inv_with_ma_filter(df,10,30)
 
-def keltner_channel_vectorized(df: pd.DataFrame, lookback_periods: int = 20, atr_multiplier: float = 2.0) -> pd.Series:
+def donchian_inv_with_ma_15_40(df):
+    return donchian_inv_with_ma_filter(df,15,40)
+
+def donchian_inv_with_ma_filter(df, lookback=20, ma_window=50):
     """
+    Inverts the logic of the filled_bar_vectorized function to generate signals
+    for a short strategy.
+
+    A buy signal from the original function becomes a short entry signal (1).
+    A sell signal from the original function becomes a short exit signal (2).
+
+    Args:
+        df (pd.DataFrame): The DataFrame with historical OHLC data.
+        ratio (float): The threshold for the body-to-range ratio of the candle.
+
+    Returns:
+        pd.Series: A Series of inverted trading signals
+                   (1 for short entry, 2 for short exit, 0 for no signal).
+    """
+
+    # Call the original function to get the base signals.
+    # A copy of the DataFrame is passed to avoid modifying the original.
+    original_signals = donchian_breakout_with_ma_filter(df.copy(),lookback, ma_window)
+
+    # Invert the signals using np.where in a vectorized manner.
+    # If the original signal is 2 (buy), the new signal is 1 (short).
+    # If the original signal is 1 (sell), the new signal is 2 (buy to cover).
+    # If the original signal is 0, it remains 0.
+    inverted_signals = np.where(original_signals == 2, 1,
+                                np.where(original_signals == 1, 2, 0))
+
+    # Return a pandas Series with the correct index.
+    return pd.Series(inverted_signals, index=df.index, dtype='int8')
+
+
+def keltner_rev_vectorized(df: pd.DataFrame, lookback_periods: int = 20, atr_multiplier: float = 2.0) -> pd.Series:
+    original_signals = keltner_tf_vectorized(df.copy(),lookback_periods, atr_multiplier)
+    # Invert the signals using np.where in a vectorized manner.
+    # If the original signal is 2 (buy), the new signal is 1 (short).
+    # If the original signal is 1 (sell), the new signal is 2 (buy to cover).
+    # If the original signal is 0, it remains 0.
+    inverted_signals = np.where(original_signals == 2, 1,
+                                np.where(original_signals == 1, 2, 0))
+
+    # Return a pandas Series with the correct index.
+    return pd.Series(inverted_signals, index=df.index, dtype='int8')
+
+def keltner_rev_15_1_5(df):
+    return keltner_rev_vectorized(df,15,1.5)
+
+def keltner_rev_50_2_5(df):
+    return keltner_rev_vectorized(df,50,2.5)
+
+
+def keltner_tf_vectorized(df: pd.DataFrame, lookback_periods: int = 20, atr_multiplier: float = 2.0) -> pd.Series:
+    """:
     Generates trading signals based on the Keltner Channel breakout strategy.
 
     Args:
@@ -174,6 +230,12 @@ def keltner_channel_vectorized(df: pd.DataFrame, lookback_periods: int = 20, atr
     signals[short_condition] = 1
 
     return signals
+
+def keltner_tf_15_1_5(df):
+    return keltner_tf_vectorized(df,15,1.5)
+
+def keltner_tf_50_2_5(df):
+    return keltner_tf_vectorized(df,50,2.5)
 
 def donchian_channel_10_5_5(df):
     return donchian_channel_vectorized(df,10,5,5)
@@ -1045,11 +1107,6 @@ def doji_rsi_simplified_vectorized(df):
 
     return signals
 
-
-import pandas as pd
-import numpy as np
-
-
 def bollinger_bands_adx_simple_vectorized(df, adx_entry_threshold=25, adx_exit_threshold=20):
     """
     Generates trading signals for the entire DataFrame based on the
@@ -1150,8 +1207,16 @@ indicators_strategy =[
     donchian_breakout_with_ma_filter,
     donchian_breakout_with_ma_10_30,
     donchian_breakout_with_ma_15_40,
+    donchian_inv_with_ma_filter,
+    donchian_inv_with_ma_15_40,
+    donchian_inv_with_ma_10_30,
+    keltner_rev_vectorized,
+    keltner_rev_15_1_5,
+    keltner_rev_50_2_5,
+    keltner_tf_vectorized,
+    keltner_tf_15_1_5,
+    keltner_tf_50_2_5,
     #keltner_channel_vectorized,
-    #donchian_channel_vectorized,
     weekly_breakout_vectorized,
     weekly_breakout_1_2,
     weekly_breakout_2_1,

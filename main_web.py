@@ -21,6 +21,13 @@ def get_strategy_names():
 def run_backtest(ticker, function_name):
     return biz.run_backtest(ticker, function_name)
 
+def init_repos(repo):
+    repo.init_repo()
+    from strategy.ticker_stategy_repo import TickerStrategyRepo
+    s_repo = TickerStrategyRepo()
+    s_repo.backup()
+    s_repo.init_repo()
+    s_repo.merge_ticker_strategies()
 
 def toggle_strategy_filter(full_matrix, only_valid):
     if only_valid:
@@ -351,7 +358,7 @@ def main():
                     return get_df_for_display(), "All strategies disabled."
 
                 def init_repo():
-                    repo.init_repo()
+                    init_repos(repo)
                     return get_df_for_display(), repo.get_all_strategies_as_list(), "Repository initialized."
 
                 def enable_strategy(name):

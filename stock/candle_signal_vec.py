@@ -693,7 +693,7 @@ candlestick_strategies = [
     morning_evening_star_signal_vectorized,
     shooting_star_hammer_signal_vectorized,
     hammer_signal_vectorized,
-    inverted_hammer_signal_vectorized,
+    #inverted_hammer_signal_vectorized,
     doji_signal_strategy_v1_vectorized,
     filled_bar_vectorized,
     inverted_filled_bar_strategy,
