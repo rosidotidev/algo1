@@ -71,8 +71,6 @@ def is_valid_strategy(ticker: str, strategy: str, best_matrix: pd.DataFrame) -> 
     #print(f"[TRACE] Match found for strategy '{strategy}' and not NO_STRATEGY: {result}")
     return result
 
-
-
 def run_backtest_DaxPattern_vec(data_path,slperc=0.04,tpperc=0.02,capital_allocation=1,show_plot=False,target_strategy=cs_vec.dax_total_signal_vectorized,add_indicators=True):
     '''
     Commenting this code because this kind of approach with caching doesn't work as expected

@@ -395,10 +395,10 @@ def optimize_strategy(
     # salva CSV usando NpEncoder per sicurezza
     df_results = pd.DataFrame(results_list)
     df_results["params"] = df_results["params"].apply(lambda p: json.dumps(p, cls=NpEncoder))
-    df_results.to_csv(
-        f"{base_path}optimization/{ticker}_{func.__name__}_backtest_results.csv",
-        index=False
-    )
+    #df_results.to_csv(
+    #    f"{base_path}optimization/{ticker}_{func.__name__}_backtest_results.csv",
+    #    index=False
+    #)
 
     # selezione del migliore
     best_score, best_params = -np.inf, None

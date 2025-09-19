@@ -10,10 +10,17 @@ class XStrategyBT(XBacktestingBT):
     def init(self):
         self.built_signals=False
         super().init()
+    def  _current_df(self,current_date):
+        current_df = None
+        if current_date in self.df.index:
+            current_df=self.df.loc[current_date]
+        return current_df
+
+    def _get_current_date(self):
+        return self.data.index[-1]
 
     def current_df(self):
-        current_date = self.data.index[-1]
-        current_df=None
+        current_date = self._get_current_date()
         if 'TotalSignal' not in self.df.columns:
             self.df.loc[:, 'TotalSignal'] = 0
         if not self.built_signals:
@@ -21,9 +28,11 @@ class XStrategyBT(XBacktestingBT):
             self.built_signals=True
 
         # Check if the date exists in the DataFrame
-        if current_date in self.df.index:
-            current_df=self.df.loc[current_date]
+        current_df=self._current_df(current_date)
         return current_df
+
+
+
 
 
 

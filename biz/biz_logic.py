@@ -5,9 +5,9 @@ import strategy.xx_trades_bt as trades
 import pandas as pd
 from typing import List
 
-def run_long_process(optimize=False):
+def run_long_process(optimize=False,parallel=True):
 
-    result_string=trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"],optimize=optimize)
+    result_string=trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"],optimize=optimize,parallel=parallel)
     updated_files = bu.get_csv_files("../results/")
     return result_string, updated_files
 

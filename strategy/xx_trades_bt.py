@@ -53,7 +53,8 @@ def is_valid_strategy_in_repo(strategy_name: str, strategies_df: pd.DataFrame) -
 
 def is_valid_strategy(ticker: str, strategy: str, best_matrix: pd.DataFrame) -> bool:
     #print(f"[TRACE] Called is_valid_strategy with:\n  Ticker: {ticker}\n  Strategy: {strategy}")
-
+    if  best_matrix is None:
+        return True
     # Filtra tutte le righe per quel ticker
     ticker_rows = best_matrix[best_matrix['Ticker'] == ticker]
     #print(f"[TRACE] Found {len(ticker_rows)} rows for ticker '{ticker}'.")
@@ -270,6 +271,7 @@ def exec_analysis_parallel_new(base_path="../", slperc=0.15, tpperc=1.0, optimiz
 
     best_matrix = None
     if optimize:
+        print(f" optimize: {optimize}")
         best_path = f"{data_dir}/best_matrix.csv"
         best_matrix = load_best_matrix(best_path)
 
@@ -354,9 +356,9 @@ def execute_all_strategies_for_single_ticker(all_functions, best_matrix, data_di
                     # Print error traceback if backtest fails
                     print(f"Error running backtest for {ticker}: {repr(e)}")
                     traceback.print_exc()
-        # else:
-        # Skip disabled strategies
-        # print(f"Skipping disabled strategy: {func_name}")
+            #else:
+                # Skip disabled strategies
+                #print(f"Skipping disabled strategy: {func_name} for ticker {ticker}")
     return df
 
 
