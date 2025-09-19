@@ -4,6 +4,7 @@ import backtrader_util.bu as bu
 import strategy.xx_trades_bt as trades
 import pandas as pd
 from typing import List
+from strategy.xx_trades_bt import TickerStrategyRepo
 
 def run_long_process(optimize=False,parallel=True):
 
@@ -91,7 +92,7 @@ def generate_best_matrix(win_rate, ret, trades, strategies):
 
 def run_backtest(ticker, function_name):
     function_name = function_name.replace(" ", "_")
-
+    bu.cache["context"]["TickerStrategyRepo"] = TickerStrategyRepo("../data/")
     merged_functions_list = cs_vec.candlestick_strategies + ins_vec.indicators_strategy
     functions_dict = {func.__name__: func for func in merged_functions_list}
     func = functions_dict[function_name]

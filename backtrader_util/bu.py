@@ -1,7 +1,5 @@
 import os
-import pandas as pd
 from datetime import datetime
-import backtrader_util.bu as bu
 from stock.strategy_repo import StrategyRepo
 import json
 import inspect
@@ -177,13 +175,14 @@ def get_csv_files(directory):
 cache = {
     "stop_loss": 0.05,
     "take_profit": 0.08,
-    "df": {}
+    "df": {},
+    "context": {}
 }
 
 
 def reset_df_cache():
     """Reset the 'df' entry in cache to an empty dict."""
-    bu.cache["df"] = {}
+    cache["df"] = {}
 
 
 def ticker_exists(ticker: str, dtype: str) -> bool:
@@ -191,11 +190,11 @@ def ticker_exists(ticker: str, dtype: str) -> bool:
     Check if ticker with exact dtype key exists in cache.
     If dtype is None, check if ticker_base or ticker_enriched exists.
     """
-    if "df" not in bu.cache:
+    if "df" not in cache:
         return False
 
     key = f"{ticker}_{dtype}"
-    return key in bu.cache["df"]
+    return key in cache["df"]
 
 
 
@@ -204,11 +203,11 @@ def add_df_to_cache(ticker: str, df: pd.DataFrame, dtype: str='base'):
     Add a DataFrame to cache with key ticker_dtype.
     Overwrites if key already exists. check on max length
     """
-    if "df" not in bu.cache:
-        bu.cache["df"] = {}
+    if "df" not in cache:
+        cache["df"] = {}
     key = f"{ticker}_{dtype}"
-    if len(bu.cache["df"]) <= 30:
-        bu.cache["df"][key] = df.copy()
+    if len(cache["df"]) <= 30:
+        cache["df"][key] = df.copy()
 
 
 
@@ -218,7 +217,7 @@ def get_df_from_cache(ticker: str, dtype: str) -> pd.DataFrame | None:
     Returns None if not found.
     """
     key = f"{ticker}_{dtype}"
-    return bu.cache["df"].get(key)
+    return cache["df"].get(key)
 
 def debug_if_contains(target:str,data: str, ctx: dict, results: pd.Series):
     if target in data.upper():  # case-insensitive

@@ -124,7 +124,7 @@ def run_x_backtest_DaxPattern_vec(data_path, slperc=0.04, tpperc=0.02, capital_a
 
     ticker=ti.get_ticker_from_file_path(data_path)
     dir_path=ti.get_data_path_from_file_path(data_path)
-    tsr=TickerStrategyRepo(dir_path)
+    tsr=bu.cache["context"]["TickerStrategyRepo"]
 
     tsd=tsr.get_by_ticker_and_strategy(ticker,target_strategy.__name__)
 
@@ -314,6 +314,7 @@ def exec_analysis_parallel_new(base_path="../", slperc=0.15, tpperc=1.0, optimiz
 def execute_all_strategies_for_single_ticker(all_functions, best_matrix, data_dir, df, optimize, slperc, strategies_df,
                                              ticker, tpperc):
     print(f"Working on ticker {ticker} ")
+    bu.cache["context"]["TickerStrategyRepo"] = TickerStrategyRepo("../data/")
     for ind, row in strategies_df.iterrows():
         func_name = row["strategy_name"]  # Strategy name as string
         func_ref = func_name.replace(" ", "_")  # Convert name to function-like format

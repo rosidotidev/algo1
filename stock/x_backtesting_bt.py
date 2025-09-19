@@ -1,6 +1,5 @@
 from stock.base_bt import BaseStrategyBT
 
-
 class XBacktestingBT(BaseStrategyBT):
     slperc= 0.05
     tpperc= 1.00
