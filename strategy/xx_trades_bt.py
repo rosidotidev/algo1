@@ -7,13 +7,13 @@ import data.data_enricher as de
 import time
 import datetime
 import os
+import shutil
 from stock.strategy_repo import StrategyRepo
 from stock.x_backtesting_bt import XBacktestingBT
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import pandas as pd
 import traceback
 from strategy.ticker_stategy_repo import TickerStrategyRepo
-
 from strategy.ticker_strategy import TickerStrategy
 from strategy.x_strategy_bt import XStrategyBT
 
@@ -246,7 +246,7 @@ def exec_analysis_sequential_new(base_path="../", slperc=0.15, tpperc=1.0, optim
     return df
 
 
-def exec_analysis_parallel_new(base_path="../", slperc=0.15, tpperc=1.0, optimize=False, max_workers=None):
+def exec_analysis_parallel_new(base_path="../", slperc=0.15, tpperc=1.0, optimize=False, max_workers=6):
     """
     Executes backtesting for all tickers using both candlestick and indicator strategies in parallel.
     Each ticker is processed in a separate process.
@@ -387,8 +387,11 @@ def exec_analysis_and_save_results(base_path='../', slperc=0.15, tpperc=1.0, par
 
     # Save results
     today = datetime.datetime.now().strftime("%Y%m%d")
-    df.to_csv(f"{base_path}../results/report_{today}.csv", index=False)
-    df.to_csv(f"{base_path}../results/report.csv", index=False)
+    file_today = f"{base_path}../results/report_{today}.csv"
+    file_latest = f"{base_path}../results/report.csv"
+
+    df.to_csv(file_today, index=False)
+    shutil.copy(file_today, file_latest)
 
     # ⏱️ Print decorated summary
     elapsed_time = time.time() - start_time

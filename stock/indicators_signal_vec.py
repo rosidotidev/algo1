@@ -1,6 +1,6 @@
 
 import pandas as pd
-import backtrader_util.bu as bu
+
 
 def adx_sma_tf_10_30_25(df) -> pd.Series:
     return adx_sma_trend_following(df, 10, 30, 25)
@@ -679,8 +679,7 @@ def x_rsi_bollinger_macd_total_signal_base_vectorized(df, tolerance_percent=5,up
     # Re-apply entry signals to ensure they take precedence
     signals[buy_condition] = 2
     signals[sell_condition] = 1
-    if False:
-        bu.log_last_n_rows(df,1)
+
     return signals
 
 def rsi_hammer_70_30_vectorized(df):

@@ -5,6 +5,7 @@ import strategy.xx_trades_bt as trades
 import pandas as pd
 from typing import List
 from strategy.xx_trades_bt import TickerStrategyRepo
+import stock.ticker as ti
 
 def run_long_process(optimize=False,parallel=True):
 
@@ -69,7 +70,8 @@ def generate_best_matrix(win_rate, ret, trades, strategies):
         selected = pd.DataFrame({"Error": [str(e)]})
 
     # Identify tickers missing from filtered results
-    all_tickers = set(df['Ticker'].unique())
+    #all_tickers = set(df['Ticker'].unique())
+    all_tickers = set(ti.read_tickers_from_file(filepath="../data/tickers.txt"))
     selected_tickers = set(selected['Ticker'].unique())
     missing = all_tickers - selected_tickers
 

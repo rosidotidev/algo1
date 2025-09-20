@@ -1,8 +1,6 @@
-import time
+
 import numpy as np
 import itertools
-
-from data.data_enricher import add_indicators
 from stock.my_yfinance import MyYFinance
 import stock.candle_signal_vec as scs
 import stock.indicators_signal_vec as si
@@ -11,6 +9,7 @@ from strategy.ticker_stategy_repo import TickerStrategyRepo
 from stock.strategy_repo import StrategyRepo
 import json
 import pandas as pd
+from backtrader_util import bu
 
 def get_best_strategies(
     df: pd.DataFrame,
@@ -343,6 +342,7 @@ def optimize_strategy(
     """
     print(f" ticker {ticker} func {func}")
     tsp = TickerStrategyRepo(f"{base_path}data")
+    bu.cache["context"]["TickerStrategyRepo"] = tsp
     strategy = tsp.get_by_ticker_and_strategy(ticker, func.__name__)
     add_indicators:bool=StrategyRepo.get_add_indicators_flag(func)
     all_portfolios = {}
@@ -410,15 +410,11 @@ def optimize_strategy(
             best_score, best_params = score, combo
 
     if best_params is not None:
-        # converti tutti i valori in int Python per evitare problemi con json.dumps dentro save()
-        best_params_dict = dict(zip(keys, [int(v) if isinstance(v, np.integer) else v for v in best_params]))
-        tsp.update_ticker_strategy(ticker, func.__name__, best_params_dict)
+        #best_params_dict = dict(zip(keys, [int(v) if isinstance(v, np.integer) else v for v in best_params]))
+        #tsp.update_ticker_strategy(ticker, func.__name__, best_params_dict)
         best_portfolio = all_portfolios[best_params]
     else:
         best_portfolio = None
-
-
-
     return df_results, best_portfolio
 
 def test_generic():

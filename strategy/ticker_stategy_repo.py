@@ -176,7 +176,7 @@ class TickerStrategyRepo:
 if __name__ == "__main__":
     repo = TickerStrategyRepo('../../data/')
     repo.init_repo()
-    repo.merge_ticker_strategies('ticker_strategies_old.csv','ticker_strategies.csv')
+    #repo.merge_ticker_strategies('ticker_strategies_old.csv','ticker_strategies.csv')
     if False:
         # Test retrieval
         test_result = repo.get_by_ticker_and_strategy("AAPL", "mean_reversion")

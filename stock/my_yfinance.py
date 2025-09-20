@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime, timedelta, timezone
 import pandas as pd
+import time
 
 class MyYFinance:
     BASE_URL = "https://query2.finance.yahoo.com/v8/finance/chart/"
@@ -86,22 +87,5 @@ class MyYFinance:
 if __name__ == "__main__":
     # https://github.com/ranaroussi/yfinance/issues/2422
     #data = MyYFinance.fetch_data("AAPL", start_date="20201130", end_date="20201201")
-    #data= MyYFinance.fetch_by_period("MSFT",period="3y")
-    #print(data)
-    import importlib
-    import time
-
-    modules_to_test = [
-        "os",
-        "time",
-        "numpy",
-        "pandas",
-        "stock.my_yfinance",
-        "ticker"
-    ]
-
-    for mod in modules_to_test:
-        start = time.perf_counter()
-        importlib.import_module(mod)
-        end = time.perf_counter()
-        print(f"{mod:<20} {end - start:.4f} s")
+    data= MyYFinance.fetch_by_period("MSFT",period="3y")
+    print(data)

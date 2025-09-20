@@ -12,3 +12,5 @@ pipenv install \
   pandas-ta==0.3.14b0 \
   xgboost==2.1.4 \
   backtesting==0.6.2
+
+  pipenv run python -m cProfile main.py > out3.txt
