@@ -5,7 +5,7 @@ from stock.strategy_repo import StrategyRepo
 import stock.ticker as ti
 
 class TickerStrategyRepo:
-    def __init__(self, base_path: str = "../data/"):
+    def __init__(self, base_path: str = "../data"):
         self.base_path = base_path
         self.filename = f'{base_path}/ticker_strategies.csv'
         self._df: Optional[pd.DataFrame] = None

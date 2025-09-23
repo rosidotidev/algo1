@@ -1172,8 +1172,6 @@ def bollinger_bands_adx_simple_35_20_vectorized(df):
 
 def bollinger_bands_adx_simple_45_25_vectorized(df):
     return bollinger_bands_adx_simple_vectorized(df, adx_entry_threshold=45, adx_exit_threshold=25)
-
-
 indicators_strategy =[
     bollinger_bands_mean_reversion_sma_vectorized,
     sma_stoch_close_strategy_vectorized,

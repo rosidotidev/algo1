@@ -661,6 +661,54 @@ def combined_signal_vectorized(df):
 
     return final_signals
 
+def liquidity_grab_rev_strategy(df: pd.DataFrame, lookback: int = 20) -> pd.Series:
+    """
+    Liquidity Grab Inversion Strategy (vectorized).
+
+    Args:
+        df (pd.DataFrame): Must contain columns ['High', 'Low', 'Close'].
+        lookback (int): Number of candles for breakout detection.
+
+    Returns:
+        pd.Series: Trading signals (2=Buy, 1=Sell, 0=Hold).
+    """
+
+    highs = df['High']
+    lows = df['Low']
+
+    # breakout detection
+    breakout_high = highs > highs.shift(1).rolling(lookback).max()  # rompe un massimo precedente
+    breakout_low = lows < lows.shift(1).rolling(lookback).min()     # rompe un minimo precedente
+
+    # livelli di grab
+    grab_low = np.where(breakout_high, lows, np.nan)   # minimo della candela breakout up
+    grab_high = np.where(breakout_low, highs, np.nan)  # massimo della candela breakout down
+
+    # propaga in avanti i livelli finché non sono invalidati
+    grab_low = pd.Series(grab_low, index=df.index).ffill()
+    grab_high = pd.Series(grab_high, index=df.index).ffill()
+
+    # segnali
+    short_signal = (df['Low'] < grab_low) & pd.notna(grab_low)
+    long_signal = (df['High'] > grab_high) & pd.notna(grab_high)
+
+    signals = pd.Series(0, index=df.index)
+    signals[short_signal] = 1   # Sell
+    signals[long_signal] = 2   # Buy
+
+    return signals
+
+def liquidity_grab_tf_strategy(df: pd.DataFrame, lookback: int = 20) -> pd.Series:
+    # Chiama la strategia originale
+    signals = liquidity_grab_rev_strategy(df, lookback)
+
+    # Inverte i segnali
+    inverse_signals = signals.copy()
+    inverse_signals[signals == 2] = 1  # Long → Short
+    inverse_signals[signals == 1] = 2  # Short → Long
+    # Hold rimane 0
+
+    return inverse_signals
 
 def aaa():
     """
@@ -699,6 +747,9 @@ candlestick_strategies = [
     inverted_filled_bar_strategy,
     retracement_rev_vectorized,
     retracement_tf_vectorized,
+    liquidity_grab_rev_strategy,
+    liquidity_grab_tf_strategy,
+
 
     #combined_signal_vectorized
 ]

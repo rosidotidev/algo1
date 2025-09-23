@@ -58,5 +58,48 @@ def main():
 def mainx():
     run_with_tickers(tickers=["AMZN","INTC","WDC"])
 
+def test_liquidity_grab():
+    import matplotlib.pyplot as plt
+
+    def plot_liquidity_grab(df, grab_low, grab_high, signals):
+        plt.figure(figsize=(12, 6))
+
+        # Plot candlestick-like: High-Low line
+        plt.vlines(df.index, df['Low'], df['High'], color='black', alpha=0.6)
+
+        # Plot grab levels
+        plt.plot(df.index, grab_low, color='red', linestyle='--', label='Grab Low')
+        plt.plot(df.index, grab_high, color='green', linestyle='--', label='Grab High')
+
+        # Plot signals
+        plt.scatter(df.index[signals == 2], df['High'][signals == 2], color='green', marker='^', s=100,
+                    label='Long Signal')
+        plt.scatter(df.index[signals == 1], df['Low'][signals == 1], color='red', marker='v', s=100,
+                    label='Short Signal')
+
+        plt.title("Liquidity Grab Strategy Signals")
+        plt.xlabel("Candles")
+        plt.ylabel("Price")
+        plt.legend()
+        #n.pyplt.savefig("plot.html", bbox_inches='tight')  # salva su file
+        plt.show()
+    import stock.candle_signal_vec as can
+    import stock.ticker as ti
+    import pandas as pd
+    import numpy as np
+
+    df=ti.read_from_csv("../data/GLD.csv")
+    signals = can.liquidity_grab_strategy(df, lookback=20)
+    # grab_low e grab_high li puoi calcolare come nella funzione
+    highs = df['High']
+    lows = df['Low']
+    breakout_high = highs > highs.shift(1).rolling(20).max()
+    breakout_low = lows < lows.shift(1).rolling(20).min()
+    grab_low = pd.Series(np.where(breakout_high, lows, np.nan), index=df.index).ffill()
+    grab_high = pd.Series(np.where(breakout_low, highs, np.nan), index=df.index).ffill()
+
+    plot_liquidity_grab(df, grab_low, grab_high, signals)
+
+
 if __name__ == "__main__":
-    mainx()
+    test_liquidity_grab()
