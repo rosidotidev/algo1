@@ -62,7 +62,7 @@ class TickerStrategyRepo:
         Creates all combinations and persists them to file.
         """
         # Mocked tickers
-        tickers = ti.read_tickers_from_file(f'{self.base_path}tickers.txt')
+        tickers = ti.read_tickers_from_file(f'{self.base_path}/tickers.txt')
 
         # Mocked strategies with parameters
         strategies = StrategyRepo.get_all_available_strategy_functions()
@@ -119,8 +119,8 @@ class TickerStrategyRepo:
             csv_output (str or None): Path to save merged result (if None, overwrite target).
         """
         # Carica i due CSV
-        df_src = pd.read_csv(f"{self.base_path}{csv_source}")
-        df_tgt = pd.read_csv(f"{self.base_path}{csv_target}")
+        df_src = pd.read_csv(f"{self.base_path}/{csv_source}")
+        df_tgt = pd.read_csv(f"{self.base_path}/{csv_target}")
 
         # Normalizza params -> dict
         def parse_params(x):
@@ -153,7 +153,7 @@ class TickerStrategyRepo:
 
         # Salva il risultato
         if csv_output is None:
-            csv_output = f"{self.base_path}{csv_target}"
+            csv_output = f"{self.base_path}/{csv_target}"
 
         # Riconverti params a JSON string prima di salvare
         df_tgt["params"] = df_tgt["params"].apply(json.dumps)
@@ -168,7 +168,7 @@ class TickerStrategyRepo:
         """
         df_to_save = self._df.copy()
         df_to_save["params"] = df_to_save["params"].apply(json.dumps)
-        backup_path = f'{self.base_path}{backup_filename}'
+        backup_path = f'{self.base_path}/{backup_filename}'
         df_to_save.to_csv(backup_path, index=False)
         print(f"Backup created: {backup_path}")
         return backup_path

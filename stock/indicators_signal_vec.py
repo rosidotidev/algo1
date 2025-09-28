@@ -1,5 +1,6 @@
 
 import pandas as pd
+import stock.candle_signal_vec as scs
 
 
 def adx_sma_tf_10_30_25(df) -> pd.Series:
@@ -1172,6 +1173,31 @@ def bollinger_bands_adx_simple_35_20_vectorized(df):
 
 def bollinger_bands_adx_simple_45_25_vectorized(df):
     return bollinger_bands_adx_simple_vectorized(df, adx_entry_threshold=45, adx_exit_threshold=25)
+
+def liquidity_grab_rev_adx_filtered(df: pd.DataFrame, lookback: int = 20, adx_threshold: int = 25) -> pd.Series:
+    signals = scs.liquidity_grab_rev_strategy(df, lookback)
+    # Filtro trend
+    signals = signals.where(
+        ((signals == 2) & (df['ADX_14'] > adx_threshold)) |
+        ((signals == 1) &  (df['ADX_14'] > adx_threshold)) |
+        (signals == 0), 0
+    )
+
+    return signals
+
+def liquidity_grab_tf_adx_filtered(df: pd.DataFrame, lookback: int = 20, adx_threshold: int = 25) -> pd.Series:
+    signals = scs.liquidity_grab_tf_strategy(df, lookback)
+    # Filtro trend
+    signals = signals.where(
+        ((signals == 2) & (df['ADX_14'] > adx_threshold)) |
+        ((signals == 1) &  (df['ADX_14'] > adx_threshold)) |
+        (signals == 0), 0
+    )
+
+    return signals
+
+
+
 indicators_strategy =[
     bollinger_bands_mean_reversion_sma_vectorized,
     sma_stoch_close_strategy_vectorized,
@@ -1223,6 +1249,9 @@ indicators_strategy =[
     donchian_channel_vectorized,
     donchian_channel_10_5_5,
     donchian_channel_20_5_5,
+    liquidity_grab_rev_adx_filtered,
+    liquidity_grab_tf_adx_filtered,
+
     #t_indicators_combined_signal_vectorized
 ]
 

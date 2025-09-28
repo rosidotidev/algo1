@@ -710,6 +710,8 @@ def liquidity_grab_tf_strategy(df: pd.DataFrame, lookback: int = 20) -> pd.Serie
 
     return inverse_signals
 
+
+
 def aaa():
     """
 
@@ -749,8 +751,6 @@ candlestick_strategies = [
     retracement_tf_vectorized,
     liquidity_grab_rev_strategy,
     liquidity_grab_tf_strategy,
-
-
     #combined_signal_vectorized
 ]
 if __name__ == "__main__":
