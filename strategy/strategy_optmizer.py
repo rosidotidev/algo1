@@ -410,8 +410,8 @@ def optimize_strategy(
             best_score, best_params = score, combo
 
     if best_params is not None:
-        #best_params_dict = dict(zip(keys, [int(v) if isinstance(v, np.integer) else v for v in best_params]))
-        #tsp.update_ticker_strategy(ticker, func.__name__, best_params_dict)
+        best_params_dict = dict(zip(keys, [int(v) if isinstance(v, np.integer) else v for v in best_params]))
+        tsp.update_ticker_strategy(ticker, func.__name__, best_params_dict)
         best_portfolio = all_portfolios[best_params]
     else:
         best_portfolio = None

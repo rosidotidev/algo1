@@ -60,6 +60,10 @@ def load_all_tickers():
     res=ti.fetch_and_save_ticker_data("../data/tickers.txt","../data/","3y")
     return res
 
+def save_selection_callback(ticker_dropdown, strategy_dropdown, params_text):
+    return biz.update_ticker_strategy(ticker_dropdown, strategy_dropdown, params_text)
+
+
 def filter_dataframe(query,file_name='report.csv'):
     df = pd.read_csv(f"../results/{file_name}")
     df=ti.calculate_performance_index(df)
@@ -448,17 +452,30 @@ def main():
                                 # Prefilled param_space text area (editable)
                                 params_text = gr.Textbox(
                                     label="Parameter Space (Python dict)",
-                                    lines=10,
+                                    lines=3,
                                     value="{}"
                                 )
 
                                 optimize_button = gr.Button("Run Optimization")
 
+                                best_params = gr.Textbox(
+                                    label="Best params",
+                                    lines=3,
+                                    value="{}"
+                                )
+                                save_selection_button = gr.Button("Save Selected as Best")
+                                save_feedback = gr.Textbox(label="Save Feedback", interactive=False)
+                                save_selection_button.click(
+                                    save_selection_callback,
+                                    inputs=[ticker_dropdown, strategy_dropdown, best_params],
+                                    outputs=[save_feedback]
+                                )
+
                             # --- Right column: results ---
                             with gr.Column(scale=3):
                                 optimization_results = gr.Dataframe(
                                     label="Optimization Results",
-                                    interactive=False
+                                    interactive=True
                                 )
                                 best_params_output = gr.Textbox(
                                     label="Best Parameters"
@@ -501,6 +518,8 @@ def main():
                             inputs=[ticker_dropdown, strategy_dropdown, params_text],
                             outputs=[optimization_results, best_params_output]
                         )
+
+
                         strategy_dropdown.change(
                             prefill_param_space,  # funzione che calcola param_space
                             inputs=[strategy_dropdown],  # input: nome della strategy selezionata

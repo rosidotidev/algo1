@@ -6,6 +6,7 @@ import pandas as pd
 from typing import List
 from strategy.xx_trades_bt import TickerStrategyRepo
 import stock.ticker as ti
+import json
 
 def run_long_process(optimize=False,parallel=True):
 
@@ -91,6 +92,24 @@ def generate_best_matrix(win_rate, ret, trades, strategies):
     # Save the final matrix
     result_df.to_csv("../data/best_matrix.csv", index=False)
     return result_df
+
+def update_ticker_strategy(ticker, strategy, params_string):
+    if params_string.startswith('"') and params_string.endswith('"'):
+        params_string = params_string[1:-1]
+
+    params = params_string.replace('""', '"')
+    # convert in dict
+    d = json.loads(params)
+
+    tsr = TickerStrategyRepo("../data/")
+    strategy_name = strategy.replace(" ", "_")
+    result = tsr.update_ticker_strategy(ticker, strategy_name, d)
+
+    if result:
+        return f"updated {ticker} strategy {strategy}"
+    else:
+        return f"Error on update {ticker} strategy {strategy}"
+
 
 def run_backtest(ticker, function_name):
     function_name = function_name.replace(" ", "_")
