@@ -1,8 +1,8 @@
 import warnings
 import gradio as gr
 import pandas as pd
-import stock.indicators_signal_vec as ins_vec
-import stock.candle_signal_vec as cs_vec
+import stock.enriched_signal_vec as ins_vec
+import stock.simpe_signal_vec as cs_vec
 import stock.ticker as ti
 import backtrader_util.bu as bu
 import biz.biz_logic as biz

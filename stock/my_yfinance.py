@@ -35,7 +35,7 @@ class MyYFinance:
             "Connection": "keep-alive",
             "DNT": "1"
         }
-
+        print(url)
         response = requests.get(url, params=params, headers=headers)
         response.raise_for_status()
         return MyYFinance._parse_response(response.json())

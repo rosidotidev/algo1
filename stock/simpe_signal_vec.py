@@ -1,6 +1,225 @@
 import pandas as pd
 import numpy as np
 
+def weekly_breakout_2_1(df):
+    return weekly_breakout_vectorized(df,2,1)
+
+def weekly_breakout_1_2(df):
+    return weekly_breakout_vectorized(df,1,2)
+
+def weekly_breakout_2_2(df):
+    return weekly_breakout_vectorized(df,2,2)
+
+def weekly_breakout_1_3(df):
+    return weekly_breakout_vectorized(df,1,3)
+
+def weekly_breakout_2_3(df):
+    return weekly_breakout_vectorized(df,2,3)
+
+def weekly_breakout_vectorized(df, lookback_weeks=1, entry_day=1):
+    """
+    Fully vectorized weekly breakout strategy with correct handling of long and short positions.
+
+    Logic:
+        - On entry_day (default Tuesday = 1):
+            - 2 (Buy)  if previous day's close > previous N weeks' high
+            - 1 (Sell) if previous day's close < previous N weeks' low
+        - Exit signals:
+            - -2 (Exit Buy)  if previously long and no new long
+            - -1 (Exit Sell) if previously short and no new short
+        - 0 otherwise
+    """
+    price_col = "Close"
+
+    # 1. Compute weekly highs and lows
+    weekly = df.groupby(df.index.to_period("W"))[price_col].agg(["max", "min"])
+    weekly["high"] = weekly["max"].rolling(lookback_weeks).max().shift(1)
+    weekly["low"] = weekly["min"].rolling(lookback_weeks).min().shift(1)
+
+    # 2. Map weekly levels to daily index
+    week_periods = df.index.to_period("W")
+    prev_high = week_periods.map(weekly["high"].to_dict())
+    prev_low = week_periods.map(weekly["low"].to_dict())
+
+    # 3. Previous day's close for evaluating today's entry
+    prev_close = df[price_col].shift(1)
+    entry_flag = df.index.dayofweek == entry_day
+
+    # 4. Vectorized entry signals
+    long_entry  = entry_flag & (prev_close > prev_high)
+    short_entry = entry_flag & (prev_close < prev_low)
+
+    # 5. Initialize signal series
+    signals = pd.Series(0, index=df.index, dtype="int8")
+    signals[long_entry]  = 2
+    signals[short_entry] = 1
+
+    # 6. Track previous position state separately for long and short
+    # Create boolean masks
+    prev_long  = signals.shift(1) == 2
+    prev_short = signals.shift(1) == 1
+
+    # 7. Exit conditions (only where no new entry is present)
+    exit_long  = entry_flag & prev_long & (~long_entry)
+    exit_short = entry_flag & prev_short & (~short_entry)
+
+    signals[exit_long & (signals == 0)]   = -2
+    signals[exit_short & (signals == 0)]  = -1
+
+    return signals
+
+
+def keltner_rev_vectorized(df: pd.DataFrame, lookback_periods: int = 20, atr_multiplier: float = 2.0) -> pd.Series:
+    original_signals = keltner_tf_vectorized(df.copy(),lookback_periods, atr_multiplier)
+    # Invert the signals using np.where in a vectorized manner.
+    # If the original signal is 2 (buy), the new signal is 1 (short).
+    # If the original signal is 1 (sell), the new signal is 2 (buy to cover).
+    # If the original signal is 0, it remains 0.
+    inverted_signals = np.where(original_signals == 2, 1,
+                                np.where(original_signals == 1, 2, 0))
+
+    # Return a pandas Series with the correct index.
+    return pd.Series(inverted_signals, index=df.index, dtype='int8')
+
+def keltner_rev_15_1_5(df):
+    return keltner_rev_vectorized(df,15,1.5)
+
+def keltner_rev_50_2_5(df):
+    return keltner_rev_vectorized(df,50,2.5)
+
+
+def keltner_tf_vectorized(df: pd.DataFrame, lookback_periods: int = 20, atr_multiplier: float = 2.0) -> pd.Series:
+    """:
+    Generates trading signals based on the Keltner Channel breakout strategy.
+
+    Args:
+        df (pd.DataFrame): DataFrame with a DatetimeIndex and 'High', 'Low', 'Close' columns.
+        lookback_periods (int): The number of periods to use for the moving average and ATR.
+        atr_multiplier (float): The multiplier for the ATR to set the channel width.
+
+    Returns:
+        pd.Series: Trading signals (2 = Long, 1 = Short, 0 = No position).
+    """
+    # Calculate True Range (TR)
+    # TR is the greatest of:
+    # 1. Current High minus Current Low
+    # 2. Absolute value of Current High minus Previous Close
+    # 3. Absolute value of Current Low minus Previous Close
+    high_low = df['High'] - df['Low']
+    high_close = abs(df['High'] - df['Close'].shift(1))
+    low_close = abs(df['Low'] - df['Close'].shift(1))
+    true_range = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
+
+    # Calculate Average True Range (ATR)
+    # The ATR is the rolling mean of the True Range.
+    atr = true_range.rolling(lookback_periods).mean()
+
+    # Calculate the moving average (center line of the channel)
+    center_line = df['Close'].rolling(lookback_periods).mean()
+
+    # Calculate the upper and lower Keltner Channels
+    upper_channel = center_line + (atr * atr_multiplier)
+    lower_channel = center_line - (atr * atr_multiplier)
+
+    # Initialize a signals Series with a default value of 0 (no position)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Generate long signals (2): if the price breaks above the upper channel
+    long_condition = df['Close'] > upper_channel
+    signals[long_condition] = 2
+
+    # Generate short signals (1): if the price breaks below the lower channel
+    short_condition = df['Close'] < lower_channel
+    signals[short_condition] = 1
+
+    return signals
+
+def keltner_tf_15_1_5(df):
+    return keltner_tf_vectorized(df,15,1.5)
+
+def keltner_tf_50_2_5(df):
+    return keltner_tf_vectorized(df,50,2.5)
+
+
+def donchian_breakout_with_ma_10_30(df):
+    return donchian_breakout_with_ma_filter(df, lookback=10, ma_window=30)
+
+def donchian_breakout_with_ma_15_40(df):
+    return donchian_breakout_with_ma_filter(df, lookback=10, ma_window=30)
+
+def donchian_breakout_with_ma_filter(df, lookback=20, ma_window=50):
+    """
+    Generates trading signals based on a Donchian Channel breakout
+    with a long-term moving average trend filter.
+
+    Logic:
+        - Buy (2) when Close > Donchian high AND Close > long MA
+        - Sell (1) when Close < Donchian low AND Close < long MA
+        - Hold (0) otherwise
+
+    Args:
+        df (pd.DataFrame): DataFrame with a DatetimeIndex and 'Close' column
+        lookback (int): Lookback window for Donchian channel (default 20)
+        ma_window (int): Window for long moving average (default 50)
+
+    Returns:
+        pd.Series: Trading signals (2 = Buy, 1 = Sell, 0 = Hold)
+    """
+    # Donchian Channel
+    rolling_high = df["Close"].rolling(lookback, min_periods=1).max().shift(1)
+    rolling_low = df["Close"].rolling(lookback, min_periods=1).min().shift(1)
+
+    # Long-term moving average
+    long_ma = df["Close"].rolling(ma_window, min_periods=1).mean()
+
+    # Conditions
+    buy_condition = (df["Close"] > rolling_high) & (df["Close"] > long_ma)
+    sell_condition = (df["Close"] < rolling_low) & (df["Close"] < long_ma)
+
+    # Signals
+    signals = pd.Series(0, index=df.index, dtype="int8")
+    signals[buy_condition] = 2
+    signals[sell_condition] = 1
+
+    return signals
+
+def donchian_inv_with_ma_10_30(df):
+    return donchian_inv_with_ma_filter(df,10,30)
+
+def donchian_inv_with_ma_15_40(df):
+    return donchian_inv_with_ma_filter(df,15,40)
+
+def donchian_inv_with_ma_filter(df, lookback=20, ma_window=50):
+    """
+    Inverts the logic of the filled_bar_vectorized function to generate signals
+    for a short strategy.
+
+    A buy signal from the original function becomes a short entry signal (1).
+    A sell signal from the original function becomes a short exit signal (2).
+
+    Args:
+        df (pd.DataFrame): The DataFrame with historical OHLC data.
+        ratio (float): The threshold for the body-to-range ratio of the candle.
+
+    Returns:
+        pd.Series: A Series of inverted trading signals
+                   (1 for short entry, 2 for short exit, 0 for no signal).
+    """
+
+    # Call the original function to get the base signals.
+    # A copy of the DataFrame is passed to avoid modifying the original.
+    original_signals = donchian_breakout_with_ma_filter(df.copy(),lookback, ma_window)
+
+    # Invert the signals using np.where in a vectorized manner.
+    # If the original signal is 2 (buy), the new signal is 1 (short).
+    # If the original signal is 1 (sell), the new signal is 2 (buy to cover).
+    # If the original signal is 0, it remains 0.
+    inverted_signals = np.where(original_signals == 2, 1,
+                                np.where(original_signals == 1, 2, 0))
+
+    # Return a pandas Series with the correct index.
+    return pd.Series(inverted_signals, index=df.index, dtype='int8')
+
 def retracement_tf_vectorized(df, short=5, medium=10, long=20):
     """
     Trend-following retracement strategy (TF).
@@ -751,6 +970,24 @@ candlestick_strategies = [
     retracement_tf_vectorized,
     liquidity_grab_rev_strategy,
     liquidity_grab_tf_strategy,
+    donchian_breakout_with_ma_filter,
+    donchian_breakout_with_ma_10_30,
+    donchian_breakout_with_ma_15_40,
+    donchian_inv_with_ma_filter,
+    donchian_inv_with_ma_15_40,
+    donchian_inv_with_ma_10_30,
+    keltner_rev_vectorized,
+    keltner_rev_15_1_5,
+    keltner_rev_50_2_5,
+    keltner_tf_vectorized,
+    keltner_tf_15_1_5,
+    keltner_tf_50_2_5,
+    weekly_breakout_vectorized,
+    weekly_breakout_1_2,
+    weekly_breakout_2_1,
+    weekly_breakout_2_2,
+    weekly_breakout_1_3,
+    weekly_breakout_2_3,
     #combined_signal_vectorized
 ]
 if __name__ == "__main__":

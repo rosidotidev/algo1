@@ -1,7 +1,7 @@
 import pandas as pd
 from typing import Optional, List
-import stock.indicators_signal_vec as ins_vec
-import stock.candle_signal_vec as cs_vec
+import stock.enriched_signal_vec as ins_vec
+import stock.simpe_signal_vec as cs_vec
 
 
 class StrategyRepo:

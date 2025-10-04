@@ -2,8 +2,8 @@
 import numpy as np
 import itertools
 from stock.my_yfinance import MyYFinance
-import stock.candle_signal_vec as scs
-import stock.indicators_signal_vec as si
+import stock.simpe_signal_vec as scs
+import stock.enriched_signal_vec as si
 import strategy.xx_trades_bt as trades
 from strategy.ticker_stategy_repo import TickerStrategyRepo
 from stock.strategy_repo import StrategyRepo
@@ -49,7 +49,7 @@ def get_best_strategies(
     # Restituisci solo le top_n
     return df_sorted.head(top_n)
 
-def test_donchian_breakout_with_ma_filter(tick="TPR",strat=si.donchian_breakout_with_ma_filter):
+def test_donchian_breakout_with_ma_filter(tick="TPR",strat=scs.donchian_breakout_with_ma_filter):
     ticker = tick
     func = strat
     price = MyYFinance.fetch_by_period(ticker, period='3y')
@@ -134,7 +134,7 @@ def test_donchian_breakout_with_ma_filter(tick="TPR",strat=si.donchian_breakout_
 
 def test_weekly_breakout_vectorized():
     ticker = "UCG.MI"
-    func = si.weekly_breakout_vectorized
+    func = scs.weekly_breakout_vectorized
     price = MyYFinance.fetch_by_period(ticker, period='3y')
 
     # lookback_weeks=1, entry_day=1

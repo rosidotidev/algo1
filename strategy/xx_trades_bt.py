@@ -1,8 +1,8 @@
 from backtesting import Backtest
 import stock.ticker as ti
 from backtrader_util import bu
-import stock.candle_signal_vec as cs_vec
-import stock.indicators_signal_vec as ins_vec
+import stock.simpe_signal_vec as cs_vec
+import stock.enriched_signal_vec as ins_vec
 import data.data_enricher as de
 import time
 import datetime
