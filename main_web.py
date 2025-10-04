@@ -88,50 +88,19 @@ def filter_dataframe(query,file_name='report.csv'):
     except Exception as e:
         return pd.DataFrame({"Error": [str(e)]})
 
-def top_strategies(
-    file_name='report.csv',
+def top_strategies(file_name='report.csv',
     metric='Return [%]',
     min_win_rate=0,
     min_return=0,
     min_trades=0,
     top_n=2000
 ):
-    df = pd.read_csv(f"../results/{file_name}")
-    df = df.dropna(subset=['Ticker', 'strategy', 'Return [%]', 'Win Rate [%]', '# Trades'])
-
-    if metric == 'aggregate':
-        df['score'] = (df['Return [%]'] * df['Win Rate [%]']).round(2)
-        metric = 'score'
-
-    # Group by Ticker and strategy, calculate mean for relevant metrics
-    grouped = df.groupby(['Ticker', 'strategy']).agg({
-        'Return [%]': 'mean',
-        'Win Rate [%]': 'mean',
-        '# Trades': 'mean',
-        metric: 'mean' if metric != 'score' else 'first'
-    }).reset_index()
-
-    if metric == 'score':
-        grouped = grouped.rename(columns={'score': 'Score'})
-        grouped['Score'] = grouped['Score'].round(2)
-        sort_col = 'Score'
-    else:
-        sort_col = metric
-
-    # Round metrics
-    grouped[['Return [%]', 'Win Rate [%]', '# Trades']] = grouped[['Return [%]', 'Win Rate [%]', '# Trades']].round(2)
-
-    # --- Apply filters ---
-    grouped = grouped[
-        (grouped['Win Rate [%]'] >= min_win_rate) &
-        (grouped['Return [%]'] >= min_return) &
-        (grouped['# Trades'] >= min_trades)
-    ]
-
-    # Sort and limit
-    grouped = grouped.sort_values(by=sort_col, ascending=False).head(top_n)
-
-    return grouped
+    return biz.top_strategies(file_name=file_name,
+    metric=metric,
+    min_win_rate=min_win_rate,
+    min_return=min_return,
+    min_trades=min_trades,
+    top_n=top_n)
 
 def fill_ticker_count():
     return ti.count_tickers_in_best_matrix("../data/best_matrix.csv","../data/tickers.txt")

@@ -8,6 +8,51 @@ from strategy.xx_trades_bt import TickerStrategyRepo
 import stock.ticker as ti
 import json
 
+def top_strategies(
+    file_name='report.csv',
+    metric='Return [%]',
+    min_win_rate=0,
+    min_return=0,
+    min_trades=0,
+    top_n=2000
+):
+    df = pd.read_csv(f"../results/{file_name}")
+    df = df.dropna(subset=['Ticker', 'strategy', 'Return [%]', 'Win Rate [%]', '# Trades'])
+
+    if metric == 'aggregate':
+        df['score'] = (df['Return [%]'] * df['Win Rate [%]']).round(2)
+        metric = 'score'
+
+    # Group by Ticker and strategy, calculate mean for relevant metrics
+    grouped = df.groupby(['Ticker', 'strategy']).agg({
+        'Return [%]': 'mean',
+        'Win Rate [%]': 'mean',
+        '# Trades': 'mean',
+        metric: 'mean' if metric != 'score' else 'first'
+    }).reset_index()
+
+    if metric == 'score':
+        grouped = grouped.rename(columns={'score': 'Score'})
+        grouped['Score'] = grouped['Score'].round(2)
+        sort_col = 'Score'
+    else:
+        sort_col = metric
+
+    # Round metrics
+    grouped[['Return [%]', 'Win Rate [%]', '# Trades']] = grouped[['Return [%]', 'Win Rate [%]', '# Trades']].round(2)
+
+    # --- Apply filters ---
+    grouped = grouped[
+        (grouped['Win Rate [%]'] >= min_win_rate) &
+        (grouped['Return [%]'] >= min_return) &
+        (grouped['# Trades'] >= min_trades)
+    ]
+
+    # Sort and limit
+    grouped = grouped.sort_values(by=sort_col, ascending=False).head(top_n)
+
+    return grouped
+
 def run_long_process(optimize=False,parallel=True):
 
     result_string=trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"],optimize=optimize,parallel=parallel)
