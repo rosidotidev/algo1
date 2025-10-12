@@ -1,6 +1,112 @@
 import pandas as pd
 import numpy as np
 
+def parab_rev_vectorized(df, short=5, medium=10, long=20):
+    """
+    parabol-reverse strategy (TF).
+
+    Logic:
+        - Long (2) when short MMA > medium MMA and short MMA < long MMA (uptrend pullback)
+        - Short (1) when short MMA < medium MMA and short MMA < long MMA (downtrend pullback)
+        - Hold (0) otherwise
+
+    Args:
+        df (pd.DataFrame): Must contain 'Close' column
+        short (int): period for short moving average
+        medium (int): period for medium moving average
+        long (int): period for long moving average
+
+    Returns:
+        pd.Series: signals (2=Long, 1=Short, 0=Hold)
+    """
+    # Calculate moving averages
+    df['mma_short'] = df['Close'].rolling(short).mean()
+    df['mma_medium'] = df['Close'].rolling(medium).mean()
+    df['mma_long'] = df['Close'].rolling(long).mean()
+
+    # Define entry conditions
+    long_signal = (df['mma_short'] > df['mma_medium']) & (df['mma_medium'] < df['mma_long'])
+    short_signal = (df['mma_short'] < df['mma_medium']) & (df['mma_medium'] > df['mma_long'])
+
+    # Create signals series
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[long_signal] = 2
+    signals[short_signal] = 1
+
+    # Clean temporary columns
+    df.drop(columns=['mma_short', 'mma_medium', 'mma_long'], inplace=True)
+
+    return signals
+
+def parab_rev_8_16_32_vectorized(df):
+    return parab_rev_vectorized(df, short=8, medium=16, long=32)
+
+def parab_rev_3_6_15_vectorized(df):
+    return parab_rev_vectorized(df, short=3, medium=6, long=15)
+
+
+def vwap_trading_strategy_threshold(df: pd.DataFrame, lookback: int = 20, threshold: float = 0.005) -> pd.Series:
+    """
+    Rolling VWAP strategy with a threshold to reduce false signals.
+    Threshold in fraction of price (0.005 = 0.5%).
+    """
+    pv = df['Close'] * df['Volume']
+    vwap = pv.rolling(lookback).sum() / df['Volume'].rolling(lookback).sum()
+
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[df['Close'] > vwap * (1 + threshold)] = 1  # Sell
+    signals[df['Close'] < vwap * (1 - threshold)] = 2  # Buy
+
+    return signals
+
+def vwap_trading_strategy_cross(df: pd.DataFrame, lookback: int = 20, threshold: float = 0.005) -> pd.Series:
+    """
+    VWAP strategy with cross detection and exit signals.
+    Buy/Sell only when a cross occurs, exit when price returns to VWAP.
+    """
+    pv = df['Close'] * df['Volume']
+    vwap = pv.rolling(lookback).sum() / df['Volume'].rolling(lookback).sum()
+
+    upper_band = vwap * (1 + threshold)
+    lower_band = vwap * (1 - threshold)
+
+    # Previous day conditions
+    prev_close = df['Close'].shift(1)
+    prev_above_upper = prev_close > upper_band.shift(1)
+    prev_below_lower = prev_close < lower_band.shift(1)
+
+    # Current day conditions
+    above_upper = df['Close'] > upper_band
+    below_lower = df['Close'] < lower_band
+
+    # Initialize signals
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # --- Entry signals (cross from opposite side) ---
+    buy_cross = (~prev_below_lower) & below_lower        # just crossed below lower band
+    sell_cross = (~prev_above_upper) & above_upper        # just crossed above upper band
+
+    signals[buy_cross] = 2
+    signals[sell_cross] = 1
+
+    # --- Exit signals (return to VWAP center) ---
+    prev_below_vwap = prev_close < vwap.shift(1)
+    prev_above_vwap = prev_close > vwap.shift(1)
+
+    cross_up_to_vwap = prev_below_vwap & (df['Close'] >= vwap)
+    cross_down_to_vwap = prev_above_vwap & (df['Close'] <= vwap)
+
+    signals[cross_up_to_vwap] = -2   # Exit Buy
+    signals[cross_down_to_vwap] = -1 # Exit Sell
+
+    return signals
+
+def vwap_trading_strategy_cross_20_15(df: pd.DataFrame) -> pd.Series:
+    return vwap_trading_strategy_cross(df, lookback= 20, threshold= 0.015)
+
+def vwap_trading_strategy_cross_30_20(df: pd.DataFrame) -> pd.Series:
+    return vwap_trading_strategy_cross(df, lookback= 30, threshold= 0.020)
+
 def weekly_breakout_2_1(df):
     return weekly_breakout_vectorized(df,2,1)
 
@@ -880,42 +986,61 @@ def combined_signal_vectorized(df):
 
     return final_signals
 
-def liquidity_grab_rev_strategy(df: pd.DataFrame, lookback: int = 20) -> pd.Series:
+def liquidity_grab_rev_strategy(df: pd.DataFrame, lookback: int = 20):
     """
-    Liquidity Grab Inversion Strategy (vectorized).
+    Liquidity Grab Reversal (vectorized, one signal per grab).
 
     Args:
-        df (pd.DataFrame): Must contain columns ['High', 'Low', 'Close'].
-        lookback (int): Number of candles for breakout detection.
+        df: DataFrame with columns ['High','Low'] (Close optional).
+        lookback: number of candles for breakout detection.
+
 
     Returns:
-        pd.Series: Trading signals (2=Buy, 1=Sell, 0=Hold).
+        signals (pd.Series): 2 = Buy, 1 = Sell, 0 = Hold
+
     """
 
     highs = df['High']
-    lows = df['Low']
+    lows  = df['Low']
 
-    # breakout detection
-    breakout_high = highs > highs.shift(1).rolling(lookback).max()  # rompe un massimo precedente
-    breakout_low = lows < lows.shift(1).rolling(lookback).min()     # rompe un minimo precedente
+    # <-- 1) breakout detection (exclude current candle from the reference window) -->
+    breakout_high = highs > highs.shift(1).rolling(lookback).max()
+    breakout_low  = lows  < lows.shift(1).rolling(lookback).min()
 
-    # livelli di grab
-    grab_low = np.where(breakout_high, lows, np.nan)   # minimo della candela breakout up
-    grab_high = np.where(breakout_low, highs, np.nan)  # massimo della candela breakout down
+    # <-- 2) produce raw grab levels at breakout candles and propagate forward -->
+    grab_low_raw  = np.where(breakout_high, lows, np.nan)   # when price broke a previous high -> save that candle's low
+    grab_high_raw = np.where(breakout_low, highs, np.nan)   # when price broke a previous low  -> save that candle's high
 
-    # propaga in avanti i livelli finché non sono invalidati
-    grab_low = pd.Series(grab_low, index=df.index).ffill()
-    grab_high = pd.Series(grab_high, index=df.index).ffill()
+    grab_low  = pd.Series(grab_low_raw,  index=df.index).ffill()
+    grab_high = pd.Series(grab_high_raw, index=df.index).ffill()
 
-    # segnali
-    short_signal = (df['Low'] < grab_low) & pd.notna(grab_low)
-    long_signal = (df['High'] > grab_high) & pd.notna(grab_high)
+    # <-- 3) group ids: each grab sequence has an id (0 = no grab yet) -->
+    gid_low  = breakout_high.cumsum()
+    gid_high = breakout_low.cumsum()
 
-    signals = pd.Series(0, index=df.index)
-    signals[short_signal] = 1   # Sell
-    signals[long_signal] = 2   # Buy
+    # <-- 4) detect breaking of current grab level -->
+    broken_low  = (lows  < grab_low)  & grab_low.notna()   # candidate short
+    broken_high = (highs > grab_high) & grab_high.notna()  # candidate long
 
+    # <-- 5) keep ONLY the FIRST break inside each grab-group (vectorized) -->
+    # cumsum inside each group: first time broken -> cum == 1
+    broken_low_cum  = broken_low.groupby(gid_low).cumsum()
+    first_broken_low = broken_low & (broken_low_cum == 1)
+
+    broken_high_cum  = broken_high.groupby(gid_high).cumsum()
+    first_broken_high = broken_high & (broken_high_cum == 1)
+
+    # <-- 6) create signals; resolve rare conflicts (both true same bar) by zeroing them -->
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[first_broken_low]  = 1
+    signals[first_broken_high] = 2
+
+    # If both happened same bar (extremely rare), remove ambiguity:
+    conflict = first_broken_low & first_broken_high
+    if conflict.any():
+        signals[conflict] = 0
     return signals
+
 
 def liquidity_grab_tf_strategy(df: pd.DataFrame, lookback: int = 20) -> pd.Series:
     # Chiama la strategia originale
@@ -958,14 +1083,14 @@ candlestick_strategies = [
     inside_bar_breakout_signal_vectorized,
     three_bar_reversal_signal_vectorized,
     engulfing_pattern_signal_vectorized,
-    pin_bar_signal_vectorized,
+    #pin_bar_signal_vectorized,
     morning_evening_star_signal_vectorized,
-    shooting_star_hammer_signal_vectorized,
-    hammer_signal_vectorized,
+    #shooting_star_hammer_signal_vectorized,
+    #hammer_signal_vectorized,
     #inverted_hammer_signal_vectorized,
     doji_signal_strategy_v1_vectorized,
-    filled_bar_vectorized,
-    inverted_filled_bar_strategy,
+    #filled_bar_vectorized,
+    #inverted_filled_bar_strategy,
     retracement_rev_vectorized,
     retracement_tf_vectorized,
     liquidity_grab_rev_strategy,
@@ -988,6 +1113,13 @@ candlestick_strategies = [
     weekly_breakout_2_2,
     weekly_breakout_1_3,
     weekly_breakout_2_3,
+    vwap_trading_strategy_threshold,
+    vwap_trading_strategy_cross,
+    vwap_trading_strategy_cross_20_15,
+    vwap_trading_strategy_cross_30_20,
+    parab_rev_vectorized,
+    parab_rev_8_16_32_vectorized,
+    parab_rev_3_6_15_vectorized
     #combined_signal_vectorized
 ]
 if __name__ == "__main__":

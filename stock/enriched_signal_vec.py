@@ -3,6 +3,51 @@ import pandas as pd
 import numpy as np
 import stock.simpe_signal_vec as scs
 
+def adx_ema_trend_strategy(df: pd.DataFrame,
+                           ema_short: int = 20,
+                           ema_long: int = 50,
+                           adx_threshold: float = 25.0) -> pd.Series:
+    """
+    EMA crossover + ADX trend confirmation (vectorized, uses precomputed ADX column).
+
+    Signals:
+      2 = Buy  when EMA_short crosses above EMA_long and ADX > threshold
+      1 = Sell when EMA_short crosses below EMA_long and ADX > threshold
+      0 = Hold otherwise
+    """
+    adx_col: str = "ADX_14"
+
+    close = df['Close']
+    adx = df[adx_col]
+
+    # EMA short/long
+    ema_s = close.ewm(span=ema_short, adjust=False).mean()
+    ema_l = close.ewm(span=ema_long, adjust=False).mean()
+
+    # Cross detection (only at crossover bars)
+    prev_above = ema_s.shift(1) > ema_l.shift(1)
+    prev_below = ema_s.shift(1) < ema_l.shift(1)
+
+    cross_up = (ema_s > ema_l) & prev_below
+    cross_down = (ema_s < ema_l) & prev_above
+
+    # ADX confirmation
+    valid_trend = adx > adx_threshold
+    long_signal = cross_up & valid_trend
+    short_signal = cross_down & valid_trend
+
+    # Signals (event-based)
+    signals = pd.Series(0, index=df.index, dtype="int8")
+    signals[long_signal] = 2
+    signals[short_signal] = 1
+
+    return signals
+
+def adx_ema_trend_10_30_25(df: pd.DataFrame) -> pd.Series:
+    return adx_ema_trend_strategy(df,ema_short= 10,ema_long= 30,adx_threshold= 25.0)
+
+def adx_ema_trend_5_15_25(df: pd.DataFrame) -> pd.Series:
+    return adx_ema_trend_strategy(df,ema_short= 5,ema_long= 15,adx_threshold= 25.0)
 
 
 def adx_sma_tf_10_30_25(df) -> pd.Series:
@@ -336,8 +381,6 @@ def moving_average_crossover_signal_vectorized(df):
 
     return signals
 
-
-
 def x_bollinger_macd_total_signal_5_vectorized(df):
     return x_rsi_bollinger_macd_total_signal_base_vectorized(df,tolerance_percent=5,up_rsi_bound=70,low_rsi_bound=30,rsi_enabled=False)
 
@@ -350,8 +393,6 @@ def x_rsi_bollinger_total_signal_15_65_35_vectorized(df):
 def x_rsi_bollinger_total_signal_10_70_30_vectorized(df):
     return x_rsi_bollinger_macd_total_signal_base_vectorized(df, tolerance_percent=10, up_rsi_bound=70,
                                                              low_rsi_bound=30,macd_enabled=False)
-
-
 def x_rsi_bollinger_macd_total_signal_base_vectorized(df, tolerance_percent=5,up_rsi_bound=70,low_rsi_bound=30,macd_enabled=True,rsi_enabled=True):
 
     tolerance = tolerance_percent / 100
@@ -393,6 +434,107 @@ def x_rsi_bollinger_macd_total_signal_base_vectorized(df, tolerance_percent=5,up
         macd_sell_condition = df['MACD'] <10000
     # Complete Sell Condition
     sell_condition = rsi_sell_condition & bollinger_upper_condition & macd_sell_condition
+
+    # Exit Long Condition
+    exit_long_rsi = df['RSI'] > up_rsi_bound
+    exit_long_bollinger = df['Close'] >= df['BB_Upper']
+    exit_long_condition = exit_long_rsi | exit_long_bollinger
+
+    # Exit Short Condition
+    exit_short_rsi = df['RSI'] < low_rsi_bound
+    exit_short_bollinger = df['Close'] <= df['BB_Lower']
+    exit_short_condition = exit_short_rsi | exit_short_bollinger
+
+    # Initialize a signal Series with a default value of 0 (Hold)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply signals using vectorized assignment, prioritizing entry signals
+    # over exit signals if they occur on the same candle.
+    signals[buy_condition] = 2
+    signals[sell_condition] = 1
+
+    # Apply exit signals
+    signals[exit_long_condition] = -2
+    signals[exit_short_condition] = -1
+
+    # Re-apply entry signals to ensure they take precedence
+    signals[buy_condition] = 2
+    signals[sell_condition] = 1
+
+    return signals
+
+def x_rsi_bollinger_macd_vectorized(df, tolerance_percent=5):
+
+    tolerance = tolerance_percent / 100
+
+    # Buy (Long Entry) Conditions
+    band_width = df['BB_Upper'] - df['BB_Lower']
+
+    lower_tolerance_max = df['BB_Lower'] + band_width * tolerance
+    bollinger_lower_condition = (df['Close'] <= lower_tolerance_max)
+
+    macd_condition = df['MACD'] > df['MACD_Signal']
+
+    # Complete Buy Condition
+    buy_condition = bollinger_lower_condition & macd_condition
+
+    # Upper tolerance zone
+    upper_tolerance_min = df['BB_Upper'] - band_width * tolerance
+    bollinger_upper_condition = (df['Close'] >= upper_tolerance_min)
+    macd_sell_condition = df['MACD'] < df['MACD_Signal']
+
+    # Complete Sell Condition
+    sell_condition = bollinger_upper_condition & macd_sell_condition
+
+    # Exit Long Condition
+
+    exit_long_condition = bollinger_upper_condition | macd_condition
+
+    # Exit Short Condition
+    exit_short_condition = bollinger_lower_condition | macd_sell_condition
+
+    # Initialize a signal Series with a default value of 0 (Hold)
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Apply signals using vectorized assignment, prioritizing entry signals
+    # over exit signals if they occur on the same candle.
+    signals[buy_condition] = 2
+    signals[sell_condition] = 1
+
+    # Apply exit signals
+    signals[exit_long_condition] = -2
+    signals[exit_short_condition] = -1
+
+    # Re-apply entry signals to ensure they take precedence
+    signals[buy_condition] = 2
+    signals[sell_condition] = 1
+
+    return signals
+
+def x_rsi_bollinger_signal_vectorized(df, tolerance_percent=5,up_rsi_bound=70,low_rsi_bound=30):
+
+    tolerance = tolerance_percent / 100
+
+    # Buy (Long Entry) Conditions
+    rsi_condition = df['RSI'] < low_rsi_bound
+
+    band_width = df['BB_Upper'] - df['BB_Lower']
+
+    lower_tolerance_max = df['BB_Lower'] + band_width * tolerance
+    bollinger_lower_condition = (df['Close'] <= lower_tolerance_max)
+
+
+    # Complete Buy Condition
+    buy_condition = rsi_condition & bollinger_lower_condition
+
+    # Sell (Short Entry) Conditions
+    rsi_sell_condition = df['RSI'] > up_rsi_bound
+    # Upper tolerance zone
+    upper_tolerance_min = df['BB_Upper'] - band_width * tolerance
+    bollinger_upper_condition = (df['Close'] >= upper_tolerance_min)
+
+    # Complete Sell Condition
+    sell_condition = rsi_sell_condition & bollinger_upper_condition
 
     # Exit Long Condition
     exit_long_rsi = df['RSI'] > up_rsi_bound
@@ -955,10 +1097,9 @@ indicators_strategy =[
     bollinger_bands_adx_simple_35_20_vectorized,
     bollinger_bands_adx_simple_vectorized,
     bollinger_bands_adx_simple_45_25_vectorized,
-    x_bollinger_macd_total_signal_5_vectorized,
-    x_bollinger_macd_total_signal_10_vectorized,
     x_rsi_bollinger_total_signal_15_65_35_vectorized,
     x_rsi_bollinger_total_signal_10_70_30_vectorized,
+    x_rsi_bollinger_signal_vectorized,
     adx_sma_trend_following,
     adx_sma_tf_10_30_25,
     adx_sma_tf_15_40_35,
@@ -972,6 +1113,9 @@ indicators_strategy =[
     donchian_channel_20_5_5,
     liquidity_grab_rev_adx_filtered,
     liquidity_grab_tf_adx_filtered,
+    adx_ema_trend_strategy,
+    adx_ema_trend_10_30_25,
+    adx_ema_trend_5_15_25,
 
     #t_indicators_combined_signal_vectorized
 ]
