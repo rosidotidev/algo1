@@ -2,7 +2,7 @@ import warnings
 import gradio as gr
 import pandas as pd
 import stock.enriched_signal_vec as ins_vec
-import stock.simpe_signal_vec as cs_vec
+import stock.simple_signal_vec as cs_vec
 import stock.ticker as ti
 import backtrader_util.bu as bu
 import biz.biz_logic as biz
@@ -72,10 +72,10 @@ def filter_dataframe(query,file_name='report.csv'):
         'Last Action',
         '# Trades',
         'Win Rate [%]',
+        'Return [%]',
         'strategy',
         'BobIndex',
         'Equity Final [$]',
-        'Return [%]',
         'Buy & Hold Return [%]'
 
 

@@ -1,5 +1,5 @@
 import stock.enriched_signal_vec as ins_vec
-import stock.simpe_signal_vec as cs_vec
+import stock.simple_signal_vec as cs_vec
 import backtrader_util.bu as bu
 import strategy.xx_trades_bt as trades
 import pandas as pd

@@ -2,7 +2,7 @@
 import numpy as np
 import itertools
 from stock.my_yfinance import MyYFinance
-import stock.simpe_signal_vec as scs
+import stock.simple_signal_vec as scs
 import stock.enriched_signal_vec as si
 import strategy.xx_trades_bt as trades
 from strategy.ticker_stategy_repo import TickerStrategyRepo

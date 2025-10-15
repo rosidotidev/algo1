@@ -83,7 +83,7 @@ def test_liquidity_grab():
         plt.legend()
         #n.pyplt.savefig("plot.html", bbox_inches='tight')  # salva su file
         plt.show()
-    import stock.simpe_signal_vec as can
+    import stock.simple_signal_vec as can
     import stock.ticker as ti
     import pandas as pd
     import numpy as np

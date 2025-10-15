@@ -101,7 +101,7 @@ def vwap_trading_strategy_cross(df: pd.DataFrame, lookback: int = 20, threshold:
 
     return signals
 
-def vwap_trading_strategy_cross_20_15(df: pd.DataFrame) -> pd.Series:
+def vwap_trading_strategy_cross_20_10(df: pd.DataFrame) -> pd.Series:
     return vwap_trading_strategy_cross(df, lookback= 20, threshold= 0.015)
 
 def vwap_trading_strategy_cross_30_20(df: pd.DataFrame) -> pd.Series:
@@ -1115,7 +1115,7 @@ candlestick_strategies = [
     weekly_breakout_2_3,
     vwap_trading_strategy_threshold,
     vwap_trading_strategy_cross,
-    vwap_trading_strategy_cross_20_15,
+    vwap_trading_strategy_cross_20_10,
     vwap_trading_strategy_cross_30_20,
     parab_rev_vectorized,
     parab_rev_8_16_32_vectorized,

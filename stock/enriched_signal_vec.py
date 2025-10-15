@@ -1,7 +1,8 @@
 
 import pandas as pd
 import numpy as np
-import stock.simpe_signal_vec as scs
+import stock.simple_signal_vec as scs
+import backtrader_util.bu as bu
 
 def adx_ema_trend_strategy(df: pd.DataFrame,
                            ema_short: int = 20,
@@ -561,7 +562,9 @@ def x_rsi_bollinger_signal_vectorized(df, tolerance_percent=5,up_rsi_bound=70,lo
     # Re-apply entry signals to ensure they take precedence
     signals[buy_condition] = 2
     signals[sell_condition] = 1
-
+    if False:
+        bu.log_last_n_rows(df)
+        print(sell_condition)
     return signals
 
 def rsi_hammer_70_30_vectorized(df):
@@ -1058,24 +1061,22 @@ def bollinger_bands_adx_simple_45_25_vectorized(df):
 def liquidity_grab_rev_adx_filtered(df: pd.DataFrame, lookback: int = 20, adx_threshold: int = 25) -> pd.Series:
     signals = scs.liquidity_grab_rev_strategy(df, lookback)
     # Filtro trend
-    signals = signals.where(
-        ((signals == 2) & (df['ADX_14'] > adx_threshold)) |
-        ((signals == 1) &  (df['ADX_14'] > adx_threshold)) |
-        (signals == 0), 0
-    )
+    signals_filtered = pd.Series(0, index=signals.index, dtype='int8')
 
-    return signals
+    signals_filtered[(signals == 2) & (df['ADX_14'] > adx_threshold)] = 2
+    signals_filtered[(signals == 1) & (df['ADX_14'] > adx_threshold)] = 1
+
+    return signals_filtered
 
 def liquidity_grab_tf_adx_filtered(df: pd.DataFrame, lookback: int = 20, adx_threshold: int = 25) -> pd.Series:
     signals = scs.liquidity_grab_tf_strategy(df, lookback)
     # Filtro trend
-    signals = signals.where(
-        ((signals == 2) & (df['ADX_14'] > adx_threshold)) |
-        ((signals == 1) &  (df['ADX_14'] > adx_threshold)) |
-        (signals == 0), 0
-    )
+    signals_filtered = pd.Series(0, index=signals.index, dtype='int8')
 
-    return signals
+    signals_filtered[(signals == 2) & (df['ADX_14'] > adx_threshold)] = 2
+    signals_filtered[(signals == 1) & (df['ADX_14'] > adx_threshold)] = 1
+
+    return signals_filtered
 
 
 
