@@ -1,5 +1,34 @@
 import pandas as pd
 import numpy as np
+import stock.strategy_util as stru
+
+def ttm_squeeze_strategy(df: pd.DataFrame,
+                         bb_length: int = 20,
+                         kc_length: int = 20,
+                         momentum_length: int = 12,
+                         smooth_length: int = 4,
+                         mult: float = 1.5) -> pd.Series:
+    """
+    TTM Squeeze Strategy (vectorized).
+    Generates Buy/Sell signals based on momentum histogram around squeeze releases.
+    """
+    # Detect squeeze
+    squeeze_on = stru.detect_ttm_squeeze(df, bb_length, kc_length, mult)
+
+    # Momentum (price relative to moving average)
+    momentum = df['Close'] - df['Close'].rolling(momentum_length).mean()
+    hist = momentum - momentum.rolling(smooth_length).mean()
+
+    # Squeeze release = squeeze just ended
+    squeeze_off = (squeeze_on.shift(1) == 1) & (squeeze_on == 0)
+
+    # Signals
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[(squeeze_off) & (hist > 0)] = 2  # Buy
+    signals[(squeeze_off) & (hist < 0)] = 1  # Sell
+
+    return signals
+
 
 def parab_rev_vectorized(df, short=5, medium=10, long=20):
     """
@@ -1119,7 +1148,8 @@ candlestick_strategies = [
     vwap_trading_strategy_cross_30_20,
     parab_rev_vectorized,
     parab_rev_8_16_32_vectorized,
-    parab_rev_3_6_15_vectorized
+    parab_rev_3_6_15_vectorized,
+    ttm_squeeze_strategy
     #combined_signal_vectorized
 ]
 if __name__ == "__main__":
