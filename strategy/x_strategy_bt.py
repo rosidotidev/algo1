@@ -19,7 +19,7 @@ class XStrategyBT(XBacktestingBT):
     def _get_current_date(self):
         return self.data.index[-1]
 
-    def current_df_(self):
+    def current_df(self):
 
         if 'TotalSignal' not in self.df.columns:
             self.df.loc[:, 'TotalSignal'] = 0
@@ -31,7 +31,7 @@ class XStrategyBT(XBacktestingBT):
         current_df=self._current_df(current_date)
         return current_df
 
-    def current_df(self):
+    def current_df_(self):
 
         if 'TotalSignal' not in self.df.columns:
             self.df.loc[:, 'TotalSignal'] = 0

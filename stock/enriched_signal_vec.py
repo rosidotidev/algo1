@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import stock.simple_signal_vec as scs
 import backtrader_util.bu as bu
+import stock.strategy_util as su
 
 def adx_ema_trend_strategy(df: pd.DataFrame,
                            ema_short: int = 20,
@@ -132,7 +133,7 @@ def adx_trend_breakout(df, lookback: int = 20, adx_threshold: float = 25) -> pd.
     signals = pd.Series(0, index=df.index, dtype='int8')
     signals[buy_condition] = 2
     signals[sell_condition] = 1
-
+    #su.debug_print_on_date(df,signals)
     return signals
 
 

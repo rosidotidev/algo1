@@ -2,32 +2,40 @@ import pandas as pd
 import numpy as np
 import stock.strategy_util as stru
 
+
 def ttm_squeeze_strategy(df: pd.DataFrame,
-                         bb_length: int = 20,
-                         kc_length: int = 20,
-                         momentum_length: int = 12,
-                         smooth_length: int = 4,
-                         mult: float = 1.5) -> pd.Series:
+                         bb_length: int = 20, keltner_length: int = 20,
+                         bb_mult: float = 2.0, keltner_mult: float = 1.5,
+                         momentum_length: int = 20, smooth_length: int = 5) -> pd.Series:
     """
-    TTM Squeeze Strategy (vectorized).
-    Generates Buy/Sell signals based on momentum histogram around squeeze releases.
+    Full TTM Squeeze strategy:
+    - Entry: when squeeze releases (on→off)
+    - Direction: histogram sign
+    - Exit: when histogram changes sign
     """
-    # Detect squeeze
-    squeeze_on = stru.detect_ttm_squeeze(df, bb_length, kc_length, mult)
 
-    # Momentum (price relative to moving average)
-    momentum = df['Close'] - df['Close'].rolling(momentum_length).mean()
-    hist = momentum - momentum.rolling(smooth_length).mean()
+    squeeze = stru.compute_squeeze(df, bb_length, keltner_length, bb_mult, keltner_mult)
+    hist = stru.compute_ttm_hist(df, momentum_length, smooth_length)
 
-    # Squeeze release = squeeze just ended
-    squeeze_off = (squeeze_on.shift(1) == 1) & (squeeze_on == 0)
+    squeeze_release = squeeze['squeeze_on'].shift(1) & squeeze['squeeze_off']
 
-    # Signals
+    # Initialize signals
     signals = pd.Series(0, index=df.index, dtype='int8')
-    signals[(squeeze_off) & (hist > 0)] = 2  # Buy
-    signals[(squeeze_off) & (hist < 0)] = 1  # Sell
+
+    # Entries
+    signals[squeeze_release & (hist > 0)] = 2   # Buy
+    signals[squeeze_release & (hist < 0)] = 1   # Sell
+
+    # Exits → momentum crosses zero (change of direction)
+    hist_prev = hist.shift(1)
+    cross_down = (hist_prev > 0) & (hist < 0)
+    cross_up = (hist_prev < 0) & (hist > 0)
+
+    signals[cross_down] = -2  # exit from Buy
+    signals[cross_up] = -1    # exit from Sell
 
     return signals
+
 
 
 def parab_rev_vectorized(df, short=5, medium=10, long=20):

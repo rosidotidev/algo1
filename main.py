@@ -4,6 +4,12 @@ from dotenv import load_dotenv
 from stock.x_trades_bt import run_backtest_for_all_tickers
 import shutil
 from biz import biz_logic as biz
+import stock.simple_signal_vec as can
+import stock.enriched_signal_vec as esv
+import stock.ticker as ti
+import data.data_enricher as de
+import pandas as pd
+import numpy as np
 
 import shutil
 
@@ -100,6 +106,19 @@ def test_liquidity_grab():
 
     plot_liquidity_grab(df, grab_low, grab_high, signals)
 
+def test_adx():
+    pd.set_option('display.max_columns', None)  # mostra tutte le colonne
+    pd.set_option('display.width', None)  # non tronca le righe
+    pd.set_option('display.max_colwidth', None)  # mostra tutto il contenuto delle celle (anche stringhe lunghe)
+
+    df = ti.read_from_csv("../data/STX_SHORT.csv")
+    df=de.add_adx_column(df)
+    print(df.tail(13))
+    res=esv.adx_trend_breakout_10_35(df)
+    print(res)
+
+
 
 if __name__ == "__main__":
-    test_liquidity_grab()
+    #test_liquidity_grab()
+    test_adx()
