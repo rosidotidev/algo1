@@ -841,7 +841,7 @@ def t_indicators_combined_signal_vectorized(df):
 
     return final_signals
 
-def mixed_signal_strategy_vectorized(df):
+def mixed_signal_strategy_vectorized(df,rsi_lower=30,rsi_upper=70,stoch_lower=20,stoch_upper=80):
     """
     Generates trading signals by combining RSI, Stochastic, and Moving Averages
     using a vectorized approach.
@@ -863,22 +863,22 @@ def mixed_signal_strategy_vectorized(df):
     # 📈 LONG SIGNAL (2)
     # Enter if the trend is bullish AND momentum indicators are in an oversold zone
     buy_condition = bullish_trend & \
-                    ((df['RSI'] < 30) | ((df['STOCHk_14_3_3'] < 20) & (df['STOCHd_14_3_3'] < 20))) & \
+                    ((df['RSI'] < rsi_lower) | ((df['STOCHk_14_3_3'] < stoch_lower) & (df['STOCHd_14_3_3'] < stoch_lower))) & \
                     (df['Close'] < df['BB_Lower'])
 
     # 📉 SHORT SIGNAL (1)
     # Enter if the trend is bearish AND momentum indicators are in an overbought zone
     sell_condition = bearish_trend & \
-                     ((df['RSI'] > 70) | ((df['STOCHk_14_3_3'] > 80) & (df['STOCHd_14_3_3'] > 80))) & \
+                     ((df['RSI'] > rsi_upper) | ((df['STOCHk_14_3_3'] > stoch_upper) & (df['STOCHd_14_3_3'] > stoch_upper))) & \
                      (df['Close'] > df['BB_Upper'])
 
     # 🚪 EXIT LONG (-2)
     # Exit a long position if the trend reverses or momentum is overbought
-    exit_long_condition = bearish_trend | ((df['RSI'] > 70) & (df['Close'] > df['BB_Upper']))
+    exit_long_condition = bearish_trend | ((df['RSI'] > rsi_upper) & (df['Close'] > df['BB_Upper']))
 
     # 🚪 EXIT SHORT (-1)
     # Exit a short position if the trend reverses or momentum is oversold
-    exit_short_condition = bullish_trend | ((df['RSI'] < 30) & (df['Close'] < df['BB_Lower']))
+    exit_short_condition = bullish_trend | ((df['RSI'] < rsi_lower) & (df['Close'] < df['BB_Lower']))
 
     # Initialize a signal Series with a default value of 0 (Hold)
     signals = pd.Series(0, index=df.index, dtype='int8')

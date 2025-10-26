@@ -29,7 +29,27 @@ def compute_squeeze(df: pd.DataFrame, bb_length: int = 20, keltner_length: int =
     })
 
 
-def compute_ttm_hist(df: pd.DataFrame, momentum_length: int = 20, smooth_length: int = 5) -> pd.Series:
+def cross_over_max(a,lookback):
+
+    max_prev = a.shift(1).rolling(lookback).max()
+    over_max = (a > max_prev) & (a.shift(1) <= max_prev.shift(1))
+    return over_max
+
+def cross_under_min(a,lookback):
+
+    min_prev = a.shift(1).rolling(lookback).min()
+    over_min = (a < min_prev) & (a.shift(1) >= min_prev.shift(1))
+    return over_min
+
+def cross_over(a,b):
+    cross_ov = (a > b) & (a.shift(1)<=b.shift(1))
+    return cross_ov
+
+def cross_under(a,b):
+    cross_und = (a < b) & (a.shift(1)>=b.shift(1))
+    return cross_und
+
+def compute_momentum_hist(df: pd.DataFrame, momentum_length: int = 20, smooth_length: int = 5) -> pd.Series:
     """
     Compute simplified TTM Squeeze histogram (momentum measure).
     """
@@ -39,7 +59,34 @@ def compute_ttm_hist(df: pd.DataFrame, momentum_length: int = 20, smooth_length:
     return hist
 
 
-import pandas as pd
+def vwap(df: pd.DataFrame, lookback: int = 20) -> pd.Series:
+    """
+    Rolling VWAP calculation with a lookback period.
+    """
+    pv = df['Close'] * df['Volume']
+    vwap = pv.rolling(lookback).sum() / df['Volume'].rolling(lookback).sum()
+    return vwap
+
+def vma(df: pd.DataFrame, lookback: int = 20) -> pd.Series:
+    """
+    Rolling Volume calculation with a lookback period.
+    """
+    vma_res = df['Volume'].rolling(lookback).mean()
+    return vma_res
+
+def v_max(df: pd.DataFrame, lookback: int = 20) -> pd.Series:
+    """
+    Rolling Volume calculation with a lookback period.
+    """
+    vma_res = df['Volume'].rolling(lookback).max()
+    return vma_res
+
+def v_min(df: pd.DataFrame, lookback: int = 20) -> pd.Series:
+    """
+    Rolling Volume calculation with a lookback period.
+    """
+    vma_res = df['Volume'].rolling(lookback).min()
+    return vma_res
 
 
 def debug_print_on_date(df: pd.DataFrame,

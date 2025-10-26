@@ -2,6 +2,224 @@ import pandas as pd
 import numpy as np
 import stock.strategy_util as stru
 
+def squeeze_ema_strategy(df: pd.DataFrame, short_ema: int = 10, squeez_back_period: int = 5) -> pd.Series:
+    """
+    Strategia semplice basata su:
+    - TTM Squeeze (default params)
+    - EMA short per confermare breakout
+    """
+    # --- Squeeze ---
+    squeeze_df = stru.compute_squeeze(df)  # usa parametri di default
+
+    # --- EMA ---
+    ema = df['Close'].ewm(span=short_ema, adjust=False).mean()
+
+    # --- Condizioni LONG ---
+    long_condition = (
+        squeeze_df['squeeze_on'].shift(squeez_back_period) &   # squeeze attivo qualche periodo fa
+        squeeze_df['squeeze_off'].shift(squeez_back_period-1) & # squeeze rilasciato subito dopo
+        (df['Close'] > ema)                                                   # conferma trend rialzista
+    )
+
+    # --- Condizioni SHORT ---
+    short_condition = (
+        squeeze_df['squeeze_on'].shift(squeez_back_period) &
+        squeeze_df['squeeze_off'].shift(squeez_back_period-1) &
+        (df['Close'] < ema)                                                   # conferma trend ribassista
+    )
+
+    # --- Segnali ---
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[long_condition] = 2
+    signals[short_condition] = 1
+
+    return signals
+
+def squeeze_ema_10_20(df: pd.DataFrame):
+    return squeeze_ema_strategy(df,10,20)
+
+def squeeze_ema_15_25(df: pd.DataFrame):
+    return squeeze_ema_strategy(df,15,25)
+
+def volume_trend_basic(df: pd.DataFrame, lookback: int = 20) -> pd.Series:
+    close = df['Close']
+    volume = df['Volume']
+
+    # Calcolo della media mobile semplice
+    sma = close.rolling(lookback).mean()
+    vw = stru.vwap(df, lookback)
+    # Condizione di "cross volume breakout"
+    vol_cross = stru.cross_over_max(volume, lookback)
+
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Entry SOLO se c'è stato CROSS del volume oltre il massimo precedente
+    long_condition = vol_cross & (close > sma) & (close > vw) & (vw > sma)
+    short_condition = vol_cross & (close < sma) & (close < vw) & (vw < sma)
+
+    signals[long_condition] = 2
+    signals[short_condition] = 1
+
+    return signals
+
+
+
+def volume_trend_10(df: pd.DataFrame):
+    return volume_trend_basic(df, lookback=10)
+
+def volume_trend_30(df: pd.DataFrame):
+    return volume_trend_basic(df, lookback=30)
+
+
+def momentum_vwap_vma_strategy(df: pd.DataFrame,
+                                        momentum_length: int = 20,
+                                        smooth_length: int = 5,
+                                        vwap_length: int = 20,
+                                        vma_length: int = 20) -> pd.Series:
+
+    hist = stru.compute_momentum_hist(df, momentum_length, smooth_length)
+    vwap_val = stru.vwap(df, vwap_length)
+    vma_val = stru.vma(df, vma_length)
+
+    close = df["Close"]
+    volume = df["Volume"]
+
+    # Momentum crescente = conferma trend
+    momentum_up = hist > hist.shift(1)
+
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # ✅ LONG
+    long_condition = (
+        (hist > 0) &
+        momentum_up &
+        (stru.cross_over(close,vwap_val)) &
+        (volume > vma_val) &
+        (close > close.shift(1)
+        )
+    )
+    signals[long_condition] = 2
+
+    # ✅ SHORT
+    short_condition = (
+        (hist < 0) &
+        (~momentum_up) &
+        (stru.cross_under(close,  vwap_val)) &
+        (volume > vma_val) &
+        (close < close.shift(1)
+        )
+    )
+    signals[short_condition] = 1
+
+    return signals
+
+def ema_vwap_vectorized(df: pd.DataFrame,
+                            emaShortPeriod: int = 13,
+                            emaLongPeriod: int = 18) -> pd.Series:
+    """
+    Vectorized EMA/VWAP/SMA crossover strategy.
+    Generates trading signals based on entry conditions only:
+    2 = Long entry
+    1 = Short entry
+    0 = No action (Hold/Flat/Exit handled by backtester)
+
+    Args:
+        df (pd.DataFrame): Must include 'High', 'Low', 'Close', 'Volume'
+        emaShortPeriod (int): Fast EMA for entry
+        emaLongPeriod (int): Slow EMA for entry
+        smaPeriod (int): SMA filter for entry
+
+    Returns:
+        pd.Series: Trading signals (2 = Buy, 1 = Short, 0 = Hold)
+    """
+
+    close = df["Close"]
+    # === Indicatori ===
+    emaShort = close.ewm(span=emaShortPeriod, adjust=False).mean()
+    emaLong = close.ewm(span=emaLongPeriod, adjust=False).mean()
+
+    # VWAP vectorized
+    vwap = stru.vwap(df)
+
+    # === Segnali ===
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Entry Long (Buy)
+    long_condition = (
+        (emaShort > emaLong) &
+        (emaShort.shift(1) <= emaLong.shift(1)) &
+        (close > vwap)
+    )
+    signals[long_condition] = 2
+
+    # Entry Short (Sell Short)
+    short_condition = (
+        (emaShort < emaLong) &
+        (emaShort.shift(1) >= emaLong.shift(1)) &
+        (close < vwap)
+    )
+    signals[short_condition] = 1
+
+    return signals
+
+def ema_vwap_sma_vectorized(df: pd.DataFrame,
+                            emaShortPeriod: int = 17,
+                            emaLongPeriod: int = 31,
+                            smaPeriod: int = 69) -> pd.Series:
+    """
+    Vectorized EMA/VWAP/SMA crossover strategy.
+    Generates trading signals based on entry conditions only:
+    2 = Long entry
+    1 = Short entry
+    0 = No action (Hold/Flat/Exit handled by backtester)
+
+    Args:
+        df (pd.DataFrame): Must include 'High', 'Low', 'Close', 'Volume'
+        emaShortPeriod (int): Fast EMA for entry
+        emaLongPeriod (int): Slow EMA for entry
+        smaPeriod (int): SMA filter for entry
+
+    Returns:
+        pd.Series: Trading signals (2 = Buy, 1 = Short, 0 = Hold)
+    """
+
+    close = df["Close"]
+    # === Indicatori ===
+    emaShort = close.ewm(span=emaShortPeriod, adjust=False).mean()
+    emaLong = close.ewm(span=emaLongPeriod, adjust=False).mean()
+    smaLong = close.rolling(smaPeriod).mean()
+
+    # VWAP vectorized
+    vwap = stru.vwap(df)
+
+    # === Segnali ===
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Entry Long (Buy)
+    long_condition = (
+        (emaShort > emaLong) &
+        (emaShort.shift(1) <= emaLong.shift(1)) &
+        (close > vwap) &
+        (close > smaLong)
+    )
+    signals[long_condition] = 2
+
+    # Entry Short (Sell Short)
+    short_condition = (
+        (emaShort < emaLong) &
+        (emaShort.shift(1) >= emaLong.shift(1)) &
+        (close < vwap) &
+        (close < smaLong)
+    )
+    signals[short_condition] = 1
+
+    return signals
+
+def ema_vwap_sma_15_30_50(df: pd.DataFrame):
+    return ema_vwap_sma_vectorized(df,15,30,50)
+
+def ema_vwap_sma_5_10_20(df: pd.DataFrame):
+    return ema_vwap_sma_vectorized(df,5,10,20)
 
 def ttm_squeeze_strategy(df: pd.DataFrame,
                          bb_length: int = 20, keltner_length: int = 20,
@@ -15,7 +233,7 @@ def ttm_squeeze_strategy(df: pd.DataFrame,
     """
 
     squeeze = stru.compute_squeeze(df, bb_length, keltner_length, bb_mult, keltner_mult)
-    hist = stru.compute_ttm_hist(df, momentum_length, smooth_length)
+    hist = stru.compute_momentum_hist(df, momentum_length, smooth_length)
 
     squeeze_release = squeeze['squeeze_on'].shift(1) & squeeze['squeeze_off']
 
@@ -87,8 +305,7 @@ def vwap_trading_strategy_threshold(df: pd.DataFrame, lookback: int = 20, thresh
     Rolling VWAP strategy with a threshold to reduce false signals.
     Threshold in fraction of price (0.005 = 0.5%).
     """
-    pv = df['Close'] * df['Volume']
-    vwap = pv.rolling(lookback).sum() / df['Volume'].rolling(lookback).sum()
+    vwap = stru.vwap(df,lookback)
 
     signals = pd.Series(0, index=df.index, dtype='int8')
     signals[df['Close'] > vwap * (1 + threshold)] = 1  # Sell
@@ -101,8 +318,7 @@ def vwap_trading_strategy_cross(df: pd.DataFrame, lookback: int = 20, threshold:
     VWAP strategy with cross detection and exit signals.
     Buy/Sell only when a cross occurs, exit when price returns to VWAP.
     """
-    pv = df['Close'] * df['Volume']
-    vwap = pv.rolling(lookback).sum() / df['Volume'].rolling(lookback).sum()
+    vwap = stru.vwap(df,lookback)
 
     upper_band = vwap * (1 + threshold)
     lower_band = vwap * (1 - threshold)
@@ -1157,7 +1373,18 @@ candlestick_strategies = [
     parab_rev_vectorized,
     parab_rev_8_16_32_vectorized,
     parab_rev_3_6_15_vectorized,
-    ttm_squeeze_strategy
+    #ttm_squeeze_strategy,
+    ema_vwap_sma_vectorized,
+    #momentum_vwap_vma_strategy,
+    ema_vwap_sma_15_30_50,
+    ema_vwap_sma_5_10_20,
+    ema_vwap_vectorized,
+    volume_trend_basic,
+    volume_trend_10,
+    volume_trend_30,
+    squeeze_ema_strategy,
+    squeeze_ema_10_20,
+    squeeze_ema_15_25
     #combined_signal_vectorized
 ]
 if __name__ == "__main__":
