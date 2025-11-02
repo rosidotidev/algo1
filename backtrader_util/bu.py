@@ -1,6 +1,5 @@
 import os
 from datetime import datetime
-from stock.strategy_repo import StrategyRepo
 import json
 import inspect
 import pandas as pd
@@ -38,6 +37,7 @@ def append_df(df1,df2):
     return df_final
 
 def suggest_param_space(func_name: str):
+    from stock.strategy_repo import StrategyRepo
     """
     Generate a default param_space dictionary for a strategy function name.
 
@@ -81,6 +81,7 @@ def suggest_param_space(func_name: str):
 
 
 def get_prefill_param_space(strategy_name):
+    from stock.strategy_repo import StrategyRepo
     strategies=StrategyRepo.get_all_available_strategy_functions()
     func_map = {f.__name__.replace("_", " "): f for f in strategies}
     func = func_map[strategy_name]

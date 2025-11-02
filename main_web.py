@@ -121,8 +121,8 @@ def main():
                     with gr.Column(scale=1):
                         file_dropdown = gr.Dropdown(files, label="Select CSV File")
 
-                        win_rate_slider = gr.Slider(minimum=0, maximum=100, value=80, label="Min Win Rate [%]")
-                        return_slider = gr.Slider(minimum=0, maximum=500, value=50, label="Min Return [%]")
+                        win_rate_slider = gr.Slider(minimum=0, maximum=100, value=50, label="Min Win Rate [%]")
+                        return_slider = gr.Slider(minimum=0, maximum=500, value=20, label="Min Return [%]")
                         trades_slider = gr.Slider(minimum=0, maximum=100, value=1, label="Min # Trades")
                         last_action_check = gr.CheckboxGroup([1, 2, 0, -1, -2], label="Last Action values to include",
                                                              value=[1, 2, -1, -2])

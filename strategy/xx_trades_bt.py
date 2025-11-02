@@ -1,8 +1,8 @@
 from backtesting import Backtest
 import stock.ticker as ti
 from backtrader_util import bu
-import stock.simple_signal_vec as cs_vec
-import stock.enriched_signal_vec as ins_vec
+import stock.simple_signal_vec as simple
+import stock.enriched_signal_vec as enriched
 import data.data_enricher as de
 import time
 import datetime
@@ -16,6 +16,7 @@ import traceback
 from strategy.ticker_stategy_repo import TickerStrategyRepo
 from strategy.ticker_strategy import TickerStrategy
 from strategy.x_strategy_bt import XStrategyBT
+import stock.plot as my_plot
 
 
 def load_best_matrix(path: str) -> pd.DataFrame:
@@ -76,13 +77,13 @@ def is_valid_strategy(ticker: str, strategy: str, best_matrix: pd.DataFrame) -> 
 
 
 
-def run_backtest_DaxPattern_vec(data_path,slperc=0.04,tpperc=0.02,capital_allocation=1,show_plot=False,target_strategy=cs_vec.dax_total_signal_vectorized,add_indicators=True):
+def run_backtest_DaxPattern_vec(data_path,slperc=0.04,tpperc=0.02,capital_allocation=1,show_plot=False,target_strategy=simple.dax_total_signal_vectorized,add_indicators=True):
 
     df=ti.read_from_csv(data_path)
     return run_backtest_DaxPattern_vec_df(df,slperc=slperc,tpperc=tpperc,capital_allocation=capital_allocation,show_plot=show_plot,target_strategy=target_strategy,add_indicators=add_indicators)
 
 def run_backtest_DaxPattern_vec_df(df, slperc=0.04, tpperc=0.02, capital_allocation=1, show_plot=False,
-                                    target_strategy=cs_vec.dax_total_signal_vectorized, add_indicators=True):
+                                    target_strategy=simple.dax_total_signal_vectorized, add_indicators=True):
     df = bu.norm_date_time(df.copy())
     if add_indicators:
         df = de.add_rsi_macd_bb(df)
@@ -113,7 +114,7 @@ def run_backtest_DaxPattern_vec_df(df, slperc=0.04, tpperc=0.02, capital_allocat
     return results
 
 def run_x_backtest_DaxPattern_vec(data_path, slperc=0.04, tpperc=0.02, capital_allocation=1, show_plot=False,
-                                    target_strategy=cs_vec.dax_total_signal_vectorized, add_indicators=True):
+                                    target_strategy=simple.dax_total_signal_vectorized, add_indicators=True, open_browser=True):
     df = ti.read_from_csv(data_path)
     df = bu.norm_date_time(df.copy())
     if add_indicators:
@@ -148,10 +149,13 @@ def run_x_backtest_DaxPattern_vec(data_path, slperc=0.04, tpperc=0.02, capital_a
     results = bt.run(slperc=slperc, tpperc=tpperc, ts=ts,df=df, ctx=ctx)
     ctx.update(results.to_dict())
     # print(f" ctx {results}")
-    if show_plot:
-        bt.plot(filename=None)
+
     for key, value in ctx.items():
         results[key] = bu.format_value(value)
+
+    if show_plot:
+        fig=bt.plot(filename=None,open_browser=open_browser)
+        bu.cache["context"]["backtest_plot"]=fig
     # Used to solve issue on single backtest
     if False:
         bu.debug_if_contains("DRS", data_path, ctx, results);
@@ -159,7 +163,7 @@ def run_x_backtest_DaxPattern_vec(data_path, slperc=0.04, tpperc=0.02, capital_a
     return results
 
 
-def run_backtest_for_all_tickers(tickers_file, data_directory,slperc=0.15,tpperc=0.15,candle_strategy=cs_vec.three_bar_reversal_signal_vectorized,add_indicators=False,optimize=False):
+def run_backtest_for_all_tickers(tickers_file, data_directory,slperc=0.15,tpperc=0.15,candle_strategy=simple.three_bar_reversal_signal_vectorized,add_indicators=False,optimize=False):
     """Runs backtests for all tickers in tickers.txt and determines the best performer."""
     best_report=None
     # Read tickers from file
@@ -366,10 +370,10 @@ def execute_all_strategies_for_single_ticker(all_functions, best_matrix, data_di
 
 def exec_analysis(base_path="../",slperc=0.15, tpperc=1.0, optimize=False):
     df = None
-    for strategy in cs_vec.candlestick_strategies:
+    for strategy in simple.candlestick_strategies:
         df1 = run_backtest_for_all_tickers(f'{base_path}../data/tickers.txt', f'{base_path}../data/', slperc=slperc,tpperc=tpperc,candle_strategy=strategy,optimize=optimize)
         df = bu.append_df(df, df1)
-    for strategy in ins_vec.indicators_strategy:
+    for strategy in enriched.indicators_strategy:
         df1 = run_backtest_for_all_tickers(f'{base_path}../data/tickers.txt', f'{base_path}../data/', slperc=slperc,tpperc=tpperc,candle_strategy=strategy,
                                            add_indicators=True,optimize=optimize)
         df = bu.append_df(df, df1)
@@ -409,7 +413,7 @@ def exec_analysis_and_save_results(base_path='../', slperc=0.15, tpperc=1.0, par
     return summary
 
 def test0():
-    s2 = run_backtest_DaxPattern_vec("../../data/DRS.csv", slperc=0.15, tpperc=0.40, target_strategy=cs_vec.filled_bar_vectorized,
+    s2 = run_backtest_DaxPattern_vec("../../data/DRS.csv", slperc=0.15, tpperc=0.40, target_strategy=simple.filled_bar_vectorized,
                                  capital_allocation=10000, show_plot=True,add_indicators=False)
 
 def test2():
@@ -427,7 +431,29 @@ def test3():
     print(f"Data exec time: {exec_time - start_time:.2f} seconds")
 
 def test4():
-    s2 = run_x_backtest_DaxPattern_vec("../../data/DRS.csv", slperc=0.15, tpperc=0.40, target_strategy=cs_vec.filled_bar_vectorized,
-                                 capital_allocation=10000, show_plot=True,add_indicators=False)
+    bu.cache["context"]["TickerStrategyRepo"]=TickerStrategyRepo("../../data/")
+    func_strategy=simple.ema_pullback_strategy
+    #func_strategy=enriched.adx_trend_breakout_10_35
+    add_ind=StrategyRepo.get_add_indicators_flag(func_strategy)
+    s2 = run_x_backtest_DaxPattern_vec("../../data/MGNI.csv", slperc=0.05, tpperc=0.08, target_strategy=func_strategy,
+                                 capital_allocation=10000, show_plot=True,add_indicators=add_ind,open_browser=False)
+
+    fig=bu.cache["context"]["backtest_plot"]
+    my_plot.plot_x(fig)
+    strategy=s2._strategy
+    print(strategy.df)
+    print(strategy.closed_trades)
+    df=strategy.df
+    df['trades']=0
+    print(strategy.closed_trades[0])
+    for trade in strategy.closed_trades:
+        entry_time = trade.entry_time
+        if entry_time in df.index:
+            if trade.is_long:
+                df.at[entry_time, "trades"] = 2
+            elif trade.is_short:
+                df.at[entry_time, "trades"] = 1
+    my_plot.plot_numeric_flags_signals(strategy.df,['Close','ema_short','ema_long'],flag_cols=['cross','trend_up','trend_down'],signals=df['trades'])
+    a=1
 if __name__ == "__main__":
     test4()

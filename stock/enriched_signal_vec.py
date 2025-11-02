@@ -134,6 +134,11 @@ def adx_trend_breakout(df, lookback: int = 20, adx_threshold: float = 25) -> pd.
     signals[buy_condition] = 2
     signals[sell_condition] = 1
     #su.debug_print_on_date(df,signals)
+    df['buy_condition']=buy_condition
+    df['sell_condition']=sell_condition
+    df['highest_high']=highest_high
+    df['lowest_low']=lowest_low
+
     return signals
 
 

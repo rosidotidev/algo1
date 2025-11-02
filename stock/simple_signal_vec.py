@@ -2,6 +2,203 @@ import pandas as pd
 import numpy as np
 import stock.strategy_util as stru
 
+def ema_pullback_strategy_b1(df: pd.DataFrame,
+                             short_ema: int = 8,
+                             long_ema: int = 13,
+                             min_move: float = 0.001,
+                             min_trend_gap: float = 0.06,
+                             cooloff: int = -3) -> pd.Series:
+    """
+    EMA Pullback Strategy - Vectorized Pure Version
+    -----------------------------------------------
+    Migliorie:
+    - Cross EMA8 validi solo con movimento significativo
+    - Filtro trend: gap minimo 0.5–1% tra EMA8 e EMA21
+    - Cooloff vettoriale (nessun for)
+    - Nessun indicatore extra (solo prezzo + EMA)
+    """
+
+    close = df['Close']
+    open_ = df['Open']
+
+    ema_short = close.ewm(span=short_ema, adjust=False).mean()
+    ema_long = close.ewm(span=long_ema, adjust=False).mean()
+
+    # Movimento minimo intraday per considerare un cross valido
+    price_move = abs(close - open_) / open_
+
+    cross_ema_short = (
+        (((open_ > ema_short) & (close < ema_short)) |
+         ((open_ < ema_short) & (close > ema_short)))
+        & (price_move > min_move)
+    )
+
+    # Filtri trend con gap minimo
+    trend_up = ema_short > ema_long * (1 + min_trend_gap)
+    trend_down = ema_long > ema_short * (1 + min_trend_gap)
+
+    # Condizioni di ingresso
+    long_condition = (
+        trend_up &
+        cross_ema_short &
+        (open_ > ema_long) &
+        (close > ema_long) &
+        (close.shift(1) > ema_short.shift(1))
+    )
+
+    short_condition = (
+        trend_down &
+        cross_ema_short &
+        (open_ < ema_long) &
+        (close < ema_long) &
+        (close.shift(1) < ema_short.shift(1))
+    )
+
+    # Condizioni di uscita
+    exit_long_condition = (close < ema_short)
+    exit_short_condition = (close > ema_short)
+
+    # Creazione serie segnali base
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[exit_long_condition] = -2
+    signals[exit_short_condition] = -1
+    signals[long_condition] = 2
+    signals[short_condition] = 1
+
+    # COOL-OFF vettoriale: ignora segnali entro N barre dal precedente
+    if cooloff > 0:
+        entry_mask = signals.isin([1, 2])
+        last_entry = entry_mask.astype(float).replace(0.0, np.nan)
+        last_entry = last_entry * np.arange(len(entry_mask))  # indice progressivo
+        last_valid = last_entry.ffill()
+        dist = np.arange(len(entry_mask)) - last_valid
+        # Cancella segnali troppo vicini
+        signals[(entry_mask) & (dist <= cooloff)] = 0
+    df['signals']=signals
+    df['ema_short']=ema_short
+    df['ema_long']=ema_long
+    return signals
+
+def ema_pullback_strategy(df: pd.DataFrame,
+                          short_ema: int = 8,
+                          long_ema: int = 21,
+                          min_move: float = 0.02,
+                          min_trend_gap: float = 0.06,
+                          lookback_trend: int = 5) -> pd.Series:
+    """
+    EMA Pullback Strategy - Trend Persistence Version
+    ------------------------------------------------
+    Logica aggiornata:
+    - Conferma trend tramite EMA short rispetto al valore di lookback_trend barre fa
+    - Cross valido solo se la candela corrente 'sfonda' la EMA short
+    - Filtri su gap di trend e movimento minimo intraday
+    """
+
+    close = df['Close']
+    open_ = df['Open']
+    high = df['High']
+    low = df['Low']
+
+    ema_short = close.ewm(span=short_ema, adjust=False).mean()
+    ema_long = close.ewm(span=long_ema, adjust=False).mean()
+
+    # Movimento minimo intraday per considerare un cross valido
+    #price_move = abs(close - open_) / open_
+
+    # Trend filter con persistenza nel tempo
+    ema_short_prev = ema_short.shift(lookback_trend)
+    persistent_up = ema_short > ema_short_prev * (1 + min_trend_gap)
+    persistent_down = ema_short < ema_short_prev * (1 + min_trend_gap)
+
+    # Filtri trend generali con gap minimo
+    trend_up = (ema_short > ema_long * (1 + min_trend_gap)) & persistent_up
+    #trend_up = persistent_up
+    trend_down = (ema_long > ema_short * (1 + min_trend_gap)) & persistent_down
+    #trend_down = persistent_down
+
+    # Cross EMA short (candela che "sfonda" la EMA)
+    cross = ((low < ema_short) & (high > ema_short)) |((low > ema_short) & (high < ema_short))#& (price_move > min_move)
+
+    # Condizioni di ingresso
+    long_condition = trend_up & cross & (close > ema_long)
+    short_condition = trend_down & cross & (close < ema_long)
+
+    # Serie segnali
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[long_condition] = 2
+    signals[short_condition] = 1
+
+    # Aggiunta colonne di debug utili per analisi
+    df['ema_short'] = ema_short
+    df['ema_long'] = ema_long
+    df['signals'] = signals
+    df['cross'] = cross
+
+    df['trend_up'] = trend_up
+    df['trend_down']=trend_down
+
+    return signals
+
+
+
+def ema_pullback_simple_strategy(
+    df: pd.DataFrame,
+    short_ema: int = 8,
+    long_ema: int = 21
+) -> pd.Series:
+    """
+    Strategy:
+    - Trend filter: EMA8 vs EMA21
+    - Entry when price crosses EMA8 without touching EMA21
+    - Returns:
+        2 = Buy
+        1 = Sell/Short
+        0 = Hold
+    """
+
+    close = df['Close']
+    open_ = df['Open']
+
+    ema_short = close.ewm(span=short_ema, adjust=False).mean()
+    ema_long = close.ewm(span=long_ema, adjust=False).mean()
+
+
+    # Crossing EMA8 → Open/Close on opposite sides
+    cross_ema_short = (
+        ((open_ > ema_short) & (close < ema_short)) |
+        ((open_ < ema_short) & (close > ema_short))
+
+    )
+
+    # LONG conditions
+    long_condition = (
+        (ema_short > ema_long) &
+        cross_ema_short &
+        (open_ > ema_long) &
+        (close > ema_long ) &
+        close.shift(1) > ema_short.shift(1)
+    )
+
+    # SHORT conditions
+    short_condition = (
+        (ema_long > ema_short) &
+        cross_ema_short &
+        (open_ < ema_long) &
+        (close < ema_long) &
+        close.shift(1) < ema_short.shift(1)
+    )
+    exit_long_condition=ema_long > ema_short
+    exit_short_condition = ema_long < ema_short
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[exit_long_condition] = -2
+    signals[exit_short_condition] = -1
+    signals[long_condition] = 2
+    signals[short_condition] = 1
+
+    return signals
+
+
+
 def squeeze_ema_strategy(df: pd.DataFrame, short_ema: int = 10, squeez_back_period: int = 5) -> pd.Series:
     """
     Strategia semplice basata su:
@@ -21,13 +218,18 @@ def squeeze_ema_strategy(df: pd.DataFrame, short_ema: int = 10, squeez_back_peri
         (df['Close'] > ema)                                                   # conferma trend rialzista
     )
 
+
     # --- Condizioni SHORT ---
     short_condition = (
         squeeze_df['squeeze_on'].shift(squeez_back_period) &
         squeeze_df['squeeze_off'].shift(squeez_back_period-1) &
         (df['Close'] < ema)                                                   # conferma trend ribassista
     )
-
+    df['squeeze_on'] = squeeze_df['squeeze_on']
+    df['squeeze_off'] = squeeze_df['squeeze_off']
+    df['ema'] = ema
+    df['long_condition'] = long_condition
+    df['short_condition'] = short_condition
     # --- Segnali ---
     signals = pd.Series(0, index=df.index, dtype='int8')
     signals[long_condition] = 2
@@ -1384,7 +1586,8 @@ candlestick_strategies = [
     volume_trend_30,
     squeeze_ema_strategy,
     squeeze_ema_10_20,
-    squeeze_ema_15_25
+    squeeze_ema_15_25,
+    ema_pullback_strategy,
     #combined_signal_vectorized
 ]
 if __name__ == "__main__":
