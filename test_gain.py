@@ -6,8 +6,9 @@ import pandas as pd
 initial_capital = 343
 monthly_deposit = 230
 quarterly_return = 0.13
-months = 36
-
+months = 60
+fill_months= 20
+start_fill_months=0
 # Start date (ultimo giorno del mese iniziale)
 start_date = pd.to_datetime("2025-07-31")
 
@@ -18,8 +19,10 @@ invested = initial_capital  # money put in (without gains)
 
 for month in range(1, months + 1):
     # deposit each month
-    invested += monthly_deposit
-    capital += monthly_deposit
+    start_fill_months+=1
+    if start_fill_months < fill_months:
+        invested += monthly_deposit
+        capital += monthly_deposit
 
     gain = 0  # default: no gain
 
@@ -37,7 +40,8 @@ for month in range(1, months + 1):
         "Date": date,
         "Invested": invested,
         "Capital": round(capital, 2),
-        "Quarterly_Gain": gain
+        "Quarterly_Gain": gain,
+        "filled_month": start_fill_months < fill_months
     })
 
 df = pd.DataFrame(records)

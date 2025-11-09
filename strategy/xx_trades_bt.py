@@ -432,10 +432,10 @@ def test3():
 
 def test4():
     bu.cache["context"]["TickerStrategyRepo"]=TickerStrategyRepo("../../data/")
-    func_strategy=simple.ema_pullback_strategy
+    func_strategy=simple.squeeze_ema_strategy
     #func_strategy=enriched.adx_trend_breakout_10_35
     add_ind=StrategyRepo.get_add_indicators_flag(func_strategy)
-    s2 = run_x_backtest_DaxPattern_vec("../../data/MGNI.csv", slperc=0.05, tpperc=0.08, target_strategy=func_strategy,
+    s2 = run_x_backtest_DaxPattern_vec("../../data/TPR.csv", slperc=0.05, tpperc=0.08, target_strategy=func_strategy,
                                  capital_allocation=10000, show_plot=True,add_indicators=add_ind,open_browser=False)
 
     fig=bu.cache["context"]["backtest_plot"]

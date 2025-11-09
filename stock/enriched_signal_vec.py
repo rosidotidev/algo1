@@ -1089,7 +1089,7 @@ def liquidity_grab_tf_adx_filtered(df: pd.DataFrame, lookback: int = 20, adx_thr
 indicators_strategy =[
     bollinger_bands_mean_reversion_sma_vectorized,
     sma_stoch_close_strategy_vectorized,
-    stochastic_oscillator_signal_vectorized,
+    #stochastic_oscillator_signal_vectorized,
     moving_average_crossover_signal_vectorized,
     rsi_hammer_70_30_vectorized,
     rsi_hammer_65_35_vectorized,

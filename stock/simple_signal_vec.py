@@ -243,6 +243,101 @@ def squeeze_ema_10_20(df: pd.DataFrame):
 def squeeze_ema_15_25(df: pd.DataFrame):
     return squeeze_ema_strategy(df,15,25)
 
+def volume_trend_ema_threshold(df: pd.DataFrame,
+                               lookback: int = 20,
+                               ema_len: int = 8,
+                               vol_threshold: float = 0.20) -> pd.Series:
+    """
+    Volume Breakout + EMA Filter + Max-Volume Threshold
+    ---------------------------------------------------
+    Logic:
+    - Volume must also exceed (rolling_max_volume * (1 + vol_threshold))
+    - EMA used only as directional trend filter
+    - Returns only entry signals (2 long, 1 short)
+    """
+
+    close = df['Close']
+    volume = df['Volume']
+
+    # EMA for directional trend filter
+    ema_short = close.ewm(span=ema_len, adjust=False).mean()
+
+    # Rolling max volume of the period (shifted to exclude today)
+    vol_max = volume.rolling(lookback).max().shift(1)
+
+    # Threshold: volume must exceed max_volume * (1 + threshold)
+    vol_threshold_cond = volume > (vol_max * (1 + vol_threshold))
+
+    # Output signal structure
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Directional conditions
+    long_condition  = vol_threshold_cond & (close > ema_short)
+    short_condition = vol_threshold_cond & (close < ema_short)
+
+    signals[long_condition] = 2
+    signals[short_condition] = 1
+
+    return signals
+
+def volume_donchian_breakout(df: pd.DataFrame,
+                             lookback_vol: int = 20,
+                             lookback_price: int = 50,
+                             vol_threshold: float = 0.20) -> pd.Series:
+    """
+    Volume Breakout + Donchian Channel Filter (Non-Intraday Strategy)
+    -----------------------------------------------------------------
+    Logic:
+    - Volume must exceed (rolling_max_volume * (1 + vol_threshold))
+    - Entry signal only if price closes beyond the high/low of the long-term
+      Donchian Channel (representing significant S/R).
+    - Returns entry signals (2 for long, 1 for short).
+    """
+
+    close = df['Close']
+    high = df['High']
+    low = df['Low']
+
+    # --- 1. Define Key Price Levels (Long-Term Price Channel) ---
+    # We use the Donchian Channel (Max High / Min Low)
+    # lookback_price (e.g., 50 periods) defines the S/R window
+
+    # Resistance (R): Highest high observed over the last lookback_price periods
+    R_level = high.rolling(lookback_price).max().shift(1)
+
+    # Support (S): Lowest low observed over the last lookback_price periods
+    S_level = low.rolling(lookback_price).min().shift(1)
+
+    # --- 2. Volume Breakout Condition ---
+    volume = df['Volume']
+    # Rolling max volume of the period (shifted to exclude today)
+    vol_max = volume.rolling(lookback_vol).max().shift(1)
+
+    # Threshold: volume must exceed max_volume * (1 + threshold)
+    vol_threshold_cond = volume > (vol_max * (1 + vol_threshold))
+
+    # --- 3. Signal Generation ---
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # Directional Conditions (Volume Breakout + Price breaking the Key Level)
+
+    # Long: Volume Spike AND Close is above the Resistance R_level (upside breakout)
+    long_condition = vol_threshold_cond & (close > R_level)
+
+    # Short: Volume Spike AND Close is below the Support S_level (downside breakout)
+    short_condition = vol_threshold_cond & (close < S_level)
+
+    signals[long_condition] = 2
+    signals[short_condition] = 1
+
+    return signals
+
+def volume_donchian_breakout_10_25_20(df: pd.DataFrame) -> pd.Series:
+    return volume_donchian_breakout(df,10,25,0.2)
+
+def volume_donchian_breakout_15_30_20(df: pd.DataFrame) -> pd.Series:
+    return volume_donchian_breakout(df,15,30,0.2)
+
 def volume_trend_basic(df: pd.DataFrame, lookback: int = 20) -> pd.Series:
     close = df['Close']
     volume = df['Volume']
@@ -1536,14 +1631,14 @@ dax_total_signal,
 candlestick_strategies = [
     dax_momentum_signal_vectorized,
     inside_bar_breakout_signal_vectorized,
-    three_bar_reversal_signal_vectorized,
+    #three_bar_reversal_signal_vectorized,
     engulfing_pattern_signal_vectorized,
     #pin_bar_signal_vectorized,
-    morning_evening_star_signal_vectorized,
+    #morning_evening_star_signal_vectorized,
     #shooting_star_hammer_signal_vectorized,
     #hammer_signal_vectorized,
     #inverted_hammer_signal_vectorized,
-    doji_signal_strategy_v1_vectorized,
+    #doji_signal_strategy_v1_vectorized,
     #filled_bar_vectorized,
     #inverted_filled_bar_strategy,
     retracement_rev_vectorized,
@@ -1556,12 +1651,12 @@ candlestick_strategies = [
     donchian_inv_with_ma_filter,
     donchian_inv_with_ma_15_40,
     donchian_inv_with_ma_10_30,
-    keltner_rev_vectorized,
-    keltner_rev_15_1_5,
-    keltner_rev_50_2_5,
-    keltner_tf_vectorized,
-    keltner_tf_15_1_5,
-    keltner_tf_50_2_5,
+    #keltner_rev_vectorized,
+    #keltner_rev_15_1_5,
+    #keltner_rev_50_2_5,
+    #keltner_tf_vectorized,
+    #keltner_tf_15_1_5,
+    #keltner_tf_50_2_5,
     weekly_breakout_vectorized,
     weekly_breakout_1_2,
     weekly_breakout_2_1,
@@ -1588,6 +1683,10 @@ candlestick_strategies = [
     squeeze_ema_10_20,
     squeeze_ema_15_25,
     ema_pullback_strategy,
+    volume_trend_ema_threshold,
+    volume_donchian_breakout,
+    volume_donchian_breakout_10_25_20,
+    volume_donchian_breakout_15_30_20
     #combined_signal_vectorized
 ]
 if __name__ == "__main__":
