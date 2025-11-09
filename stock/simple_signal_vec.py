@@ -243,6 +243,52 @@ def squeeze_ema_10_20(df: pd.DataFrame):
 def squeeze_ema_15_25(df: pd.DataFrame):
     return squeeze_ema_strategy(df,15,25)
 
+def volume_spike_candle_strategy(df: pd.DataFrame,
+                                         lookback: int = 20,
+                                         spike_multiplier: float = 2.0) -> pd.Series:
+    """
+    Simple 2-Filter Strategy (Vectorized) with Single Lookback
+    -----------------------------------------------------------
+    Filters:
+    1. Volume Spike: Volume > spike_multiplier * rolling mean(volume over 'lookback' bars)
+    2. Candlestick Direction + Breakout:
+       - Long: Close > max(high) of last 'lookback' bars
+       - Short: Close < min(low) of last 'lookback' bars
+
+    Returns:
+    - pd.Series of entry signals: 2 = long, 1 = short, 0 = hold
+    """
+    df = df.copy()
+
+    # --- 1. Rolling average volume over the same lookback ---
+    vol_mean = df['Volume'].rolling(lookback).mean().shift(1)
+    vol_spike = df['Volume'] > (vol_mean * spike_multiplier)
+
+    # --- 2. Candlestick direction ---
+    bullish = df['Close'] > df['Open']
+    bearish = df['Close'] < df['Open']
+
+    # --- 3. Breakout over the same lookback ---
+    max_high = df['High'].rolling(lookback).max().shift(1)
+    min_low = df['Low'].rolling(lookback).min().shift(1)
+
+    long_cond = vol_spike & bullish & (df['Close'] > max_high)
+    short_cond = vol_spike & bearish & (df['Close'] < min_low)
+
+    # --- 4. Signals ---
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[long_cond] = 2
+    signals[short_cond] = 1
+
+    return signals
+
+
+def volume_spike_candle_10_15(df: pd.DataFrame) -> pd.Series:
+    return volume_spike_candle_strategy(df,10,1.5)
+
+def volume_spike_candle_30_20(df: pd.DataFrame) -> pd.Series:
+    return volume_spike_candle_strategy(df,30,2.0)
+
 def volume_trend_ema_threshold(df: pd.DataFrame,
                                lookback: int = 20,
                                ema_len: int = 8,
@@ -331,6 +377,8 @@ def volume_donchian_breakout(df: pd.DataFrame,
     signals[short_condition] = 1
 
     return signals
+
+
 
 def volume_donchian_breakout_10_25_20(df: pd.DataFrame) -> pd.Series:
     return volume_donchian_breakout(df,10,25,0.2)
@@ -1686,7 +1734,10 @@ candlestick_strategies = [
     volume_trend_ema_threshold,
     volume_donchian_breakout,
     volume_donchian_breakout_10_25_20,
-    volume_donchian_breakout_15_30_20
+    volume_donchian_breakout_15_30_20,
+    volume_spike_candle_strategy,
+    volume_spike_candle_10_15,
+    volume_spike_candle_30_20
     #combined_signal_vectorized
 ]
 if __name__ == "__main__":
