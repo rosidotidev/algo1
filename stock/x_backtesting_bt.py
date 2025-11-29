@@ -1,13 +1,17 @@
 from stock.base_bt import BaseStrategyBT
+import backtrader_util.bu as bu
 
 class XBacktestingBT(BaseStrategyBT):
     slperc= 0.05
     tpperc= 1.00
+    enabled_long=True
+    enabled_short=True
     def init(self):
         self.long_stop_price = None  # Stop Loss
         self.short_stop_price = None
         self.long_tp_price= None
         self.short_tp_price= None
+
 
 
     def stop_loss_long_check(self):
@@ -35,12 +39,12 @@ class XBacktestingBT(BaseStrategyBT):
         self.track_no_action()
         if not (self.position.is_short or self.position.is_long):
 
-            if total_signal == 2:
+            if total_signal == 2 and self.enabled_long:
                 self.buy()
                 self.track_enter_long()
                 self.long_stop_price=self.data.Close[-1] * (1 - self.slperc)
                 self.long_tp_price = self.data.Close[-1] * (1 + self.tpperc)
-            elif total_signal == 1:
+            elif total_signal == 1 and self.enabled_short:
                 self.sell()
                 self.track_enter_short()
                 self.short_stop_price = self.data.Close[-1] * (1 + self.slperc)

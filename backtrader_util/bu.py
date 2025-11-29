@@ -176,6 +176,8 @@ def get_csv_files(directory):
 cache = {
     "stop_loss": 0.05,
     "take_profit": 0.08,
+    "enabled_long": True,
+    "enabled_short": True,
     "df": {},
     "context": {}
 }

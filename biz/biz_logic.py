@@ -53,9 +53,9 @@ def top_strategies(
 
     return grouped
 
-def run_long_process(optimize=False,parallel=True):
+def run_long_process(optimize=False,parallel=True,enabled_long=True,enabled_short=True):
 
-    result_string=trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"],optimize=optimize,parallel=parallel)
+    result_string=trades.exec_analysis_and_save_results(base_path="./", slperc=bu.cache["stop_loss"], tpperc=bu.cache["take_profit"],optimize=optimize,parallel=parallel,enabled_long=enabled_long,enabled_short=enabled_short)
     updated_files = bu.get_csv_files("../results/")
     return result_string, updated_files
 
@@ -77,9 +77,11 @@ def get_strategy_names() -> List[str]:
     return algorithm_names
 
 
-def save_cache(stop_loss, take_profit):
+def save_cache(stop_loss, take_profit,enable_long,enable_short):
     bu.cache["stop_loss"] = stop_loss
     bu.cache["take_profit"] = take_profit
+    bu.cache["enabled_long"] = enable_long
+    bu.cache["enabled_short"] = enable_short
     return "Values saved!"
 
 def generate_best_matrix(win_rate, ret, trades, strategies):
@@ -156,7 +158,7 @@ def update_ticker_strategy(ticker, strategy, params_string):
         return f"Error on update {ticker} strategy {strategy}"
 
 
-def run_backtest(ticker, function_name):
+def run_backtest(ticker, function_name,enabled_long=True,enabled_short=True):
     function_name = function_name.replace(" ", "_")
     bu.cache["context"]["TickerStrategyRepo"] = TickerStrategyRepo("../data/")
     merged_functions_list = cs_vec.candlestick_strategies + ins_vec.indicators_strategy
@@ -173,7 +175,9 @@ def run_backtest(ticker, function_name):
         capital_allocation=1,
         show_plot=True,
         target_strategy=func,
-        add_indicators=add_indicators
+        add_indicators=add_indicators,
+        enabled_long=enabled_long,
+        enabled_short=enabled_short
     )
     return res
 

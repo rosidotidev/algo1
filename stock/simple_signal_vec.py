@@ -638,6 +638,46 @@ def parab_rev_vectorized(df, short=5, medium=10, long=20):
 
     return signals
 
+def parab_rev_ema_vectorized(df, short=5, medium=10, long=20):
+    """
+    parabol-reverse strategy (TF).
+
+    Logic:
+        - Long (2) when short MMA > medium MMA and short MMA < long MMA (uptrend pullback)
+        - Short (1) when short MMA < medium MMA and short MMA < long MMA (downtrend pullback)
+        - Hold (0) otherwise
+
+    Args:
+        df (pd.DataFrame): Must contain 'Close' column
+        short (int): period for short moving average
+        medium (int): period for medium moving average
+        long (int): period for long moving average
+
+    Returns:
+        pd.Series: signals (2=Long, 1=Short, 0=Hold)
+    """
+    # Calculate moving averages
+    df['mma_short'] = df['Close'].rolling(short).mean()
+    df['mma_medium'] = df['Close'].rolling(medium).mean()
+    df['mma_long'] = df['Close'].rolling(long).mean()
+    vlong=8*long
+    ema = df['Close'].ewm(span=vlong, adjust=False).mean()
+    ema_bull = ema > ema.shift(vlong)
+    ema_bear = ema< ema.shift(vlong)
+    # Define entry conditions
+    long_signal = (df['mma_short'] > df['mma_medium']) & (df['mma_medium'] < df['mma_long']) &(ema_bull)
+    short_signal = (df['mma_short'] < df['mma_medium']) & (df['mma_medium'] > df['mma_long']) &(ema_bear)
+
+    # Create signals series
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[long_signal] = 2
+    signals[short_signal] = 1
+
+    # Clean temporary columns
+    df.drop(columns=['mma_short', 'mma_medium', 'mma_long'], inplace=True)
+
+    return signals
+
 def parab_rev_8_16_32_vectorized(df):
     return parab_rev_vectorized(df, short=8, medium=16, long=32)
 
@@ -651,6 +691,26 @@ def vwap_trading_strategy_threshold(df: pd.DataFrame, lookback: int = 20, thresh
     Threshold in fraction of price (0.005 = 0.5%).
     """
     vwap = stru.vwap(df,lookback)
+    ema= df['Close'].ewm(span=4*lookback, adjust=False).mean()
+
+    buy=df['Close'] < vwap * (1 - threshold)
+    sell=df['Close'] > vwap * (1 + threshold)
+    ema_buy=ema > ema.shift(lookback)
+    ema_sell = ema < ema.shift(lookback)
+
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[sell & ema_sell] = 1  # Sell
+    signals[buy & ema_buy] = 2  # Buy
+
+    return signals
+
+
+def vwap_trading_strategy_threshold_old(df: pd.DataFrame, lookback: int = 20, threshold: float = 0.005) -> pd.Series:
+    """
+    Rolling VWAP strategy with a threshold to reduce false signals.
+    Threshold in fraction of price (0.005 = 0.5%).
+    """
+    vwap = stru.vwap(df, lookback)
 
     signals = pd.Series(0, index=df.index, dtype='int8')
     signals[df['Close'] > vwap * (1 + threshold)] = 1  # Sell
@@ -698,6 +758,43 @@ def vwap_trading_strategy_cross(df: pd.DataFrame, lookback: int = 20, threshold:
     signals[cross_down_to_vwap] = -1 # Exit Sell
 
     return signals
+
+def vwap_trading_strategy_cross_alfa(df: pd.DataFrame, lookback: int = 20, threshold: float = 0.005) -> pd.Series:
+    """
+    VWAP strategy with cross detection and exit signals.
+    Buy/Sell only when a cross occurs, exit when price returns to VWAP.
+    """
+    vwap = stru.vwap(df,lookback)
+
+    upper_band = vwap * (1 + threshold)
+    lower_band = vwap * (1 - threshold)
+
+    # Previous day conditions
+    prev_close = df['Close'].shift(1)
+    prev_above_upper = prev_close > upper_band.shift(1)
+    prev_below_lower = prev_close < lower_band.shift(1)
+
+    # Current day conditions
+    above_upper = df['Close'] > upper_band
+    below_lower = df['Close'] < lower_band
+    ema = df['Close'].ewm(span=8 * lookback, adjust=False).mean()
+
+    ema_bull=ema > ema.shift(lookback)
+    ema_bear = ema < ema.shift(lookback)
+
+    # Initialize signals
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    # --- Entry signals (cross from opposite side) ---
+    buy_cross = (~prev_below_lower) & below_lower  & ema_bull       # just crossed below lower band
+    sell_cross = (~prev_above_upper) & above_upper & ema_bear       # just crossed above upper band
+
+    signals[buy_cross] = 2
+    signals[sell_cross] = 1
+
+    return signals
+
+
 
 def vwap_trading_strategy_cross_20_10(df: pd.DataFrame) -> pd.Series:
     return vwap_trading_strategy_cross(df, lookback= 20, threshold= 0.015)
@@ -924,6 +1021,50 @@ def donchian_inv_with_ma_filter(df, lookback=20, ma_window=50):
     # Return a pandas Series with the correct index.
     return pd.Series(inverted_signals, index=df.index, dtype='int8')
 
+def retracement_tf_ema_vectorized(df, short=5, medium=10, long=20):
+    """
+    Trend-following retracement strategy (TF).
+
+    Logic:
+        - Long (2) when short MMA < medium MMA and short MMA > long MMA (uptrend pullback)
+        - Short (1) when short MMA > medium MMA and short MMA < long MMA (downtrend pullback)
+        - Hold (0) otherwise
+
+    Args:
+        df (pd.DataFrame): Must contain 'Close' column
+        short (int): period for short moving average
+        medium (int): period for medium moving average
+        long (int): period for long moving average
+
+    Returns:
+        pd.Series: signals (2=Long, 1=Short, 0=Hold)
+    """
+    # Calculate moving averages
+    df['mma_short'] = df['Close'].rolling(short).mean()
+    df['mma_medium'] = df['Close'].rolling(medium).mean()
+    df['mma_long'] = df['Close'].rolling(long).mean()
+
+    vlong = 8 * long
+    ema = df['Close'].ewm(span=vlong, adjust=False).mean()
+    ema_bull = ema > ema.shift(vlong)
+    ema_bear = ema < ema.shift(vlong)
+
+    # Define entry conditions
+    long_signal = (df['mma_short'] < df['mma_medium']) & (df['mma_short'] > df['mma_long']) & (ema_bull)
+    short_signal = (df['mma_short'] > df['mma_medium']) & (df['mma_short'] < df['mma_long']) & (ema_bear)
+
+
+    # Create signals series
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[long_signal] = 2
+    signals[short_signal] = 1
+
+    # Clean temporary columns
+    df.drop(columns=['mma_short', 'mma_medium', 'mma_long'], inplace=True)
+
+    return signals
+
+
 def retracement_tf_vectorized(df, short=5, medium=10, long=20):
     """
     Trend-following retracement strategy (TF).
@@ -960,7 +1101,6 @@ def retracement_tf_vectorized(df, short=5, medium=10, long=20):
     df.drop(columns=['mma_short', 'mma_medium', 'mma_long'], inplace=True)
 
     return signals
-
 
 def retracement_rev_vectorized(df, short=5, medium=10, long=20):
     """
@@ -1639,6 +1779,66 @@ def liquidity_grab_rev_strategy(df: pd.DataFrame, lookback: int = 20):
         signals[conflict] = 0
     return signals
 
+def liquidity_grab_rev_ema_strategy(df: pd.DataFrame, lookback: int = 20):
+    """
+    Liquidity Grab Reversal (vectorized, one signal per grab).
+
+    Args:
+        df: DataFrame with columns ['High','Low'] (Close optional).
+        lookback: number of candles for breakout detection.
+
+
+    Returns:
+        signals (pd.Series): 2 = Buy, 1 = Sell, 0 = Hold
+
+    """
+
+    highs = df['High']
+    lows  = df['Low']
+
+    # <-- 1) breakout detection (exclude current candle from the reference window) -->
+    breakout_high = highs > highs.shift(1).rolling(lookback).max()
+    breakout_low  = lows  < lows.shift(1).rolling(lookback).min()
+
+    # <-- 2) produce raw grab levels at breakout candles and propagate forward -->
+    grab_low_raw  = np.where(breakout_high, lows, np.nan)   # when price broke a previous high -> save that candle's low
+    grab_high_raw = np.where(breakout_low, highs, np.nan)   # when price broke a previous low  -> save that candle's high
+
+    grab_low  = pd.Series(grab_low_raw,  index=df.index).ffill()
+    grab_high = pd.Series(grab_high_raw, index=df.index).ffill()
+
+    # <-- 3) group ids: each grab sequence has an id (0 = no grab yet) -->
+    gid_low  = breakout_high.cumsum()
+    gid_high = breakout_low.cumsum()
+
+    # <-- 4) detect breaking of current grab level -->
+    broken_low  = (lows  < grab_low)  & grab_low.notna()   # candidate short
+    broken_high = (highs > grab_high) & grab_high.notna()  # candidate long
+
+    # <-- 5) keep ONLY the FIRST break inside each grab-group (vectorized) -->
+    # cumsum inside each group: first time broken -> cum == 1
+    broken_low_cum  = broken_low.groupby(gid_low).cumsum()
+    first_broken_low = broken_low & (broken_low_cum == 1)
+
+    broken_high_cum  = broken_high.groupby(gid_high).cumsum()
+    first_broken_high = broken_high & (broken_high_cum == 1)
+    vlong = 8 * lookback
+    ema = df['Close'].ewm(span=vlong, adjust=False).mean()
+    ema_bull = ema > ema.shift(vlong)
+    ema_bear = ema < ema.shift(vlong)
+
+
+    # <-- 6) create signals; resolve rare conflicts (both true same bar) by zeroing them -->
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[first_broken_low & ema_bear]  = 1
+    signals[first_broken_high & ema_bull] = 2
+
+    # If both happened same bar (extremely rare), remove ambiguity:
+    conflict = first_broken_low & first_broken_high
+    if conflict.any():
+        signals[conflict] = 0
+    return signals
+
 
 def liquidity_grab_tf_strategy(df: pd.DataFrame, lookback: int = 20) -> pd.Series:
     # Chiama la strategia originale
@@ -1699,10 +1899,10 @@ candlestick_strategies = [
     donchian_inv_with_ma_filter,
     donchian_inv_with_ma_15_40,
     donchian_inv_with_ma_10_30,
-    #keltner_rev_vectorized,
+    keltner_rev_vectorized,
     #keltner_rev_15_1_5,
     #keltner_rev_50_2_5,
-    #keltner_tf_vectorized,
+    keltner_tf_vectorized,
     #keltner_tf_15_1_5,
     #keltner_tf_50_2_5,
     weekly_breakout_vectorized,
@@ -1737,7 +1937,11 @@ candlestick_strategies = [
     volume_donchian_breakout_15_30_20,
     volume_spike_candle_strategy,
     volume_spike_candle_10_15,
-    volume_spike_candle_30_20
+    volume_spike_candle_30_20,
+    retracement_tf_ema_vectorized,
+    parab_rev_ema_vectorized,
+    #vwap_trading_strategy_cross_alfa,
+    liquidity_grab_rev_ema_strategy,
     #combined_signal_vectorized
 ]
 if __name__ == "__main__":

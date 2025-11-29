@@ -377,7 +377,9 @@ def optimize_strategy(
             capital_allocation=1,
             show_plot=False,
             target_strategy=func,
-            add_indicators=add_indicators
+            add_indicators=add_indicators,
+            enabled_long=bu.cache["enabled_long"],
+            enabled_short=bu.cache["enabled_short"]
         )
 
         all_portfolios[combo] = res

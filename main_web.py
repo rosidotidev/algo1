@@ -24,14 +24,14 @@ def prefill_param_space(strategy_name):
     return json.dumps(param_space, separators=(",", ":"), indent=None)
 
 
-def save_cache(stop_loss, take_profit):
-    return biz.save_cache(stop_loss, take_profit)
+def save_cache(stop_loss, take_profit, enabled_long, enabled_short    ):
+    return biz.save_cache(stop_loss, take_profit,enabled_long,enabled_short)
 
 def get_strategy_names():
     return biz.get_strategy_names()
 
 def run_backtest(ticker, function_name):
-    return biz.run_backtest(ticker, function_name)
+    return biz.run_backtest(ticker, function_name,bu.cache["enabled_long"],bu.cache["enabled_short"])
 
 def init_repos(repo):
     repo.init_repo()
@@ -52,12 +52,13 @@ def generate_best_matrix(win_rate, ret, trades,strategies):
 
 def run_long_process(optimize=False):
     #bu.reset_df_cache()
-    result_string, updated_files =biz.run_long_process(optimize=optimize)
+
+    result_string, updated_files =biz.run_long_process(optimize=optimize,enabled_long=bu.cache["enabled_long"],enabled_short=bu.cache["enabled_short"])
 
     return result_string, gr.update(choices=updated_files)
 
 def load_all_tickers():
-    res=ti.fetch_and_save_ticker_data("../data/tickers.txt","../data/","3y")
+    res=ti.fetch_and_save_ticker_data("../data/tickers.txt","../data/","6y")
     return res
 
 def save_selection_callback(ticker_dropdown, strategy_dropdown, params_text):
@@ -218,9 +219,11 @@ def main():
                     with gr.Column(scale=1):
                         stop_loss_input = gr.Number(label="Stop Loss", value=bu.cache.get("stop_loss", 0))
                         take_profit_input = gr.Number(label="Take Profit", value=bu.cache.get("take_profit", 0))
+                        enabled_long = gr.Checkbox(label="Enable Long", value=bu.cache.get("enabled_long", True))
+                        enabled_short = gr.Checkbox(label="Enable Short", value=bu.cache.get("enabled_short", True))
                         save_button = gr.Button("Save")
                         save_output = gr.Textbox(label="Save Status")
-                        save_button.click(save_cache, inputs=[stop_loss_input, take_profit_input], outputs=save_output)
+                        save_button.click(save_cache, inputs=[stop_loss_input, take_profit_input,enabled_long,enabled_short], outputs=save_output)
                     with gr.Column(scale=5):
                         process_output = gr.Textbox(label="Process strategies")
                         optimize_checkbox = gr.Checkbox(label="Optimize", value=True)

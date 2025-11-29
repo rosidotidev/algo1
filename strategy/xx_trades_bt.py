@@ -114,7 +114,7 @@ def run_backtest_DaxPattern_vec_df(df, slperc=0.04, tpperc=0.02, capital_allocat
     return results
 
 def run_x_backtest_DaxPattern_vec(data_path, slperc=0.04, tpperc=0.02, capital_allocation=1, show_plot=False,
-                                    target_strategy=simple.dax_total_signal_vectorized, add_indicators=True, open_browser=True):
+                                    target_strategy=simple.dax_total_signal_vectorized, add_indicators=True, open_browser=True,enabled_long=True,enabled_short=True):
     df = ti.read_from_csv(data_path)
     df = bu.norm_date_time(df.copy())
     if add_indicators:
@@ -146,7 +146,7 @@ def run_x_backtest_DaxPattern_vec(data_path, slperc=0.04, tpperc=0.02, capital_a
 
     # Esegui il backtest
     ctx = {}
-    results = bt.run(slperc=slperc, tpperc=tpperc, ts=ts,df=df, ctx=ctx)
+    results = bt.run(slperc=slperc, tpperc=tpperc, ts=ts,df=df, ctx=ctx,enabled_long=enabled_long,enabled_short=enabled_short)
     ctx.update(results.to_dict())
     # print(f" ctx {results}")
 
@@ -250,7 +250,7 @@ def exec_analysis_sequential_new(base_path="../", slperc=0.15, tpperc=1.0, optim
     return df
 
 
-def exec_analysis_parallel_new(base_path="../", slperc=0.15, tpperc=1.0, optimize=False, max_workers=6):
+def exec_analysis_parallel_new(base_path="../", slperc=0.15, tpperc=1.0, optimize=False, max_workers=6,enabled_long=True,enabled_short=True):
     """
     Executes backtesting for all tickers using both candlestick and indicator strategies in parallel.
     Each ticker is processed in a separate process.
@@ -298,7 +298,7 @@ def exec_analysis_parallel_new(base_path="../", slperc=0.15, tpperc=1.0, optimiz
                     slperc,
                     strategies_df,
                     ticker,
-                    tpperc
+                    tpperc,enabled_long,enabled_short
                 )
             )
 
@@ -316,7 +316,7 @@ def exec_analysis_parallel_new(base_path="../", slperc=0.15, tpperc=1.0, optimiz
 
 
 def execute_all_strategies_for_single_ticker(all_functions, best_matrix, data_dir, df, optimize, slperc, strategies_df,
-                                             ticker, tpperc):
+                                             ticker, tpperc,enabled_long=True, enabled_short=True):
     print(f"Working on ticker {ticker} ")
     bu.cache["context"]["TickerStrategyRepo"] = TickerStrategyRepo("../data/")
     for ind, row in strategies_df.iterrows():
@@ -349,7 +349,9 @@ def execute_all_strategies_for_single_ticker(all_functions, best_matrix, data_di
                         tpperc=tpperc,
                         capital_allocation=1,
                         target_strategy=strategy_func,
-                        add_indicators=enrich_flag
+                        add_indicators=enrich_flag,
+                        enabled_long=enabled_long,
+                        enabled_short=enabled_short
                     )
                     report["strategy"] = strategy_func.__name__  # Add strategy name to report
                     reports = {}
@@ -379,12 +381,12 @@ def exec_analysis(base_path="../",slperc=0.15, tpperc=1.0, optimize=False):
         df = bu.append_df(df, df1)
     return df
 
-def exec_analysis_and_save_results(base_path='../', slperc=0.15, tpperc=1.0, parallel=True,optimize=False):
+def exec_analysis_and_save_results(base_path='../', slperc=0.15, tpperc=1.0, parallel=True,optimize=False,enabled_long=True,enabled_short=False):
     start_time = time.time()  # ⏱️ Start timer
 
     # Choose execution mode
     if parallel:
-        df = exec_analysis_parallel_new(base_path, slperc=slperc, tpperc=tpperc,optimize=optimize)
+        df = exec_analysis_parallel_new(base_path, slperc=slperc, tpperc=tpperc,optimize=optimize,enabled_long=enabled_long,enabled_short=enabled_short)
     else:
         df = exec_analysis_sequential_new(base_path, slperc=slperc, tpperc=tpperc, optimize=optimize)
         #df = exec_analysis(base_path, slperc=slperc, tpperc=tpperc,optimize=optimize)

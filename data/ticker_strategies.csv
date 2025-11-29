@@ -50,12 +50,6 @@ ADBE,donchian_breakout_with_ma_15_40,{}
 ADBE,donchian_inv_with_ma_filter,{}
 ADBE,donchian_inv_with_ma_15_40,{}
 ADBE,donchian_inv_with_ma_10_30,{}
-ADBE,keltner_rev_vectorized,{}
-ADBE,keltner_rev_15_1_5,{}
-ADBE,keltner_rev_50_2_5,{}
-ADBE,keltner_tf_vectorized,{}
-ADBE,keltner_tf_15_1_5,{}
-ADBE,keltner_tf_50_2_5,{}
 ADBE,weekly_breakout_vectorized,{}
 ADBE,weekly_breakout_1_2,{}
 ADBE,weekly_breakout_2_1,{}
@@ -80,6 +74,10 @@ ADBE,squeeze_ema_strategy,{}
 ADBE,squeeze_ema_10_20,{}
 ADBE,squeeze_ema_15_25,{}
 ADBE,ema_pullback_strategy,"{""short_ema"": 8, ""long_ema"": 28, ""min_move"": 0.02, ""min_trend_gap"": 0.04, ""lookback_trend"": 5}"
+ADBE,volume_trend_ema_threshold,{}
+ADBE,volume_donchian_breakout,{}
+ADBE,volume_donchian_breakout_10_25_20,{}
+ADBE,volume_donchian_breakout_15_30_20,{}
 ADSK,bollinger_bands_mean_reversion_sma_vectorized,{}
 ADSK,sma_stoch_close_strategy_vectorized,{}
 ADSK,stochastic_oscillator_signal_vectorized,{}
@@ -131,12 +129,6 @@ ADSK,donchian_breakout_with_ma_15_40,{}
 ADSK,donchian_inv_with_ma_filter,{}
 ADSK,donchian_inv_with_ma_15_40,{}
 ADSK,donchian_inv_with_ma_10_30,{}
-ADSK,keltner_rev_vectorized,{}
-ADSK,keltner_rev_15_1_5,{}
-ADSK,keltner_rev_50_2_5,{}
-ADSK,keltner_tf_vectorized,{}
-ADSK,keltner_tf_15_1_5,{}
-ADSK,keltner_tf_50_2_5,{}
 ADSK,weekly_breakout_vectorized,{}
 ADSK,weekly_breakout_1_2,{}
 ADSK,weekly_breakout_2_1,{}
@@ -161,6 +153,10 @@ ADSK,squeeze_ema_strategy,{}
 ADSK,squeeze_ema_10_20,{}
 ADSK,squeeze_ema_15_25,{}
 ADSK,ema_pullback_strategy,{}
+ADSK,volume_trend_ema_threshold,{}
+ADSK,volume_donchian_breakout,{}
+ADSK,volume_donchian_breakout_10_25_20,{}
+ADSK,volume_donchian_breakout_15_30_20,{}
 AI,bollinger_bands_mean_reversion_sma_vectorized,{}
 AI,sma_stoch_close_strategy_vectorized,{}
 AI,stochastic_oscillator_signal_vectorized,{}
@@ -212,12 +208,6 @@ AI,donchian_breakout_with_ma_15_40,{}
 AI,donchian_inv_with_ma_filter,{}
 AI,donchian_inv_with_ma_15_40,{}
 AI,donchian_inv_with_ma_10_30,{}
-AI,keltner_rev_vectorized,{}
-AI,keltner_rev_15_1_5,{}
-AI,keltner_rev_50_2_5,{}
-AI,keltner_tf_vectorized,{}
-AI,keltner_tf_15_1_5,{}
-AI,keltner_tf_50_2_5,{}
 AI,weekly_breakout_vectorized,{}
 AI,weekly_breakout_1_2,{}
 AI,weekly_breakout_2_1,{}
@@ -235,13 +225,17 @@ AI,ema_vwap_sma_vectorized,{}
 AI,ema_vwap_sma_15_30_50,{}
 AI,ema_vwap_sma_5_10_20,{}
 AI,ema_vwap_vectorized,"{""emaShortPeriod"": 12, ""emaLongPeriod"": 26}"
-AI,volume_trend_basic,{}
+AI,volume_trend_basic,"{""lookback"": 26}"
 AI,volume_trend_10,{}
 AI,volume_trend_30,{}
 AI,squeeze_ema_strategy,{}
 AI,squeeze_ema_10_20,{}
 AI,squeeze_ema_15_25,{}
 AI,ema_pullback_strategy,{}
+AI,volume_trend_ema_threshold,{}
+AI,volume_donchian_breakout,{}
+AI,volume_donchian_breakout_10_25_20,{}
+AI,volume_donchian_breakout_15_30_20,{}
 AMD,bollinger_bands_mean_reversion_sma_vectorized,{}
 AMD,sma_stoch_close_strategy_vectorized,{}
 AMD,stochastic_oscillator_signal_vectorized,{}
@@ -293,12 +287,6 @@ AMD,donchian_breakout_with_ma_15_40,{}
 AMD,donchian_inv_with_ma_filter,{}
 AMD,donchian_inv_with_ma_15_40,{}
 AMD,donchian_inv_with_ma_10_30,{}
-AMD,keltner_rev_vectorized,{}
-AMD,keltner_rev_15_1_5,{}
-AMD,keltner_rev_50_2_5,{}
-AMD,keltner_tf_vectorized,{}
-AMD,keltner_tf_15_1_5,{}
-AMD,keltner_tf_50_2_5,{}
 AMD,weekly_breakout_vectorized,{}
 AMD,weekly_breakout_1_2,{}
 AMD,weekly_breakout_2_1,{}
@@ -323,6 +311,10 @@ AMD,squeeze_ema_strategy,{}
 AMD,squeeze_ema_10_20,{}
 AMD,squeeze_ema_15_25,{}
 AMD,ema_pullback_strategy,"{""short_ema"": 16, ""long_ema"": 30, ""min_move"": 0.01, ""min_trend_gap"": 0.03, ""lookback_trend"": 7}"
+AMD,volume_trend_ema_threshold,"{""lookback"": 16, ""ema_len"": 4, ""vol_threshold"": 0.4}"
+AMD,volume_donchian_breakout,"{""lookback_vol"": 14, ""lookback_price"": 36, ""vol_threshold"": 0.4}"
+AMD,volume_donchian_breakout_10_25_20,{}
+AMD,volume_donchian_breakout_15_30_20,{}
 AMZN,bollinger_bands_mean_reversion_sma_vectorized,{}
 AMZN,sma_stoch_close_strategy_vectorized,{}
 AMZN,stochastic_oscillator_signal_vectorized,{}
@@ -374,12 +366,6 @@ AMZN,donchian_breakout_with_ma_15_40,{}
 AMZN,donchian_inv_with_ma_filter,{}
 AMZN,donchian_inv_with_ma_15_40,{}
 AMZN,donchian_inv_with_ma_10_30,{}
-AMZN,keltner_rev_vectorized,{}
-AMZN,keltner_rev_15_1_5,{}
-AMZN,keltner_rev_50_2_5,{}
-AMZN,keltner_tf_vectorized,{}
-AMZN,keltner_tf_15_1_5,{}
-AMZN,keltner_tf_50_2_5,{}
 AMZN,weekly_breakout_vectorized,{}
 AMZN,weekly_breakout_1_2,{}
 AMZN,weekly_breakout_2_1,{}
@@ -400,10 +386,14 @@ AMZN,ema_vwap_vectorized,{}
 AMZN,volume_trend_basic,{}
 AMZN,volume_trend_10,{}
 AMZN,volume_trend_30,{}
-AMZN,squeeze_ema_strategy,{}
+AMZN,squeeze_ema_strategy,"{""short_ema"": 36, ""squeez_back_period"": 13}"
 AMZN,squeeze_ema_10_20,{}
 AMZN,squeeze_ema_15_25,{}
 AMZN,ema_pullback_strategy,"{""short_ema"": 8, ""long_ema"": 30, ""min_move"": 0.01, ""min_trend_gap"": 0.04, ""lookback_trend"": 7}"
+AMZN,volume_trend_ema_threshold,{}
+AMZN,volume_donchian_breakout,{}
+AMZN,volume_donchian_breakout_10_25_20,{}
+AMZN,volume_donchian_breakout_15_30_20,{}
 ASML,bollinger_bands_mean_reversion_sma_vectorized,{}
 ASML,sma_stoch_close_strategy_vectorized,{}
 ASML,stochastic_oscillator_signal_vectorized,{}
@@ -455,12 +445,6 @@ ASML,donchian_breakout_with_ma_15_40,{}
 ASML,donchian_inv_with_ma_filter,{}
 ASML,donchian_inv_with_ma_15_40,{}
 ASML,donchian_inv_with_ma_10_30,{}
-ASML,keltner_rev_vectorized,{}
-ASML,keltner_rev_15_1_5,{}
-ASML,keltner_rev_50_2_5,{}
-ASML,keltner_tf_vectorized,{}
-ASML,keltner_tf_15_1_5,{}
-ASML,keltner_tf_50_2_5,{}
 ASML,weekly_breakout_vectorized,{}
 ASML,weekly_breakout_1_2,{}
 ASML,weekly_breakout_2_1,{}
@@ -468,7 +452,7 @@ ASML,weekly_breakout_2_2,{}
 ASML,weekly_breakout_1_3,{}
 ASML,weekly_breakout_2_3,{}
 ASML,vwap_trading_strategy_threshold,{}
-ASML,vwap_trading_strategy_cross,{}
+ASML,vwap_trading_strategy_cross,"{""lookback"": 21, ""threshold"": 0.004}"
 ASML,vwap_trading_strategy_cross_20_10,{}
 ASML,vwap_trading_strategy_cross_30_20,{}
 ASML,parab_rev_vectorized,{}
@@ -485,6 +469,10 @@ ASML,squeeze_ema_strategy,{}
 ASML,squeeze_ema_10_20,{}
 ASML,squeeze_ema_15_25,{}
 ASML,ema_pullback_strategy,{}
+ASML,volume_trend_ema_threshold,{}
+ASML,volume_donchian_breakout,{}
+ASML,volume_donchian_breakout_10_25_20,{}
+ASML,volume_donchian_breakout_15_30_20,{}
 AVGO,bollinger_bands_mean_reversion_sma_vectorized,{}
 AVGO,sma_stoch_close_strategy_vectorized,{}
 AVGO,stochastic_oscillator_signal_vectorized,{}
@@ -536,12 +524,6 @@ AVGO,donchian_breakout_with_ma_15_40,{}
 AVGO,donchian_inv_with_ma_filter,{}
 AVGO,donchian_inv_with_ma_15_40,{}
 AVGO,donchian_inv_with_ma_10_30,{}
-AVGO,keltner_rev_vectorized,{}
-AVGO,keltner_rev_15_1_5,{}
-AVGO,keltner_rev_50_2_5,{}
-AVGO,keltner_tf_vectorized,{}
-AVGO,keltner_tf_15_1_5,{}
-AVGO,keltner_tf_50_2_5,{}
 AVGO,weekly_breakout_vectorized,{}
 AVGO,weekly_breakout_1_2,{}
 AVGO,weekly_breakout_2_1,{}
@@ -566,6 +548,10 @@ AVGO,squeeze_ema_strategy,{}
 AVGO,squeeze_ema_10_20,{}
 AVGO,squeeze_ema_15_25,{}
 AVGO,ema_pullback_strategy,{}
+AVGO,volume_trend_ema_threshold,{}
+AVGO,volume_donchian_breakout,"{""lookback_vol"": 26, ""lookback_price"": 36, ""vol_threshold"": 0.2}"
+AVGO,volume_donchian_breakout_10_25_20,{}
+AVGO,volume_donchian_breakout_15_30_20,{}
 AXP,bollinger_bands_mean_reversion_sma_vectorized,{}
 AXP,sma_stoch_close_strategy_vectorized,{}
 AXP,stochastic_oscillator_signal_vectorized,{}
@@ -617,12 +603,6 @@ AXP,donchian_breakout_with_ma_15_40,{}
 AXP,donchian_inv_with_ma_filter,{}
 AXP,donchian_inv_with_ma_15_40,{}
 AXP,donchian_inv_with_ma_10_30,{}
-AXP,keltner_rev_vectorized,{}
-AXP,keltner_rev_15_1_5,{}
-AXP,keltner_rev_50_2_5,{}
-AXP,keltner_tf_vectorized,{}
-AXP,keltner_tf_15_1_5,{}
-AXP,keltner_tf_50_2_5,{}
 AXP,weekly_breakout_vectorized,{}
 AXP,weekly_breakout_1_2,{}
 AXP,weekly_breakout_2_1,{}
@@ -630,7 +610,7 @@ AXP,weekly_breakout_2_2,{}
 AXP,weekly_breakout_1_3,{}
 AXP,weekly_breakout_2_3,{}
 AXP,vwap_trading_strategy_threshold,{}
-AXP,vwap_trading_strategy_cross,{}
+AXP,vwap_trading_strategy_cross,"{""lookback"": 20, ""threshold"": 0.006}"
 AXP,vwap_trading_strategy_cross_20_10,{}
 AXP,vwap_trading_strategy_cross_30_20,{}
 AXP,parab_rev_vectorized,{}
@@ -647,6 +627,10 @@ AXP,squeeze_ema_strategy,{}
 AXP,squeeze_ema_10_20,{}
 AXP,squeeze_ema_15_25,{}
 AXP,ema_pullback_strategy,{}
+AXP,volume_trend_ema_threshold,{}
+AXP,volume_donchian_breakout,{}
+AXP,volume_donchian_breakout_10_25_20,{}
+AXP,volume_donchian_breakout_15_30_20,{}
 BABA,bollinger_bands_mean_reversion_sma_vectorized,{}
 BABA,sma_stoch_close_strategy_vectorized,{}
 BABA,stochastic_oscillator_signal_vectorized,{}
@@ -698,12 +682,6 @@ BABA,donchian_breakout_with_ma_15_40,{}
 BABA,donchian_inv_with_ma_filter,{}
 BABA,donchian_inv_with_ma_15_40,{}
 BABA,donchian_inv_with_ma_10_30,{}
-BABA,keltner_rev_vectorized,{}
-BABA,keltner_rev_15_1_5,{}
-BABA,keltner_rev_50_2_5,{}
-BABA,keltner_tf_vectorized,{}
-BABA,keltner_tf_15_1_5,{}
-BABA,keltner_tf_50_2_5,{}
 BABA,weekly_breakout_vectorized,{}
 BABA,weekly_breakout_1_2,{}
 BABA,weekly_breakout_2_1,{}
@@ -728,6 +706,10 @@ BABA,squeeze_ema_strategy,{}
 BABA,squeeze_ema_10_20,{}
 BABA,squeeze_ema_15_25,{}
 BABA,ema_pullback_strategy,"{""short_ema"": 6, ""long_ema"": 18, ""min_move"": 0.01, ""min_trend_gap"": 0.07, ""lookback_trend"": 5}"
+BABA,volume_trend_ema_threshold,{}
+BABA,volume_donchian_breakout,"{""lookback_vol"": 22, ""lookback_price"": 36, ""vol_threshold"": 0.1}"
+BABA,volume_donchian_breakout_10_25_20,{}
+BABA,volume_donchian_breakout_15_30_20,{}
 BAC,bollinger_bands_mean_reversion_sma_vectorized,{}
 BAC,sma_stoch_close_strategy_vectorized,{}
 BAC,stochastic_oscillator_signal_vectorized,{}
@@ -779,12 +761,6 @@ BAC,donchian_breakout_with_ma_15_40,{}
 BAC,donchian_inv_with_ma_filter,{}
 BAC,donchian_inv_with_ma_15_40,{}
 BAC,donchian_inv_with_ma_10_30,{}
-BAC,keltner_rev_vectorized,{}
-BAC,keltner_rev_15_1_5,{}
-BAC,keltner_rev_50_2_5,{}
-BAC,keltner_tf_vectorized,{}
-BAC,keltner_tf_15_1_5,{}
-BAC,keltner_tf_50_2_5,{}
 BAC,weekly_breakout_vectorized,{}
 BAC,weekly_breakout_1_2,{}
 BAC,weekly_breakout_2_1,{}
@@ -792,7 +768,7 @@ BAC,weekly_breakout_2_2,{}
 BAC,weekly_breakout_1_3,{}
 BAC,weekly_breakout_2_3,{}
 BAC,vwap_trading_strategy_threshold,{}
-BAC,vwap_trading_strategy_cross,{}
+BAC,vwap_trading_strategy_cross,"{""lookback"": 20, ""threshold"": 0.004}"
 BAC,vwap_trading_strategy_cross_20_10,{}
 BAC,vwap_trading_strategy_cross_30_20,{}
 BAC,parab_rev_vectorized,{}
@@ -809,6 +785,10 @@ BAC,squeeze_ema_strategy,{}
 BAC,squeeze_ema_10_20,{}
 BAC,squeeze_ema_15_25,{}
 BAC,ema_pullback_strategy,{}
+BAC,volume_trend_ema_threshold,{}
+BAC,volume_donchian_breakout,{}
+BAC,volume_donchian_breakout_10_25_20,{}
+BAC,volume_donchian_breakout_15_30_20,{}
 BAMI.MI,bollinger_bands_mean_reversion_sma_vectorized,{}
 BAMI.MI,sma_stoch_close_strategy_vectorized,{}
 BAMI.MI,stochastic_oscillator_signal_vectorized,{}
@@ -860,12 +840,6 @@ BAMI.MI,donchian_breakout_with_ma_15_40,{}
 BAMI.MI,donchian_inv_with_ma_filter,{}
 BAMI.MI,donchian_inv_with_ma_15_40,{}
 BAMI.MI,donchian_inv_with_ma_10_30,{}
-BAMI.MI,keltner_rev_vectorized,{}
-BAMI.MI,keltner_rev_15_1_5,{}
-BAMI.MI,keltner_rev_50_2_5,{}
-BAMI.MI,keltner_tf_vectorized,{}
-BAMI.MI,keltner_tf_15_1_5,{}
-BAMI.MI,keltner_tf_50_2_5,{}
 BAMI.MI,weekly_breakout_vectorized,{}
 BAMI.MI,weekly_breakout_1_2,{}
 BAMI.MI,weekly_breakout_2_1,{}
@@ -890,6 +864,10 @@ BAMI.MI,squeeze_ema_strategy,{}
 BAMI.MI,squeeze_ema_10_20,{}
 BAMI.MI,squeeze_ema_15_25,{}
 BAMI.MI,ema_pullback_strategy,{}
+BAMI.MI,volume_trend_ema_threshold,{}
+BAMI.MI,volume_donchian_breakout,{}
+BAMI.MI,volume_donchian_breakout_10_25_20,{}
+BAMI.MI,volume_donchian_breakout_15_30_20,{}
 BC.MI,bollinger_bands_mean_reversion_sma_vectorized,{}
 BC.MI,sma_stoch_close_strategy_vectorized,{}
 BC.MI,stochastic_oscillator_signal_vectorized,{}
@@ -941,12 +919,6 @@ BC.MI,donchian_breakout_with_ma_15_40,{}
 BC.MI,donchian_inv_with_ma_filter,{}
 BC.MI,donchian_inv_with_ma_15_40,{}
 BC.MI,donchian_inv_with_ma_10_30,{}
-BC.MI,keltner_rev_vectorized,{}
-BC.MI,keltner_rev_15_1_5,{}
-BC.MI,keltner_rev_50_2_5,{}
-BC.MI,keltner_tf_vectorized,{}
-BC.MI,keltner_tf_15_1_5,{}
-BC.MI,keltner_tf_50_2_5,{}
 BC.MI,weekly_breakout_vectorized,{}
 BC.MI,weekly_breakout_1_2,{}
 BC.MI,weekly_breakout_2_1,{}
@@ -971,6 +943,10 @@ BC.MI,squeeze_ema_strategy,{}
 BC.MI,squeeze_ema_10_20,{}
 BC.MI,squeeze_ema_15_25,{}
 BC.MI,ema_pullback_strategy,{}
+BC.MI,volume_trend_ema_threshold,{}
+BC.MI,volume_donchian_breakout,{}
+BC.MI,volume_donchian_breakout_10_25_20,{}
+BC.MI,volume_donchian_breakout_15_30_20,{}
 BE,bollinger_bands_mean_reversion_sma_vectorized,{}
 BE,sma_stoch_close_strategy_vectorized,{}
 BE,stochastic_oscillator_signal_vectorized,{}
@@ -1022,12 +998,6 @@ BE,donchian_breakout_with_ma_15_40,{}
 BE,donchian_inv_with_ma_filter,{}
 BE,donchian_inv_with_ma_15_40,{}
 BE,donchian_inv_with_ma_10_30,{}
-BE,keltner_rev_vectorized,{}
-BE,keltner_rev_15_1_5,{}
-BE,keltner_rev_50_2_5,{}
-BE,keltner_tf_vectorized,{}
-BE,keltner_tf_15_1_5,{}
-BE,keltner_tf_50_2_5,{}
 BE,weekly_breakout_vectorized,{}
 BE,weekly_breakout_1_2,{}
 BE,weekly_breakout_2_1,{}
@@ -1052,6 +1022,10 @@ BE,squeeze_ema_strategy,{}
 BE,squeeze_ema_10_20,{}
 BE,squeeze_ema_15_25,{}
 BE,ema_pullback_strategy,"{""short_ema"": 12, ""long_ema"": 20, ""min_move"": 0.01, ""min_trend_gap"": 0.06, ""lookback_trend"": 7}"
+BE,volume_trend_ema_threshold,{}
+BE,volume_donchian_breakout,{}
+BE,volume_donchian_breakout_10_25_20,{}
+BE,volume_donchian_breakout_15_30_20,{}
 BHP,bollinger_bands_mean_reversion_sma_vectorized,{}
 BHP,sma_stoch_close_strategy_vectorized,{}
 BHP,stochastic_oscillator_signal_vectorized,{}
@@ -1103,12 +1077,6 @@ BHP,donchian_breakout_with_ma_15_40,{}
 BHP,donchian_inv_with_ma_filter,{}
 BHP,donchian_inv_with_ma_15_40,{}
 BHP,donchian_inv_with_ma_10_30,{}
-BHP,keltner_rev_vectorized,{}
-BHP,keltner_rev_15_1_5,{}
-BHP,keltner_rev_50_2_5,{}
-BHP,keltner_tf_vectorized,{}
-BHP,keltner_tf_15_1_5,{}
-BHP,keltner_tf_50_2_5,{}
 BHP,weekly_breakout_vectorized,{}
 BHP,weekly_breakout_1_2,{}
 BHP,weekly_breakout_2_1,{}
@@ -1133,6 +1101,10 @@ BHP,squeeze_ema_strategy,{}
 BHP,squeeze_ema_10_20,{}
 BHP,squeeze_ema_15_25,{}
 BHP,ema_pullback_strategy,{}
+BHP,volume_trend_ema_threshold,{}
+BHP,volume_donchian_breakout,{}
+BHP,volume_donchian_breakout_10_25_20,{}
+BHP,volume_donchian_breakout_15_30_20,{}
 BLK,bollinger_bands_mean_reversion_sma_vectorized,{}
 BLK,sma_stoch_close_strategy_vectorized,{}
 BLK,stochastic_oscillator_signal_vectorized,{}
@@ -1184,12 +1156,6 @@ BLK,donchian_breakout_with_ma_15_40,{}
 BLK,donchian_inv_with_ma_filter,{}
 BLK,donchian_inv_with_ma_15_40,{}
 BLK,donchian_inv_with_ma_10_30,{}
-BLK,keltner_rev_vectorized,{}
-BLK,keltner_rev_15_1_5,{}
-BLK,keltner_rev_50_2_5,{}
-BLK,keltner_tf_vectorized,{}
-BLK,keltner_tf_15_1_5,{}
-BLK,keltner_tf_50_2_5,{}
 BLK,weekly_breakout_vectorized,{}
 BLK,weekly_breakout_1_2,{}
 BLK,weekly_breakout_2_1,{}
@@ -1214,6 +1180,10 @@ BLK,squeeze_ema_strategy,{}
 BLK,squeeze_ema_10_20,{}
 BLK,squeeze_ema_15_25,{}
 BLK,ema_pullback_strategy,{}
+BLK,volume_trend_ema_threshold,{}
+BLK,volume_donchian_breakout,{}
+BLK,volume_donchian_breakout_10_25_20,{}
+BLK,volume_donchian_breakout_15_30_20,{}
 BMY,bollinger_bands_mean_reversion_sma_vectorized,{}
 BMY,sma_stoch_close_strategy_vectorized,{}
 BMY,stochastic_oscillator_signal_vectorized,{}
@@ -1265,12 +1235,6 @@ BMY,donchian_breakout_with_ma_15_40,{}
 BMY,donchian_inv_with_ma_filter,{}
 BMY,donchian_inv_with_ma_15_40,{}
 BMY,donchian_inv_with_ma_10_30,{}
-BMY,keltner_rev_vectorized,{}
-BMY,keltner_rev_15_1_5,{}
-BMY,keltner_rev_50_2_5,{}
-BMY,keltner_tf_vectorized,{}
-BMY,keltner_tf_15_1_5,{}
-BMY,keltner_tf_50_2_5,{}
 BMY,weekly_breakout_vectorized,{}
 BMY,weekly_breakout_1_2,{}
 BMY,weekly_breakout_2_1,{}
@@ -1295,6 +1259,10 @@ BMY,squeeze_ema_strategy,{}
 BMY,squeeze_ema_10_20,{}
 BMY,squeeze_ema_15_25,{}
 BMY,ema_pullback_strategy,{}
+BMY,volume_trend_ema_threshold,{}
+BMY,volume_donchian_breakout,{}
+BMY,volume_donchian_breakout_10_25_20,{}
+BMY,volume_donchian_breakout_15_30_20,{}
 BNB-USD,bollinger_bands_mean_reversion_sma_vectorized,{}
 BNB-USD,sma_stoch_close_strategy_vectorized,{}
 BNB-USD,stochastic_oscillator_signal_vectorized,{}
@@ -1346,12 +1314,6 @@ BNB-USD,donchian_breakout_with_ma_15_40,{}
 BNB-USD,donchian_inv_with_ma_filter,{}
 BNB-USD,donchian_inv_with_ma_15_40,{}
 BNB-USD,donchian_inv_with_ma_10_30,{}
-BNB-USD,keltner_rev_vectorized,{}
-BNB-USD,keltner_rev_15_1_5,{}
-BNB-USD,keltner_rev_50_2_5,{}
-BNB-USD,keltner_tf_vectorized,{}
-BNB-USD,keltner_tf_15_1_5,{}
-BNB-USD,keltner_tf_50_2_5,{}
 BNB-USD,weekly_breakout_vectorized,{}
 BNB-USD,weekly_breakout_1_2,{}
 BNB-USD,weekly_breakout_2_1,{}
@@ -1359,7 +1321,7 @@ BNB-USD,weekly_breakout_2_2,{}
 BNB-USD,weekly_breakout_1_3,{}
 BNB-USD,weekly_breakout_2_3,{}
 BNB-USD,vwap_trading_strategy_threshold,{}
-BNB-USD,vwap_trading_strategy_cross,{}
+BNB-USD,vwap_trading_strategy_cross,"{""lookback"": 21, ""threshold"": 0.003}"
 BNB-USD,vwap_trading_strategy_cross_20_10,{}
 BNB-USD,vwap_trading_strategy_cross_30_20,{}
 BNB-USD,parab_rev_vectorized,{}
@@ -1376,6 +1338,10 @@ BNB-USD,squeeze_ema_strategy,{}
 BNB-USD,squeeze_ema_10_20,{}
 BNB-USD,squeeze_ema_15_25,{}
 BNB-USD,ema_pullback_strategy,{}
+BNB-USD,volume_trend_ema_threshold,"{""lookback"": 18, ""ema_len"": 28, ""vol_threshold"": 0.1}"
+BNB-USD,volume_donchian_breakout,"{""lookback_vol"": 22, ""lookback_price"": 36, ""vol_threshold"": 0.1}"
+BNB-USD,volume_donchian_breakout_10_25_20,{}
+BNB-USD,volume_donchian_breakout_15_30_20,{}
 BPE.MI,bollinger_bands_mean_reversion_sma_vectorized,{}
 BPE.MI,sma_stoch_close_strategy_vectorized,{}
 BPE.MI,stochastic_oscillator_signal_vectorized,{}
@@ -1427,12 +1393,6 @@ BPE.MI,donchian_breakout_with_ma_15_40,{}
 BPE.MI,donchian_inv_with_ma_filter,{}
 BPE.MI,donchian_inv_with_ma_15_40,{}
 BPE.MI,donchian_inv_with_ma_10_30,{}
-BPE.MI,keltner_rev_vectorized,{}
-BPE.MI,keltner_rev_15_1_5,{}
-BPE.MI,keltner_rev_50_2_5,{}
-BPE.MI,keltner_tf_vectorized,{}
-BPE.MI,keltner_tf_15_1_5,{}
-BPE.MI,keltner_tf_50_2_5,{}
 BPE.MI,weekly_breakout_vectorized,{}
 BPE.MI,weekly_breakout_1_2,{}
 BPE.MI,weekly_breakout_2_1,{}
@@ -1440,7 +1400,7 @@ BPE.MI,weekly_breakout_2_2,{}
 BPE.MI,weekly_breakout_1_3,{}
 BPE.MI,weekly_breakout_2_3,{}
 BPE.MI,vwap_trading_strategy_threshold,{}
-BPE.MI,vwap_trading_strategy_cross,{}
+BPE.MI,vwap_trading_strategy_cross,"{""lookback"": 20, ""threshold"": 0.003}"
 BPE.MI,vwap_trading_strategy_cross_20_10,{}
 BPE.MI,vwap_trading_strategy_cross_30_20,{}
 BPE.MI,parab_rev_vectorized,{}
@@ -1450,13 +1410,17 @@ BPE.MI,ema_vwap_sma_vectorized,{}
 BPE.MI,ema_vwap_sma_15_30_50,{}
 BPE.MI,ema_vwap_sma_5_10_20,{}
 BPE.MI,ema_vwap_vectorized,{}
-BPE.MI,volume_trend_basic,{}
+BPE.MI,volume_trend_basic,"{""lookback"": 20}"
 BPE.MI,volume_trend_10,{}
 BPE.MI,volume_trend_30,{}
 BPE.MI,squeeze_ema_strategy,{}
 BPE.MI,squeeze_ema_10_20,{}
 BPE.MI,squeeze_ema_15_25,{}
 BPE.MI,ema_pullback_strategy,{}
+BPE.MI,volume_trend_ema_threshold,{}
+BPE.MI,volume_donchian_breakout,{}
+BPE.MI,volume_donchian_breakout_10_25_20,{}
+BPE.MI,volume_donchian_breakout_15_30_20,{}
 BRK-B,bollinger_bands_mean_reversion_sma_vectorized,{}
 BRK-B,sma_stoch_close_strategy_vectorized,{}
 BRK-B,stochastic_oscillator_signal_vectorized,{}
@@ -1508,12 +1472,6 @@ BRK-B,donchian_breakout_with_ma_15_40,{}
 BRK-B,donchian_inv_with_ma_filter,{}
 BRK-B,donchian_inv_with_ma_15_40,{}
 BRK-B,donchian_inv_with_ma_10_30,{}
-BRK-B,keltner_rev_vectorized,{}
-BRK-B,keltner_rev_15_1_5,{}
-BRK-B,keltner_rev_50_2_5,{}
-BRK-B,keltner_tf_vectorized,{}
-BRK-B,keltner_tf_15_1_5,{}
-BRK-B,keltner_tf_50_2_5,{}
 BRK-B,weekly_breakout_vectorized,{}
 BRK-B,weekly_breakout_1_2,{}
 BRK-B,weekly_breakout_2_1,{}
@@ -1538,6 +1496,10 @@ BRK-B,squeeze_ema_strategy,{}
 BRK-B,squeeze_ema_10_20,{}
 BRK-B,squeeze_ema_15_25,{}
 BRK-B,ema_pullback_strategy,{}
+BRK-B,volume_trend_ema_threshold,{}
+BRK-B,volume_donchian_breakout,{}
+BRK-B,volume_donchian_breakout_10_25_20,{}
+BRK-B,volume_donchian_breakout_15_30_20,{}
 CAR,bollinger_bands_mean_reversion_sma_vectorized,{}
 CAR,sma_stoch_close_strategy_vectorized,{}
 CAR,stochastic_oscillator_signal_vectorized,{}
@@ -1589,12 +1551,6 @@ CAR,donchian_breakout_with_ma_15_40,{}
 CAR,donchian_inv_with_ma_filter,{}
 CAR,donchian_inv_with_ma_15_40,{}
 CAR,donchian_inv_with_ma_10_30,{}
-CAR,keltner_rev_vectorized,{}
-CAR,keltner_rev_15_1_5,{}
-CAR,keltner_rev_50_2_5,{}
-CAR,keltner_tf_vectorized,{}
-CAR,keltner_tf_15_1_5,{}
-CAR,keltner_tf_50_2_5,{}
 CAR,weekly_breakout_vectorized,{}
 CAR,weekly_breakout_1_2,{}
 CAR,weekly_breakout_2_1,{}
@@ -1619,6 +1575,10 @@ CAR,squeeze_ema_strategy,{}
 CAR,squeeze_ema_10_20,{}
 CAR,squeeze_ema_15_25,{}
 CAR,ema_pullback_strategy,{}
+CAR,volume_trend_ema_threshold,{}
+CAR,volume_donchian_breakout,"{""lookback_vol"": 6, ""lookback_price"": 32, ""vol_threshold"": 0.35}"
+CAR,volume_donchian_breakout_10_25_20,{}
+CAR,volume_donchian_breakout_15_30_20,{}
 CMCSA,bollinger_bands_mean_reversion_sma_vectorized,{}
 CMCSA,sma_stoch_close_strategy_vectorized,{}
 CMCSA,stochastic_oscillator_signal_vectorized,{}
@@ -1670,12 +1630,6 @@ CMCSA,donchian_breakout_with_ma_15_40,{}
 CMCSA,donchian_inv_with_ma_filter,{}
 CMCSA,donchian_inv_with_ma_15_40,{}
 CMCSA,donchian_inv_with_ma_10_30,{}
-CMCSA,keltner_rev_vectorized,{}
-CMCSA,keltner_rev_15_1_5,{}
-CMCSA,keltner_rev_50_2_5,{}
-CMCSA,keltner_tf_vectorized,{}
-CMCSA,keltner_tf_15_1_5,{}
-CMCSA,keltner_tf_50_2_5,{}
 CMCSA,weekly_breakout_vectorized,{}
 CMCSA,weekly_breakout_1_2,{}
 CMCSA,weekly_breakout_2_1,{}
@@ -1696,10 +1650,14 @@ CMCSA,ema_vwap_vectorized,{}
 CMCSA,volume_trend_basic,{}
 CMCSA,volume_trend_10,{}
 CMCSA,volume_trend_30,{}
-CMCSA,squeeze_ema_strategy,{}
+CMCSA,squeeze_ema_strategy,"{""short_ema"": 8, ""squeez_back_period"": 7}"
 CMCSA,squeeze_ema_10_20,{}
 CMCSA,squeeze_ema_15_25,{}
 CMCSA,ema_pullback_strategy,{}
+CMCSA,volume_trend_ema_threshold,{}
+CMCSA,volume_donchian_breakout,{}
+CMCSA,volume_donchian_breakout_10_25_20,{}
+CMCSA,volume_donchian_breakout_15_30_20,{}
 COIN,bollinger_bands_mean_reversion_sma_vectorized,{}
 COIN,sma_stoch_close_strategy_vectorized,{}
 COIN,stochastic_oscillator_signal_vectorized,{}
@@ -1751,12 +1709,6 @@ COIN,donchian_breakout_with_ma_15_40,{}
 COIN,donchian_inv_with_ma_filter,{}
 COIN,donchian_inv_with_ma_15_40,{}
 COIN,donchian_inv_with_ma_10_30,{}
-COIN,keltner_rev_vectorized,{}
-COIN,keltner_rev_15_1_5,{}
-COIN,keltner_rev_50_2_5,{}
-COIN,keltner_tf_vectorized,{}
-COIN,keltner_tf_15_1_5,{}
-COIN,keltner_tf_50_2_5,{}
 COIN,weekly_breakout_vectorized,{}
 COIN,weekly_breakout_1_2,{}
 COIN,weekly_breakout_2_1,{}
@@ -1781,6 +1733,10 @@ COIN,squeeze_ema_strategy,{}
 COIN,squeeze_ema_10_20,{}
 COIN,squeeze_ema_15_25,{}
 COIN,ema_pullback_strategy,{}
+COIN,volume_trend_ema_threshold,{}
+COIN,volume_donchian_breakout,{}
+COIN,volume_donchian_breakout_10_25_20,{}
+COIN,volume_donchian_breakout_15_30_20,{}
 COST,bollinger_bands_mean_reversion_sma_vectorized,{}
 COST,sma_stoch_close_strategy_vectorized,{}
 COST,stochastic_oscillator_signal_vectorized,{}
@@ -1832,12 +1788,6 @@ COST,donchian_breakout_with_ma_15_40,{}
 COST,donchian_inv_with_ma_filter,{}
 COST,donchian_inv_with_ma_15_40,{}
 COST,donchian_inv_with_ma_10_30,{}
-COST,keltner_rev_vectorized,{}
-COST,keltner_rev_15_1_5,{}
-COST,keltner_rev_50_2_5,{}
-COST,keltner_tf_vectorized,{}
-COST,keltner_tf_15_1_5,{}
-COST,keltner_tf_50_2_5,{}
 COST,weekly_breakout_vectorized,{}
 COST,weekly_breakout_1_2,{}
 COST,weekly_breakout_2_1,{}
@@ -1862,6 +1812,10 @@ COST,squeeze_ema_strategy,{}
 COST,squeeze_ema_10_20,{}
 COST,squeeze_ema_15_25,{}
 COST,ema_pullback_strategy,{}
+COST,volume_trend_ema_threshold,{}
+COST,volume_donchian_breakout,{}
+COST,volume_donchian_breakout_10_25_20,{}
+COST,volume_donchian_breakout_15_30_20,{}
 CPR.MI,bollinger_bands_mean_reversion_sma_vectorized,{}
 CPR.MI,sma_stoch_close_strategy_vectorized,{}
 CPR.MI,stochastic_oscillator_signal_vectorized,{}
@@ -1913,12 +1867,6 @@ CPR.MI,donchian_breakout_with_ma_15_40,{}
 CPR.MI,donchian_inv_with_ma_filter,{}
 CPR.MI,donchian_inv_with_ma_15_40,{}
 CPR.MI,donchian_inv_with_ma_10_30,{}
-CPR.MI,keltner_rev_vectorized,{}
-CPR.MI,keltner_rev_15_1_5,{}
-CPR.MI,keltner_rev_50_2_5,{}
-CPR.MI,keltner_tf_vectorized,{}
-CPR.MI,keltner_tf_15_1_5,{}
-CPR.MI,keltner_tf_50_2_5,{}
 CPR.MI,weekly_breakout_vectorized,{}
 CPR.MI,weekly_breakout_1_2,{}
 CPR.MI,weekly_breakout_2_1,{}
@@ -1943,6 +1891,10 @@ CPR.MI,squeeze_ema_strategy,{}
 CPR.MI,squeeze_ema_10_20,{}
 CPR.MI,squeeze_ema_15_25,{}
 CPR.MI,ema_pullback_strategy,{}
+CPR.MI,volume_trend_ema_threshold,{}
+CPR.MI,volume_donchian_breakout,{}
+CPR.MI,volume_donchian_breakout_10_25_20,{}
+CPR.MI,volume_donchian_breakout_15_30_20,{}
 CRM,bollinger_bands_mean_reversion_sma_vectorized,{}
 CRM,sma_stoch_close_strategy_vectorized,{}
 CRM,stochastic_oscillator_signal_vectorized,{}
@@ -1994,12 +1946,6 @@ CRM,donchian_breakout_with_ma_15_40,{}
 CRM,donchian_inv_with_ma_filter,{}
 CRM,donchian_inv_with_ma_15_40,{}
 CRM,donchian_inv_with_ma_10_30,{}
-CRM,keltner_rev_vectorized,{}
-CRM,keltner_rev_15_1_5,{}
-CRM,keltner_rev_50_2_5,{}
-CRM,keltner_tf_vectorized,{}
-CRM,keltner_tf_15_1_5,{}
-CRM,keltner_tf_50_2_5,{}
 CRM,weekly_breakout_vectorized,{}
 CRM,weekly_breakout_1_2,{}
 CRM,weekly_breakout_2_1,{}
@@ -2024,6 +1970,10 @@ CRM,squeeze_ema_strategy,{}
 CRM,squeeze_ema_10_20,{}
 CRM,squeeze_ema_15_25,{}
 CRM,ema_pullback_strategy,{}
+CRM,volume_trend_ema_threshold,{}
+CRM,volume_donchian_breakout,{}
+CRM,volume_donchian_breakout_10_25_20,{}
+CRM,volume_donchian_breakout_15_30_20,{}
 CRS,bollinger_bands_mean_reversion_sma_vectorized,{}
 CRS,sma_stoch_close_strategy_vectorized,{}
 CRS,stochastic_oscillator_signal_vectorized,{}
@@ -2075,12 +2025,6 @@ CRS,donchian_breakout_with_ma_15_40,{}
 CRS,donchian_inv_with_ma_filter,{}
 CRS,donchian_inv_with_ma_15_40,{}
 CRS,donchian_inv_with_ma_10_30,{}
-CRS,keltner_rev_vectorized,{}
-CRS,keltner_rev_15_1_5,{}
-CRS,keltner_rev_50_2_5,{}
-CRS,keltner_tf_vectorized,{}
-CRS,keltner_tf_15_1_5,{}
-CRS,keltner_tf_50_2_5,{}
 CRS,weekly_breakout_vectorized,{}
 CRS,weekly_breakout_1_2,{}
 CRS,weekly_breakout_2_1,{}
@@ -2105,6 +2049,10 @@ CRS,squeeze_ema_strategy,{}
 CRS,squeeze_ema_10_20,{}
 CRS,squeeze_ema_15_25,{}
 CRS,ema_pullback_strategy,{}
+CRS,volume_trend_ema_threshold,{}
+CRS,volume_donchian_breakout,{}
+CRS,volume_donchian_breakout_10_25_20,{}
+CRS,volume_donchian_breakout_15_30_20,{}
 CRWD,bollinger_bands_mean_reversion_sma_vectorized,{}
 CRWD,sma_stoch_close_strategy_vectorized,{}
 CRWD,stochastic_oscillator_signal_vectorized,{}
@@ -2156,12 +2104,6 @@ CRWD,donchian_breakout_with_ma_15_40,{}
 CRWD,donchian_inv_with_ma_filter,{}
 CRWD,donchian_inv_with_ma_15_40,{}
 CRWD,donchian_inv_with_ma_10_30,{}
-CRWD,keltner_rev_vectorized,{}
-CRWD,keltner_rev_15_1_5,{}
-CRWD,keltner_rev_50_2_5,{}
-CRWD,keltner_tf_vectorized,{}
-CRWD,keltner_tf_15_1_5,{}
-CRWD,keltner_tf_50_2_5,{}
 CRWD,weekly_breakout_vectorized,{}
 CRWD,weekly_breakout_1_2,{}
 CRWD,weekly_breakout_2_1,{}
@@ -2186,6 +2128,10 @@ CRWD,squeeze_ema_strategy,{}
 CRWD,squeeze_ema_10_20,{}
 CRWD,squeeze_ema_15_25,{}
 CRWD,ema_pullback_strategy,{}
+CRWD,volume_trend_ema_threshold,{}
+CRWD,volume_donchian_breakout,{}
+CRWD,volume_donchian_breakout_10_25_20,{}
+CRWD,volume_donchian_breakout_15_30_20,{}
 DAVE,bollinger_bands_mean_reversion_sma_vectorized,{}
 DAVE,sma_stoch_close_strategy_vectorized,{}
 DAVE,stochastic_oscillator_signal_vectorized,{}
@@ -2237,12 +2183,6 @@ DAVE,donchian_breakout_with_ma_15_40,{}
 DAVE,donchian_inv_with_ma_filter,{}
 DAVE,donchian_inv_with_ma_15_40,{}
 DAVE,donchian_inv_with_ma_10_30,{}
-DAVE,keltner_rev_vectorized,{}
-DAVE,keltner_rev_15_1_5,{}
-DAVE,keltner_rev_50_2_5,{}
-DAVE,keltner_tf_vectorized,{}
-DAVE,keltner_tf_15_1_5,{}
-DAVE,keltner_tf_50_2_5,{}
 DAVE,weekly_breakout_vectorized,{}
 DAVE,weekly_breakout_1_2,{}
 DAVE,weekly_breakout_2_1,{}
@@ -2250,7 +2190,7 @@ DAVE,weekly_breakout_2_2,{}
 DAVE,weekly_breakout_1_3,{}
 DAVE,weekly_breakout_2_3,{}
 DAVE,vwap_trading_strategy_threshold,{}
-DAVE,vwap_trading_strategy_cross,{}
+DAVE,vwap_trading_strategy_cross,"{""lookback"": 25, ""threshold"": 0.003}"
 DAVE,vwap_trading_strategy_cross_20_10,{}
 DAVE,vwap_trading_strategy_cross_30_20,{}
 DAVE,parab_rev_vectorized,{}
@@ -2267,6 +2207,10 @@ DAVE,squeeze_ema_strategy,{}
 DAVE,squeeze_ema_10_20,{}
 DAVE,squeeze_ema_15_25,{}
 DAVE,ema_pullback_strategy,"{""short_ema"": 14, ""long_ema"": 26, ""min_move"": 0.01, ""min_trend_gap"": 0.08, ""lookback_trend"": 7}"
+DAVE,volume_trend_ema_threshold,{}
+DAVE,volume_donchian_breakout,{}
+DAVE,volume_donchian_breakout_10_25_20,{}
+DAVE,volume_donchian_breakout_15_30_20,{}
 DE,bollinger_bands_mean_reversion_sma_vectorized,{}
 DE,sma_stoch_close_strategy_vectorized,{}
 DE,stochastic_oscillator_signal_vectorized,{}
@@ -2318,12 +2262,6 @@ DE,donchian_breakout_with_ma_15_40,{}
 DE,donchian_inv_with_ma_filter,{}
 DE,donchian_inv_with_ma_15_40,{}
 DE,donchian_inv_with_ma_10_30,{}
-DE,keltner_rev_vectorized,{}
-DE,keltner_rev_15_1_5,{}
-DE,keltner_rev_50_2_5,{}
-DE,keltner_tf_vectorized,{}
-DE,keltner_tf_15_1_5,{}
-DE,keltner_tf_50_2_5,{}
 DE,weekly_breakout_vectorized,{}
 DE,weekly_breakout_1_2,{}
 DE,weekly_breakout_2_1,{}
@@ -2348,6 +2286,10 @@ DE,squeeze_ema_strategy,{}
 DE,squeeze_ema_10_20,{}
 DE,squeeze_ema_15_25,{}
 DE,ema_pullback_strategy,{}
+DE,volume_trend_ema_threshold,{}
+DE,volume_donchian_breakout,{}
+DE,volume_donchian_breakout_10_25_20,{}
+DE,volume_donchian_breakout_15_30_20,{}
 DJT,bollinger_bands_mean_reversion_sma_vectorized,{}
 DJT,sma_stoch_close_strategy_vectorized,{}
 DJT,stochastic_oscillator_signal_vectorized,{}
@@ -2399,12 +2341,6 @@ DJT,donchian_breakout_with_ma_15_40,{}
 DJT,donchian_inv_with_ma_filter,{}
 DJT,donchian_inv_with_ma_15_40,{}
 DJT,donchian_inv_with_ma_10_30,{}
-DJT,keltner_rev_vectorized,{}
-DJT,keltner_rev_15_1_5,{}
-DJT,keltner_rev_50_2_5,{}
-DJT,keltner_tf_vectorized,{}
-DJT,keltner_tf_15_1_5,{}
-DJT,keltner_tf_50_2_5,{}
 DJT,weekly_breakout_vectorized,{}
 DJT,weekly_breakout_1_2,{}
 DJT,weekly_breakout_2_1,{}
@@ -2429,6 +2365,10 @@ DJT,squeeze_ema_strategy,"{""short_ema"": 10, ""squeez_back_period"": 6}"
 DJT,squeeze_ema_10_20,{}
 DJT,squeeze_ema_15_25,{}
 DJT,ema_pullback_strategy,{}
+DJT,volume_trend_ema_threshold,{}
+DJT,volume_donchian_breakout,{}
+DJT,volume_donchian_breakout_10_25_20,{}
+DJT,volume_donchian_breakout_15_30_20,{}
 DOGE-USD,bollinger_bands_mean_reversion_sma_vectorized,{}
 DOGE-USD,sma_stoch_close_strategy_vectorized,{}
 DOGE-USD,stochastic_oscillator_signal_vectorized,{}
@@ -2480,12 +2420,6 @@ DOGE-USD,donchian_breakout_with_ma_15_40,{}
 DOGE-USD,donchian_inv_with_ma_filter,{}
 DOGE-USD,donchian_inv_with_ma_15_40,{}
 DOGE-USD,donchian_inv_with_ma_10_30,{}
-DOGE-USD,keltner_rev_vectorized,{}
-DOGE-USD,keltner_rev_15_1_5,{}
-DOGE-USD,keltner_rev_50_2_5,{}
-DOGE-USD,keltner_tf_vectorized,{}
-DOGE-USD,keltner_tf_15_1_5,{}
-DOGE-USD,keltner_tf_50_2_5,{}
 DOGE-USD,weekly_breakout_vectorized,{}
 DOGE-USD,weekly_breakout_1_2,{}
 DOGE-USD,weekly_breakout_2_1,{}
@@ -2510,6 +2444,10 @@ DOGE-USD,squeeze_ema_strategy,{}
 DOGE-USD,squeeze_ema_10_20,{}
 DOGE-USD,squeeze_ema_15_25,{}
 DOGE-USD,ema_pullback_strategy,"{""short_ema"": 12, ""long_ema"": 22, ""min_move"": 0.01, ""min_trend_gap"": 0.05, ""lookback_trend"": 5}"
+DOGE-USD,volume_trend_ema_threshold,{}
+DOGE-USD,volume_donchian_breakout,{}
+DOGE-USD,volume_donchian_breakout_10_25_20,{}
+DOGE-USD,volume_donchian_breakout_15_30_20,{}
 DRS,bollinger_bands_mean_reversion_sma_vectorized,{}
 DRS,sma_stoch_close_strategy_vectorized,{}
 DRS,stochastic_oscillator_signal_vectorized,{}
@@ -2561,12 +2499,6 @@ DRS,donchian_breakout_with_ma_15_40,{}
 DRS,donchian_inv_with_ma_filter,{}
 DRS,donchian_inv_with_ma_15_40,{}
 DRS,donchian_inv_with_ma_10_30,{}
-DRS,keltner_rev_vectorized,{}
-DRS,keltner_rev_15_1_5,{}
-DRS,keltner_rev_50_2_5,{}
-DRS,keltner_tf_vectorized,{}
-DRS,keltner_tf_15_1_5,{}
-DRS,keltner_tf_50_2_5,{}
 DRS,weekly_breakout_vectorized,{}
 DRS,weekly_breakout_1_2,{}
 DRS,weekly_breakout_2_1,{}
@@ -2591,6 +2523,10 @@ DRS,squeeze_ema_strategy,{}
 DRS,squeeze_ema_10_20,{}
 DRS,squeeze_ema_15_25,{}
 DRS,ema_pullback_strategy,{}
+DRS,volume_trend_ema_threshold,{}
+DRS,volume_donchian_breakout,{}
+DRS,volume_donchian_breakout_10_25_20,{}
+DRS,volume_donchian_breakout_15_30_20,{}
 EMR,bollinger_bands_mean_reversion_sma_vectorized,{}
 EMR,sma_stoch_close_strategy_vectorized,{}
 EMR,stochastic_oscillator_signal_vectorized,{}
@@ -2642,12 +2578,6 @@ EMR,donchian_breakout_with_ma_15_40,{}
 EMR,donchian_inv_with_ma_filter,{}
 EMR,donchian_inv_with_ma_15_40,{}
 EMR,donchian_inv_with_ma_10_30,{}
-EMR,keltner_rev_vectorized,{}
-EMR,keltner_rev_15_1_5,{}
-EMR,keltner_rev_50_2_5,{}
-EMR,keltner_tf_vectorized,{}
-EMR,keltner_tf_15_1_5,{}
-EMR,keltner_tf_50_2_5,{}
 EMR,weekly_breakout_vectorized,{}
 EMR,weekly_breakout_1_2,{}
 EMR,weekly_breakout_2_1,{}
@@ -2672,6 +2602,10 @@ EMR,squeeze_ema_strategy,{}
 EMR,squeeze_ema_10_20,{}
 EMR,squeeze_ema_15_25,{}
 EMR,ema_pullback_strategy,{}
+EMR,volume_trend_ema_threshold,{}
+EMR,volume_donchian_breakout,{}
+EMR,volume_donchian_breakout_10_25_20,{}
+EMR,volume_donchian_breakout_15_30_20,{}
 ENEL.MI,bollinger_bands_mean_reversion_sma_vectorized,{}
 ENEL.MI,sma_stoch_close_strategy_vectorized,{}
 ENEL.MI,stochastic_oscillator_signal_vectorized,{}
@@ -2723,12 +2657,6 @@ ENEL.MI,donchian_breakout_with_ma_15_40,{}
 ENEL.MI,donchian_inv_with_ma_filter,{}
 ENEL.MI,donchian_inv_with_ma_15_40,{}
 ENEL.MI,donchian_inv_with_ma_10_30,{}
-ENEL.MI,keltner_rev_vectorized,{}
-ENEL.MI,keltner_rev_15_1_5,{}
-ENEL.MI,keltner_rev_50_2_5,{}
-ENEL.MI,keltner_tf_vectorized,{}
-ENEL.MI,keltner_tf_15_1_5,{}
-ENEL.MI,keltner_tf_50_2_5,{}
 ENEL.MI,weekly_breakout_vectorized,{}
 ENEL.MI,weekly_breakout_1_2,{}
 ENEL.MI,weekly_breakout_2_1,{}
@@ -2753,6 +2681,10 @@ ENEL.MI,squeeze_ema_strategy,{}
 ENEL.MI,squeeze_ema_10_20,{}
 ENEL.MI,squeeze_ema_15_25,{}
 ENEL.MI,ema_pullback_strategy,{}
+ENEL.MI,volume_trend_ema_threshold,{}
+ENEL.MI,volume_donchian_breakout,{}
+ENEL.MI,volume_donchian_breakout_10_25_20,{}
+ENEL.MI,volume_donchian_breakout_15_30_20,{}
 ETH-USD,bollinger_bands_mean_reversion_sma_vectorized,{}
 ETH-USD,sma_stoch_close_strategy_vectorized,{}
 ETH-USD,stochastic_oscillator_signal_vectorized,{}
@@ -2804,12 +2736,6 @@ ETH-USD,donchian_breakout_with_ma_15_40,{}
 ETH-USD,donchian_inv_with_ma_filter,{}
 ETH-USD,donchian_inv_with_ma_15_40,{}
 ETH-USD,donchian_inv_with_ma_10_30,{}
-ETH-USD,keltner_rev_vectorized,{}
-ETH-USD,keltner_rev_15_1_5,{}
-ETH-USD,keltner_rev_50_2_5,{}
-ETH-USD,keltner_tf_vectorized,{}
-ETH-USD,keltner_tf_15_1_5,{}
-ETH-USD,keltner_tf_50_2_5,{}
 ETH-USD,weekly_breakout_vectorized,{}
 ETH-USD,weekly_breakout_1_2,{}
 ETH-USD,weekly_breakout_2_1,{}
@@ -2817,7 +2743,7 @@ ETH-USD,weekly_breakout_2_2,{}
 ETH-USD,weekly_breakout_1_3,{}
 ETH-USD,weekly_breakout_2_3,{}
 ETH-USD,vwap_trading_strategy_threshold,{}
-ETH-USD,vwap_trading_strategy_cross,{}
+ETH-USD,vwap_trading_strategy_cross,"{""lookback"": 22, ""threshold"": 0.006}"
 ETH-USD,vwap_trading_strategy_cross_20_10,{}
 ETH-USD,vwap_trading_strategy_cross_30_20,{}
 ETH-USD,parab_rev_vectorized,{}
@@ -2834,6 +2760,10 @@ ETH-USD,squeeze_ema_strategy,{}
 ETH-USD,squeeze_ema_10_20,{}
 ETH-USD,squeeze_ema_15_25,{}
 ETH-USD,ema_pullback_strategy,{}
+ETH-USD,volume_trend_ema_threshold,{}
+ETH-USD,volume_donchian_breakout,{}
+ETH-USD,volume_donchian_breakout_10_25_20,{}
+ETH-USD,volume_donchian_breakout_15_30_20,{}
 FBK.MI,bollinger_bands_mean_reversion_sma_vectorized,{}
 FBK.MI,sma_stoch_close_strategy_vectorized,{}
 FBK.MI,stochastic_oscillator_signal_vectorized,{}
@@ -2885,12 +2815,6 @@ FBK.MI,donchian_breakout_with_ma_15_40,{}
 FBK.MI,donchian_inv_with_ma_filter,{}
 FBK.MI,donchian_inv_with_ma_15_40,{}
 FBK.MI,donchian_inv_with_ma_10_30,{}
-FBK.MI,keltner_rev_vectorized,{}
-FBK.MI,keltner_rev_15_1_5,{}
-FBK.MI,keltner_rev_50_2_5,{}
-FBK.MI,keltner_tf_vectorized,{}
-FBK.MI,keltner_tf_15_1_5,{}
-FBK.MI,keltner_tf_50_2_5,{}
 FBK.MI,weekly_breakout_vectorized,{}
 FBK.MI,weekly_breakout_1_2,{}
 FBK.MI,weekly_breakout_2_1,{}
@@ -2915,6 +2839,10 @@ FBK.MI,squeeze_ema_strategy,{}
 FBK.MI,squeeze_ema_10_20,{}
 FBK.MI,squeeze_ema_15_25,{}
 FBK.MI,ema_pullback_strategy,{}
+FBK.MI,volume_trend_ema_threshold,{}
+FBK.MI,volume_donchian_breakout,{}
+FBK.MI,volume_donchian_breakout_10_25_20,{}
+FBK.MI,volume_donchian_breakout_15_30_20,{}
 GE,bollinger_bands_mean_reversion_sma_vectorized,{}
 GE,sma_stoch_close_strategy_vectorized,{}
 GE,stochastic_oscillator_signal_vectorized,{}
@@ -2966,12 +2894,6 @@ GE,donchian_breakout_with_ma_15_40,{}
 GE,donchian_inv_with_ma_filter,{}
 GE,donchian_inv_with_ma_15_40,{}
 GE,donchian_inv_with_ma_10_30,{}
-GE,keltner_rev_vectorized,{}
-GE,keltner_rev_15_1_5,{}
-GE,keltner_rev_50_2_5,{}
-GE,keltner_tf_vectorized,{}
-GE,keltner_tf_15_1_5,{}
-GE,keltner_tf_50_2_5,{}
 GE,weekly_breakout_vectorized,{}
 GE,weekly_breakout_1_2,{}
 GE,weekly_breakout_2_1,{}
@@ -2996,6 +2918,10 @@ GE,squeeze_ema_strategy,"{""short_ema"": 6, ""squeez_back_period"": 5}"
 GE,squeeze_ema_10_20,{}
 GE,squeeze_ema_15_25,{}
 GE,ema_pullback_strategy,"{""short_ema"": 8, ""long_ema"": 20, ""min_move"": 0.01, ""min_trend_gap"": 0.04, ""lookback_trend"": 7}"
+GE,volume_trend_ema_threshold,{}
+GE,volume_donchian_breakout,{}
+GE,volume_donchian_breakout_10_25_20,{}
+GE,volume_donchian_breakout_15_30_20,{}
 GOOGL,bollinger_bands_mean_reversion_sma_vectorized,{}
 GOOGL,sma_stoch_close_strategy_vectorized,{}
 GOOGL,stochastic_oscillator_signal_vectorized,{}
@@ -3047,12 +2973,6 @@ GOOGL,donchian_breakout_with_ma_15_40,{}
 GOOGL,donchian_inv_with_ma_filter,{}
 GOOGL,donchian_inv_with_ma_15_40,{}
 GOOGL,donchian_inv_with_ma_10_30,{}
-GOOGL,keltner_rev_vectorized,{}
-GOOGL,keltner_rev_15_1_5,{}
-GOOGL,keltner_rev_50_2_5,{}
-GOOGL,keltner_tf_vectorized,{}
-GOOGL,keltner_tf_15_1_5,{}
-GOOGL,keltner_tf_50_2_5,{}
 GOOGL,weekly_breakout_vectorized,{}
 GOOGL,weekly_breakout_1_2,{}
 GOOGL,weekly_breakout_2_1,{}
@@ -3077,6 +2997,10 @@ GOOGL,squeeze_ema_strategy,{}
 GOOGL,squeeze_ema_10_20,{}
 GOOGL,squeeze_ema_15_25,{}
 GOOGL,ema_pullback_strategy,{}
+GOOGL,volume_trend_ema_threshold,{}
+GOOGL,volume_donchian_breakout,{}
+GOOGL,volume_donchian_breakout_10_25_20,{}
+GOOGL,volume_donchian_breakout_15_30_20,{}
 HWM,bollinger_bands_mean_reversion_sma_vectorized,{}
 HWM,sma_stoch_close_strategy_vectorized,{}
 HWM,stochastic_oscillator_signal_vectorized,{}
@@ -3128,12 +3052,6 @@ HWM,donchian_breakout_with_ma_15_40,{}
 HWM,donchian_inv_with_ma_filter,{}
 HWM,donchian_inv_with_ma_15_40,{}
 HWM,donchian_inv_with_ma_10_30,{}
-HWM,keltner_rev_vectorized,{}
-HWM,keltner_rev_15_1_5,{}
-HWM,keltner_rev_50_2_5,{}
-HWM,keltner_tf_vectorized,{}
-HWM,keltner_tf_15_1_5,{}
-HWM,keltner_tf_50_2_5,{}
 HWM,weekly_breakout_vectorized,{}
 HWM,weekly_breakout_1_2,{}
 HWM,weekly_breakout_2_1,{}
@@ -3158,6 +3076,10 @@ HWM,squeeze_ema_strategy,{}
 HWM,squeeze_ema_10_20,{}
 HWM,squeeze_ema_15_25,{}
 HWM,ema_pullback_strategy,{}
+HWM,volume_trend_ema_threshold,{}
+HWM,volume_donchian_breakout,{}
+HWM,volume_donchian_breakout_10_25_20,{}
+HWM,volume_donchian_breakout_15_30_20,{}
 INGR,bollinger_bands_mean_reversion_sma_vectorized,{}
 INGR,sma_stoch_close_strategy_vectorized,{}
 INGR,stochastic_oscillator_signal_vectorized,{}
@@ -3209,12 +3131,6 @@ INGR,donchian_breakout_with_ma_15_40,{}
 INGR,donchian_inv_with_ma_filter,{}
 INGR,donchian_inv_with_ma_15_40,{}
 INGR,donchian_inv_with_ma_10_30,{}
-INGR,keltner_rev_vectorized,{}
-INGR,keltner_rev_15_1_5,{}
-INGR,keltner_rev_50_2_5,{}
-INGR,keltner_tf_vectorized,{}
-INGR,keltner_tf_15_1_5,{}
-INGR,keltner_tf_50_2_5,{}
 INGR,weekly_breakout_vectorized,{}
 INGR,weekly_breakout_1_2,{}
 INGR,weekly_breakout_2_1,{}
@@ -3239,6 +3155,10 @@ INGR,squeeze_ema_strategy,{}
 INGR,squeeze_ema_10_20,{}
 INGR,squeeze_ema_15_25,{}
 INGR,ema_pullback_strategy,{}
+INGR,volume_trend_ema_threshold,{}
+INGR,volume_donchian_breakout,{}
+INGR,volume_donchian_breakout_10_25_20,{}
+INGR,volume_donchian_breakout_15_30_20,{}
 INTC,bollinger_bands_mean_reversion_sma_vectorized,{}
 INTC,sma_stoch_close_strategy_vectorized,{}
 INTC,stochastic_oscillator_signal_vectorized,{}
@@ -3290,12 +3210,6 @@ INTC,donchian_breakout_with_ma_15_40,{}
 INTC,donchian_inv_with_ma_filter,{}
 INTC,donchian_inv_with_ma_15_40,{}
 INTC,donchian_inv_with_ma_10_30,{}
-INTC,keltner_rev_vectorized,{}
-INTC,keltner_rev_15_1_5,{}
-INTC,keltner_rev_50_2_5,{}
-INTC,keltner_tf_vectorized,{}
-INTC,keltner_tf_15_1_5,{}
-INTC,keltner_tf_50_2_5,{}
 INTC,weekly_breakout_vectorized,{}
 INTC,weekly_breakout_1_2,{}
 INTC,weekly_breakout_2_1,{}
@@ -3320,6 +3234,10 @@ INTC,squeeze_ema_strategy,{}
 INTC,squeeze_ema_10_20,{}
 INTC,squeeze_ema_15_25,{}
 INTC,ema_pullback_strategy,{}
+INTC,volume_trend_ema_threshold,{}
+INTC,volume_donchian_breakout,{}
+INTC,volume_donchian_breakout_10_25_20,{}
+INTC,volume_donchian_breakout_15_30_20,{}
 ISP.MI,bollinger_bands_mean_reversion_sma_vectorized,{}
 ISP.MI,sma_stoch_close_strategy_vectorized,{}
 ISP.MI,stochastic_oscillator_signal_vectorized,{}
@@ -3371,12 +3289,6 @@ ISP.MI,donchian_breakout_with_ma_15_40,{}
 ISP.MI,donchian_inv_with_ma_filter,{}
 ISP.MI,donchian_inv_with_ma_15_40,{}
 ISP.MI,donchian_inv_with_ma_10_30,{}
-ISP.MI,keltner_rev_vectorized,{}
-ISP.MI,keltner_rev_15_1_5,{}
-ISP.MI,keltner_rev_50_2_5,{}
-ISP.MI,keltner_tf_vectorized,{}
-ISP.MI,keltner_tf_15_1_5,{}
-ISP.MI,keltner_tf_50_2_5,{}
 ISP.MI,weekly_breakout_vectorized,{}
 ISP.MI,weekly_breakout_1_2,{}
 ISP.MI,weekly_breakout_2_1,{}
@@ -3401,6 +3313,10 @@ ISP.MI,squeeze_ema_strategy,{}
 ISP.MI,squeeze_ema_10_20,{}
 ISP.MI,squeeze_ema_15_25,{}
 ISP.MI,ema_pullback_strategy,{}
+ISP.MI,volume_trend_ema_threshold,{}
+ISP.MI,volume_donchian_breakout,{}
+ISP.MI,volume_donchian_breakout_10_25_20,{}
+ISP.MI,volume_donchian_breakout_15_30_20,{}
 JD,bollinger_bands_mean_reversion_sma_vectorized,{}
 JD,sma_stoch_close_strategy_vectorized,{}
 JD,stochastic_oscillator_signal_vectorized,{}
@@ -3452,12 +3368,6 @@ JD,donchian_breakout_with_ma_15_40,{}
 JD,donchian_inv_with_ma_filter,{}
 JD,donchian_inv_with_ma_15_40,{}
 JD,donchian_inv_with_ma_10_30,{}
-JD,keltner_rev_vectorized,{}
-JD,keltner_rev_15_1_5,{}
-JD,keltner_rev_50_2_5,{}
-JD,keltner_tf_vectorized,{}
-JD,keltner_tf_15_1_5,{}
-JD,keltner_tf_50_2_5,{}
 JD,weekly_breakout_vectorized,{}
 JD,weekly_breakout_1_2,{}
 JD,weekly_breakout_2_1,{}
@@ -3482,6 +3392,10 @@ JD,squeeze_ema_strategy,{}
 JD,squeeze_ema_10_20,{}
 JD,squeeze_ema_15_25,{}
 JD,ema_pullback_strategy,{}
+JD,volume_trend_ema_threshold,{}
+JD,volume_donchian_breakout,{}
+JD,volume_donchian_breakout_10_25_20,{}
+JD,volume_donchian_breakout_15_30_20,{}
 JNJ,bollinger_bands_mean_reversion_sma_vectorized,{}
 JNJ,sma_stoch_close_strategy_vectorized,{}
 JNJ,stochastic_oscillator_signal_vectorized,{}
@@ -3533,12 +3447,6 @@ JNJ,donchian_breakout_with_ma_15_40,{}
 JNJ,donchian_inv_with_ma_filter,{}
 JNJ,donchian_inv_with_ma_15_40,{}
 JNJ,donchian_inv_with_ma_10_30,{}
-JNJ,keltner_rev_vectorized,{}
-JNJ,keltner_rev_15_1_5,{}
-JNJ,keltner_rev_50_2_5,{}
-JNJ,keltner_tf_vectorized,{}
-JNJ,keltner_tf_15_1_5,{}
-JNJ,keltner_tf_50_2_5,{}
 JNJ,weekly_breakout_vectorized,{}
 JNJ,weekly_breakout_1_2,{}
 JNJ,weekly_breakout_2_1,{}
@@ -3563,6 +3471,10 @@ JNJ,squeeze_ema_strategy,{}
 JNJ,squeeze_ema_10_20,{}
 JNJ,squeeze_ema_15_25,{}
 JNJ,ema_pullback_strategy,{}
+JNJ,volume_trend_ema_threshold,{}
+JNJ,volume_donchian_breakout,{}
+JNJ,volume_donchian_breakout_10_25_20,{}
+JNJ,volume_donchian_breakout_15_30_20,{}
 JPM,bollinger_bands_mean_reversion_sma_vectorized,{}
 JPM,sma_stoch_close_strategy_vectorized,{}
 JPM,stochastic_oscillator_signal_vectorized,{}
@@ -3614,12 +3526,6 @@ JPM,donchian_breakout_with_ma_15_40,{}
 JPM,donchian_inv_with_ma_filter,{}
 JPM,donchian_inv_with_ma_15_40,{}
 JPM,donchian_inv_with_ma_10_30,{}
-JPM,keltner_rev_vectorized,{}
-JPM,keltner_rev_15_1_5,{}
-JPM,keltner_rev_50_2_5,{}
-JPM,keltner_tf_vectorized,{}
-JPM,keltner_tf_15_1_5,{}
-JPM,keltner_tf_50_2_5,{}
 JPM,weekly_breakout_vectorized,{}
 JPM,weekly_breakout_1_2,{}
 JPM,weekly_breakout_2_1,{}
@@ -3644,6 +3550,10 @@ JPM,squeeze_ema_strategy,{}
 JPM,squeeze_ema_10_20,{}
 JPM,squeeze_ema_15_25,{}
 JPM,ema_pullback_strategy,{}
+JPM,volume_trend_ema_threshold,{}
+JPM,volume_donchian_breakout,{}
+JPM,volume_donchian_breakout_10_25_20,{}
+JPM,volume_donchian_breakout_15_30_20,{}
 KR,bollinger_bands_mean_reversion_sma_vectorized,{}
 KR,sma_stoch_close_strategy_vectorized,{}
 KR,stochastic_oscillator_signal_vectorized,{}
@@ -3695,12 +3605,6 @@ KR,donchian_breakout_with_ma_15_40,{}
 KR,donchian_inv_with_ma_filter,{}
 KR,donchian_inv_with_ma_15_40,{}
 KR,donchian_inv_with_ma_10_30,{}
-KR,keltner_rev_vectorized,{}
-KR,keltner_rev_15_1_5,{}
-KR,keltner_rev_50_2_5,{}
-KR,keltner_tf_vectorized,{}
-KR,keltner_tf_15_1_5,{}
-KR,keltner_tf_50_2_5,{}
 KR,weekly_breakout_vectorized,{}
 KR,weekly_breakout_1_2,{}
 KR,weekly_breakout_2_1,{}
@@ -3725,6 +3629,10 @@ KR,squeeze_ema_strategy,{}
 KR,squeeze_ema_10_20,{}
 KR,squeeze_ema_15_25,{}
 KR,ema_pullback_strategy,{}
+KR,volume_trend_ema_threshold,{}
+KR,volume_donchian_breakout,{}
+KR,volume_donchian_breakout_10_25_20,{}
+KR,volume_donchian_breakout_15_30_20,{}
 KTOS,bollinger_bands_mean_reversion_sma_vectorized,{}
 KTOS,sma_stoch_close_strategy_vectorized,{}
 KTOS,stochastic_oscillator_signal_vectorized,{}
@@ -3776,12 +3684,6 @@ KTOS,donchian_breakout_with_ma_15_40,{}
 KTOS,donchian_inv_with_ma_filter,{}
 KTOS,donchian_inv_with_ma_15_40,{}
 KTOS,donchian_inv_with_ma_10_30,{}
-KTOS,keltner_rev_vectorized,{}
-KTOS,keltner_rev_15_1_5,{}
-KTOS,keltner_rev_50_2_5,{}
-KTOS,keltner_tf_vectorized,{}
-KTOS,keltner_tf_15_1_5,{}
-KTOS,keltner_tf_50_2_5,{}
 KTOS,weekly_breakout_vectorized,{}
 KTOS,weekly_breakout_1_2,{}
 KTOS,weekly_breakout_2_1,{}
@@ -3806,6 +3708,10 @@ KTOS,squeeze_ema_strategy,"{""short_ema"": 12, ""squeez_back_period"": 4}"
 KTOS,squeeze_ema_10_20,{}
 KTOS,squeeze_ema_15_25,{}
 KTOS,ema_pullback_strategy,"{""short_ema"": 14, ""long_ema"": 30, ""min_move"": 0.01, ""min_trend_gap"": 0.04, ""lookback_trend"": 7}"
+KTOS,volume_trend_ema_threshold,{}
+KTOS,volume_donchian_breakout,{}
+KTOS,volume_donchian_breakout_10_25_20,{}
+KTOS,volume_donchian_breakout_15_30_20,{}
 LDO.MI,bollinger_bands_mean_reversion_sma_vectorized,{}
 LDO.MI,sma_stoch_close_strategy_vectorized,{}
 LDO.MI,stochastic_oscillator_signal_vectorized,{}
@@ -3857,12 +3763,6 @@ LDO.MI,donchian_breakout_with_ma_15_40,{}
 LDO.MI,donchian_inv_with_ma_filter,{}
 LDO.MI,donchian_inv_with_ma_15_40,{}
 LDO.MI,donchian_inv_with_ma_10_30,{}
-LDO.MI,keltner_rev_vectorized,{}
-LDO.MI,keltner_rev_15_1_5,{}
-LDO.MI,keltner_rev_50_2_5,{}
-LDO.MI,keltner_tf_vectorized,{}
-LDO.MI,keltner_tf_15_1_5,{}
-LDO.MI,keltner_tf_50_2_5,{}
 LDO.MI,weekly_breakout_vectorized,{}
 LDO.MI,weekly_breakout_1_2,{}
 LDO.MI,weekly_breakout_2_1,{}
@@ -3887,6 +3787,10 @@ LDO.MI,squeeze_ema_strategy,{}
 LDO.MI,squeeze_ema_10_20,{}
 LDO.MI,squeeze_ema_15_25,{}
 LDO.MI,ema_pullback_strategy,{}
+LDO.MI,volume_trend_ema_threshold,{}
+LDO.MI,volume_donchian_breakout,{}
+LDO.MI,volume_donchian_breakout_10_25_20,{}
+LDO.MI,volume_donchian_breakout_15_30_20,{}
 LEU,bollinger_bands_mean_reversion_sma_vectorized,{}
 LEU,sma_stoch_close_strategy_vectorized,{}
 LEU,stochastic_oscillator_signal_vectorized,{}
@@ -3938,12 +3842,6 @@ LEU,donchian_breakout_with_ma_15_40,{}
 LEU,donchian_inv_with_ma_filter,{}
 LEU,donchian_inv_with_ma_15_40,{}
 LEU,donchian_inv_with_ma_10_30,{}
-LEU,keltner_rev_vectorized,{}
-LEU,keltner_rev_15_1_5,{}
-LEU,keltner_rev_50_2_5,{}
-LEU,keltner_tf_vectorized,{}
-LEU,keltner_tf_15_1_5,{}
-LEU,keltner_tf_50_2_5,{}
 LEU,weekly_breakout_vectorized,{}
 LEU,weekly_breakout_1_2,{}
 LEU,weekly_breakout_2_1,{}
@@ -3961,13 +3859,17 @@ LEU,ema_vwap_sma_vectorized,{}
 LEU,ema_vwap_sma_15_30_50,{}
 LEU,ema_vwap_sma_5_10_20,{}
 LEU,ema_vwap_vectorized,{}
-LEU,volume_trend_basic,{}
+LEU,volume_trend_basic,"{""lookback"": 38}"
 LEU,volume_trend_10,{}
 LEU,volume_trend_30,{}
 LEU,squeeze_ema_strategy,{}
 LEU,squeeze_ema_10_20,{}
 LEU,squeeze_ema_15_25,{}
 LEU,ema_pullback_strategy,{}
+LEU,volume_trend_ema_threshold,{}
+LEU,volume_donchian_breakout,"{""lookback_vol"": 26, ""lookback_price"": 20, ""vol_threshold"": 0.4}"
+LEU,volume_donchian_breakout_10_25_20,{}
+LEU,volume_donchian_breakout_15_30_20,{}
 LIN,bollinger_bands_mean_reversion_sma_vectorized,{}
 LIN,sma_stoch_close_strategy_vectorized,{}
 LIN,stochastic_oscillator_signal_vectorized,{}
@@ -4019,12 +3921,6 @@ LIN,donchian_breakout_with_ma_15_40,{}
 LIN,donchian_inv_with_ma_filter,{}
 LIN,donchian_inv_with_ma_15_40,{}
 LIN,donchian_inv_with_ma_10_30,{}
-LIN,keltner_rev_vectorized,{}
-LIN,keltner_rev_15_1_5,{}
-LIN,keltner_rev_50_2_5,{}
-LIN,keltner_tf_vectorized,{}
-LIN,keltner_tf_15_1_5,{}
-LIN,keltner_tf_50_2_5,{}
 LIN,weekly_breakout_vectorized,{}
 LIN,weekly_breakout_1_2,{}
 LIN,weekly_breakout_2_1,{}
@@ -4049,6 +3945,10 @@ LIN,squeeze_ema_strategy,{}
 LIN,squeeze_ema_10_20,{}
 LIN,squeeze_ema_15_25,{}
 LIN,ema_pullback_strategy,{}
+LIN,volume_trend_ema_threshold,{}
+LIN,volume_donchian_breakout,{}
+LIN,volume_donchian_breakout_10_25_20,{}
+LIN,volume_donchian_breakout_15_30_20,{}
 LLY,bollinger_bands_mean_reversion_sma_vectorized,{}
 LLY,sma_stoch_close_strategy_vectorized,{}
 LLY,stochastic_oscillator_signal_vectorized,{}
@@ -4100,12 +4000,6 @@ LLY,donchian_breakout_with_ma_15_40,{}
 LLY,donchian_inv_with_ma_filter,{}
 LLY,donchian_inv_with_ma_15_40,{}
 LLY,donchian_inv_with_ma_10_30,{}
-LLY,keltner_rev_vectorized,{}
-LLY,keltner_rev_15_1_5,{}
-LLY,keltner_rev_50_2_5,{}
-LLY,keltner_tf_vectorized,{}
-LLY,keltner_tf_15_1_5,{}
-LLY,keltner_tf_50_2_5,{}
 LLY,weekly_breakout_vectorized,{}
 LLY,weekly_breakout_1_2,{}
 LLY,weekly_breakout_2_1,{}
@@ -4126,10 +4020,14 @@ LLY,ema_vwap_vectorized,{}
 LLY,volume_trend_basic,{}
 LLY,volume_trend_10,{}
 LLY,volume_trend_30,{}
-LLY,squeeze_ema_strategy,{}
+LLY,squeeze_ema_strategy,"{""short_ema"": 8, ""squeez_back_period"": 6}"
 LLY,squeeze_ema_10_20,{}
 LLY,squeeze_ema_15_25,{}
 LLY,ema_pullback_strategy,{}
+LLY,volume_trend_ema_threshold,"{""lookback"": 22, ""ema_len"": 8, ""vol_threshold"": 0.1}"
+LLY,volume_donchian_breakout,"{""lookback_vol"": 18, ""lookback_price"": 20, ""vol_threshold"": 0.1}"
+LLY,volume_donchian_breakout_10_25_20,{}
+LLY,volume_donchian_breakout_15_30_20,{}
 LOW,bollinger_bands_mean_reversion_sma_vectorized,{}
 LOW,sma_stoch_close_strategy_vectorized,{}
 LOW,stochastic_oscillator_signal_vectorized,{}
@@ -4181,12 +4079,6 @@ LOW,donchian_breakout_with_ma_15_40,{}
 LOW,donchian_inv_with_ma_filter,{}
 LOW,donchian_inv_with_ma_15_40,{}
 LOW,donchian_inv_with_ma_10_30,{}
-LOW,keltner_rev_vectorized,{}
-LOW,keltner_rev_15_1_5,{}
-LOW,keltner_rev_50_2_5,{}
-LOW,keltner_tf_vectorized,{}
-LOW,keltner_tf_15_1_5,{}
-LOW,keltner_tf_50_2_5,{}
 LOW,weekly_breakout_vectorized,{}
 LOW,weekly_breakout_1_2,{}
 LOW,weekly_breakout_2_1,{}
@@ -4211,6 +4103,10 @@ LOW,squeeze_ema_strategy,{}
 LOW,squeeze_ema_10_20,{}
 LOW,squeeze_ema_15_25,{}
 LOW,ema_pullback_strategy,{}
+LOW,volume_trend_ema_threshold,{}
+LOW,volume_donchian_breakout,{}
+LOW,volume_donchian_breakout_10_25_20,{}
+LOW,volume_donchian_breakout_15_30_20,{}
 MASI,bollinger_bands_mean_reversion_sma_vectorized,{}
 MASI,sma_stoch_close_strategy_vectorized,{}
 MASI,stochastic_oscillator_signal_vectorized,{}
@@ -4262,12 +4158,6 @@ MASI,donchian_breakout_with_ma_15_40,{}
 MASI,donchian_inv_with_ma_filter,{}
 MASI,donchian_inv_with_ma_15_40,{}
 MASI,donchian_inv_with_ma_10_30,{}
-MASI,keltner_rev_vectorized,{}
-MASI,keltner_rev_15_1_5,{}
-MASI,keltner_rev_50_2_5,{}
-MASI,keltner_tf_vectorized,{}
-MASI,keltner_tf_15_1_5,{}
-MASI,keltner_tf_50_2_5,{}
 MASI,weekly_breakout_vectorized,{}
 MASI,weekly_breakout_1_2,{}
 MASI,weekly_breakout_2_1,{}
@@ -4292,6 +4182,10 @@ MASI,squeeze_ema_strategy,{}
 MASI,squeeze_ema_10_20,{}
 MASI,squeeze_ema_15_25,{}
 MASI,ema_pullback_strategy,{}
+MASI,volume_trend_ema_threshold,{}
+MASI,volume_donchian_breakout,{}
+MASI,volume_donchian_breakout_10_25_20,{}
+MASI,volume_donchian_breakout_15_30_20,{}
 MB.MI,bollinger_bands_mean_reversion_sma_vectorized,{}
 MB.MI,sma_stoch_close_strategy_vectorized,{}
 MB.MI,stochastic_oscillator_signal_vectorized,{}
@@ -4343,12 +4237,6 @@ MB.MI,donchian_breakout_with_ma_15_40,{}
 MB.MI,donchian_inv_with_ma_filter,{}
 MB.MI,donchian_inv_with_ma_15_40,{}
 MB.MI,donchian_inv_with_ma_10_30,{}
-MB.MI,keltner_rev_vectorized,{}
-MB.MI,keltner_rev_15_1_5,{}
-MB.MI,keltner_rev_50_2_5,{}
-MB.MI,keltner_tf_vectorized,{}
-MB.MI,keltner_tf_15_1_5,{}
-MB.MI,keltner_tf_50_2_5,{}
 MB.MI,weekly_breakout_vectorized,{}
 MB.MI,weekly_breakout_1_2,{}
 MB.MI,weekly_breakout_2_1,{}
@@ -4373,6 +4261,10 @@ MB.MI,squeeze_ema_strategy,{}
 MB.MI,squeeze_ema_10_20,{}
 MB.MI,squeeze_ema_15_25,{}
 MB.MI,ema_pullback_strategy,{}
+MB.MI,volume_trend_ema_threshold,{}
+MB.MI,volume_donchian_breakout,{}
+MB.MI,volume_donchian_breakout_10_25_20,{}
+MB.MI,volume_donchian_breakout_15_30_20,{}
 MDLZ,bollinger_bands_mean_reversion_sma_vectorized,{}
 MDLZ,sma_stoch_close_strategy_vectorized,{}
 MDLZ,stochastic_oscillator_signal_vectorized,{}
@@ -4424,12 +4316,6 @@ MDLZ,donchian_breakout_with_ma_15_40,{}
 MDLZ,donchian_inv_with_ma_filter,{}
 MDLZ,donchian_inv_with_ma_15_40,{}
 MDLZ,donchian_inv_with_ma_10_30,{}
-MDLZ,keltner_rev_vectorized,{}
-MDLZ,keltner_rev_15_1_5,{}
-MDLZ,keltner_rev_50_2_5,{}
-MDLZ,keltner_tf_vectorized,{}
-MDLZ,keltner_tf_15_1_5,{}
-MDLZ,keltner_tf_50_2_5,{}
 MDLZ,weekly_breakout_vectorized,{}
 MDLZ,weekly_breakout_1_2,{}
 MDLZ,weekly_breakout_2_1,{}
@@ -4454,6 +4340,10 @@ MDLZ,squeeze_ema_strategy,{}
 MDLZ,squeeze_ema_10_20,{}
 MDLZ,squeeze_ema_15_25,{}
 MDLZ,ema_pullback_strategy,{}
+MDLZ,volume_trend_ema_threshold,{}
+MDLZ,volume_donchian_breakout,{}
+MDLZ,volume_donchian_breakout_10_25_20,{}
+MDLZ,volume_donchian_breakout_15_30_20,{}
 META,bollinger_bands_mean_reversion_sma_vectorized,{}
 META,sma_stoch_close_strategy_vectorized,{}
 META,stochastic_oscillator_signal_vectorized,{}
@@ -4505,12 +4395,6 @@ META,donchian_breakout_with_ma_15_40,{}
 META,donchian_inv_with_ma_filter,{}
 META,donchian_inv_with_ma_15_40,{}
 META,donchian_inv_with_ma_10_30,{}
-META,keltner_rev_vectorized,{}
-META,keltner_rev_15_1_5,{}
-META,keltner_rev_50_2_5,{}
-META,keltner_tf_vectorized,{}
-META,keltner_tf_15_1_5,{}
-META,keltner_tf_50_2_5,{}
 META,weekly_breakout_vectorized,{}
 META,weekly_breakout_1_2,{}
 META,weekly_breakout_2_1,{}
@@ -4535,6 +4419,10 @@ META,squeeze_ema_strategy,{}
 META,squeeze_ema_10_20,{}
 META,squeeze_ema_15_25,{}
 META,ema_pullback_strategy,{}
+META,volume_trend_ema_threshold,{}
+META,volume_donchian_breakout,{}
+META,volume_donchian_breakout_10_25_20,{}
+META,volume_donchian_breakout_15_30_20,{}
 MGNI,bollinger_bands_mean_reversion_sma_vectorized,{}
 MGNI,sma_stoch_close_strategy_vectorized,{}
 MGNI,stochastic_oscillator_signal_vectorized,{}
@@ -4586,12 +4474,6 @@ MGNI,donchian_breakout_with_ma_15_40,{}
 MGNI,donchian_inv_with_ma_filter,{}
 MGNI,donchian_inv_with_ma_15_40,{}
 MGNI,donchian_inv_with_ma_10_30,{}
-MGNI,keltner_rev_vectorized,{}
-MGNI,keltner_rev_15_1_5,{}
-MGNI,keltner_rev_50_2_5,{}
-MGNI,keltner_tf_vectorized,{}
-MGNI,keltner_tf_15_1_5,{}
-MGNI,keltner_tf_50_2_5,{}
 MGNI,weekly_breakout_vectorized,{}
 MGNI,weekly_breakout_1_2,{}
 MGNI,weekly_breakout_2_1,{}
@@ -4616,6 +4498,10 @@ MGNI,squeeze_ema_strategy,"{""short_ema"": 20, ""squeez_back_period"": 25}"
 MGNI,squeeze_ema_10_20,{}
 MGNI,squeeze_ema_15_25,{}
 MGNI,ema_pullback_strategy,"{""short_ema"": 12, ""long_ema"": 20, ""min_move"": 0.01, ""min_trend_gap"": 0.04, ""lookback_trend"": 6}"
+MGNI,volume_trend_ema_threshold,"{""lookback"": 20, ""ema_len"": 14, ""vol_threshold"": 0.1}"
+MGNI,volume_donchian_breakout,{}
+MGNI,volume_donchian_breakout_10_25_20,{}
+MGNI,volume_donchian_breakout_15_30_20,{}
 MMM,bollinger_bands_mean_reversion_sma_vectorized,{}
 MMM,sma_stoch_close_strategy_vectorized,{}
 MMM,stochastic_oscillator_signal_vectorized,{}
@@ -4667,12 +4553,6 @@ MMM,donchian_breakout_with_ma_15_40,{}
 MMM,donchian_inv_with_ma_filter,{}
 MMM,donchian_inv_with_ma_15_40,{}
 MMM,donchian_inv_with_ma_10_30,{}
-MMM,keltner_rev_vectorized,{}
-MMM,keltner_rev_15_1_5,{}
-MMM,keltner_rev_50_2_5,{}
-MMM,keltner_tf_vectorized,{}
-MMM,keltner_tf_15_1_5,{}
-MMM,keltner_tf_50_2_5,{}
 MMM,weekly_breakout_vectorized,{}
 MMM,weekly_breakout_1_2,{}
 MMM,weekly_breakout_2_1,{}
@@ -4697,6 +4577,10 @@ MMM,squeeze_ema_strategy,{}
 MMM,squeeze_ema_10_20,{}
 MMM,squeeze_ema_15_25,{}
 MMM,ema_pullback_strategy,"{""short_ema"": 6, ""long_ema"": 18, ""min_move"": 0.01, ""min_trend_gap"": 0.04, ""lookback_trend"": 6}"
+MMM,volume_trend_ema_threshold,{}
+MMM,volume_donchian_breakout,{}
+MMM,volume_donchian_breakout_10_25_20,{}
+MMM,volume_donchian_breakout_15_30_20,{}
 MONC.MI,bollinger_bands_mean_reversion_sma_vectorized,{}
 MONC.MI,sma_stoch_close_strategy_vectorized,{}
 MONC.MI,stochastic_oscillator_signal_vectorized,{}
@@ -4748,12 +4632,6 @@ MONC.MI,donchian_breakout_with_ma_15_40,{}
 MONC.MI,donchian_inv_with_ma_filter,{}
 MONC.MI,donchian_inv_with_ma_15_40,{}
 MONC.MI,donchian_inv_with_ma_10_30,{}
-MONC.MI,keltner_rev_vectorized,{}
-MONC.MI,keltner_rev_15_1_5,{}
-MONC.MI,keltner_rev_50_2_5,{}
-MONC.MI,keltner_tf_vectorized,{}
-MONC.MI,keltner_tf_15_1_5,{}
-MONC.MI,keltner_tf_50_2_5,{}
 MONC.MI,weekly_breakout_vectorized,{}
 MONC.MI,weekly_breakout_1_2,{}
 MONC.MI,weekly_breakout_2_1,{}
@@ -4778,6 +4656,10 @@ MONC.MI,squeeze_ema_strategy,{}
 MONC.MI,squeeze_ema_10_20,{}
 MONC.MI,squeeze_ema_15_25,{}
 MONC.MI,ema_pullback_strategy,{}
+MONC.MI,volume_trend_ema_threshold,{}
+MONC.MI,volume_donchian_breakout,{}
+MONC.MI,volume_donchian_breakout_10_25_20,{}
+MONC.MI,volume_donchian_breakout_15_30_20,{}
 MRNA,bollinger_bands_mean_reversion_sma_vectorized,{}
 MRNA,sma_stoch_close_strategy_vectorized,{}
 MRNA,stochastic_oscillator_signal_vectorized,{}
@@ -4829,12 +4711,6 @@ MRNA,donchian_breakout_with_ma_15_40,{}
 MRNA,donchian_inv_with_ma_filter,{}
 MRNA,donchian_inv_with_ma_15_40,{}
 MRNA,donchian_inv_with_ma_10_30,{}
-MRNA,keltner_rev_vectorized,{}
-MRNA,keltner_rev_15_1_5,{}
-MRNA,keltner_rev_50_2_5,{}
-MRNA,keltner_tf_vectorized,{}
-MRNA,keltner_tf_15_1_5,{}
-MRNA,keltner_tf_50_2_5,{}
 MRNA,weekly_breakout_vectorized,{}
 MRNA,weekly_breakout_1_2,{}
 MRNA,weekly_breakout_2_1,{}
@@ -4859,6 +4735,10 @@ MRNA,squeeze_ema_strategy,{}
 MRNA,squeeze_ema_10_20,{}
 MRNA,squeeze_ema_15_25,{}
 MRNA,ema_pullback_strategy,"{""short_ema"": 8, ""long_ema"": 26, ""min_move"": 0.01, ""min_trend_gap"": 0.08, ""lookback_trend"": 5}"
+MRNA,volume_trend_ema_threshold,{}
+MRNA,volume_donchian_breakout,{}
+MRNA,volume_donchian_breakout_10_25_20,{}
+MRNA,volume_donchian_breakout_15_30_20,{}
 MS,bollinger_bands_mean_reversion_sma_vectorized,{}
 MS,sma_stoch_close_strategy_vectorized,{}
 MS,stochastic_oscillator_signal_vectorized,{}
@@ -4910,12 +4790,6 @@ MS,donchian_breakout_with_ma_15_40,{}
 MS,donchian_inv_with_ma_filter,{}
 MS,donchian_inv_with_ma_15_40,{}
 MS,donchian_inv_with_ma_10_30,{}
-MS,keltner_rev_vectorized,{}
-MS,keltner_rev_15_1_5,{}
-MS,keltner_rev_50_2_5,{}
-MS,keltner_tf_vectorized,{}
-MS,keltner_tf_15_1_5,{}
-MS,keltner_tf_50_2_5,{}
 MS,weekly_breakout_vectorized,{}
 MS,weekly_breakout_1_2,{}
 MS,weekly_breakout_2_1,{}
@@ -4940,6 +4814,10 @@ MS,squeeze_ema_strategy,{}
 MS,squeeze_ema_10_20,{}
 MS,squeeze_ema_15_25,{}
 MS,ema_pullback_strategy,{}
+MS,volume_trend_ema_threshold,{}
+MS,volume_donchian_breakout,{}
+MS,volume_donchian_breakout_10_25_20,{}
+MS,volume_donchian_breakout_15_30_20,{}
 MSFT,bollinger_bands_mean_reversion_sma_vectorized,{}
 MSFT,sma_stoch_close_strategy_vectorized,{}
 MSFT,stochastic_oscillator_signal_vectorized,{}
@@ -4991,12 +4869,6 @@ MSFT,donchian_breakout_with_ma_15_40,{}
 MSFT,donchian_inv_with_ma_filter,{}
 MSFT,donchian_inv_with_ma_15_40,{}
 MSFT,donchian_inv_with_ma_10_30,{}
-MSFT,keltner_rev_vectorized,{}
-MSFT,keltner_rev_15_1_5,{}
-MSFT,keltner_rev_50_2_5,{}
-MSFT,keltner_tf_vectorized,{}
-MSFT,keltner_tf_15_1_5,{}
-MSFT,keltner_tf_50_2_5,{}
 MSFT,weekly_breakout_vectorized,{}
 MSFT,weekly_breakout_1_2,{}
 MSFT,weekly_breakout_2_1,{}
@@ -5021,6 +4893,10 @@ MSFT,squeeze_ema_strategy,{}
 MSFT,squeeze_ema_10_20,{}
 MSFT,squeeze_ema_15_25,{}
 MSFT,ema_pullback_strategy,{}
+MSFT,volume_trend_ema_threshold,{}
+MSFT,volume_donchian_breakout,{}
+MSFT,volume_donchian_breakout_10_25_20,{}
+MSFT,volume_donchian_breakout_15_30_20,{}
 MTSI,bollinger_bands_mean_reversion_sma_vectorized,{}
 MTSI,sma_stoch_close_strategy_vectorized,{}
 MTSI,stochastic_oscillator_signal_vectorized,{}
@@ -5072,12 +4948,6 @@ MTSI,donchian_breakout_with_ma_15_40,{}
 MTSI,donchian_inv_with_ma_filter,{}
 MTSI,donchian_inv_with_ma_15_40,{}
 MTSI,donchian_inv_with_ma_10_30,{}
-MTSI,keltner_rev_vectorized,{}
-MTSI,keltner_rev_15_1_5,{}
-MTSI,keltner_rev_50_2_5,{}
-MTSI,keltner_tf_vectorized,{}
-MTSI,keltner_tf_15_1_5,{}
-MTSI,keltner_tf_50_2_5,{}
 MTSI,weekly_breakout_vectorized,{}
 MTSI,weekly_breakout_1_2,{}
 MTSI,weekly_breakout_2_1,{}
@@ -5102,6 +4972,10 @@ MTSI,squeeze_ema_strategy,{}
 MTSI,squeeze_ema_10_20,{}
 MTSI,squeeze_ema_15_25,{}
 MTSI,ema_pullback_strategy,{}
+MTSI,volume_trend_ema_threshold,{}
+MTSI,volume_donchian_breakout,{}
+MTSI,volume_donchian_breakout_10_25_20,{}
+MTSI,volume_donchian_breakout_15_30_20,{}
 NEM,bollinger_bands_mean_reversion_sma_vectorized,{}
 NEM,sma_stoch_close_strategy_vectorized,{}
 NEM,stochastic_oscillator_signal_vectorized,{}
@@ -5153,12 +5027,6 @@ NEM,donchian_breakout_with_ma_15_40,{}
 NEM,donchian_inv_with_ma_filter,{}
 NEM,donchian_inv_with_ma_15_40,{}
 NEM,donchian_inv_with_ma_10_30,{}
-NEM,keltner_rev_vectorized,{}
-NEM,keltner_rev_15_1_5,{}
-NEM,keltner_rev_50_2_5,{}
-NEM,keltner_tf_vectorized,{}
-NEM,keltner_tf_15_1_5,{}
-NEM,keltner_tf_50_2_5,{}
 NEM,weekly_breakout_vectorized,{}
 NEM,weekly_breakout_1_2,{}
 NEM,weekly_breakout_2_1,{}
@@ -5183,6 +5051,10 @@ NEM,squeeze_ema_strategy,{}
 NEM,squeeze_ema_10_20,{}
 NEM,squeeze_ema_15_25,{}
 NEM,ema_pullback_strategy,"{""short_ema"": 8, ""long_ema"": 18, ""min_move"": 0.01, ""min_trend_gap"": 0.04, ""lookback_trend"": 5}"
+NEM,volume_trend_ema_threshold,{}
+NEM,volume_donchian_breakout,{}
+NEM,volume_donchian_breakout_10_25_20,{}
+NEM,volume_donchian_breakout_15_30_20,{}
 NET,bollinger_bands_mean_reversion_sma_vectorized,{}
 NET,sma_stoch_close_strategy_vectorized,{}
 NET,stochastic_oscillator_signal_vectorized,{}
@@ -5234,12 +5106,6 @@ NET,donchian_breakout_with_ma_15_40,{}
 NET,donchian_inv_with_ma_filter,{}
 NET,donchian_inv_with_ma_15_40,{}
 NET,donchian_inv_with_ma_10_30,{}
-NET,keltner_rev_vectorized,{}
-NET,keltner_rev_15_1_5,{}
-NET,keltner_rev_50_2_5,{}
-NET,keltner_tf_vectorized,{}
-NET,keltner_tf_15_1_5,{}
-NET,keltner_tf_50_2_5,{}
 NET,weekly_breakout_vectorized,{}
 NET,weekly_breakout_1_2,{}
 NET,weekly_breakout_2_1,{}
@@ -5260,10 +5126,14 @@ NET,ema_vwap_vectorized,{}
 NET,volume_trend_basic,{}
 NET,volume_trend_10,{}
 NET,volume_trend_30,{}
-NET,squeeze_ema_strategy,"{""short_ema"": 10, ""squeez_back_period"": 25}"
+NET,squeeze_ema_strategy,"{""short_ema"": 20, ""squeez_back_period"": 13}"
 NET,squeeze_ema_10_20,{}
 NET,squeeze_ema_15_25,{}
 NET,ema_pullback_strategy,{}
+NET,volume_trend_ema_threshold,{}
+NET,volume_donchian_breakout,{}
+NET,volume_donchian_breakout_10_25_20,{}
+NET,volume_donchian_breakout_15_30_20,{}
 NFLX,bollinger_bands_mean_reversion_sma_vectorized,{}
 NFLX,sma_stoch_close_strategy_vectorized,{}
 NFLX,stochastic_oscillator_signal_vectorized,{}
@@ -5315,12 +5185,6 @@ NFLX,donchian_breakout_with_ma_15_40,{}
 NFLX,donchian_inv_with_ma_filter,{}
 NFLX,donchian_inv_with_ma_15_40,{}
 NFLX,donchian_inv_with_ma_10_30,{}
-NFLX,keltner_rev_vectorized,{}
-NFLX,keltner_rev_15_1_5,{}
-NFLX,keltner_rev_50_2_5,{}
-NFLX,keltner_tf_vectorized,{}
-NFLX,keltner_tf_15_1_5,{}
-NFLX,keltner_tf_50_2_5,{}
 NFLX,weekly_breakout_vectorized,{}
 NFLX,weekly_breakout_1_2,{}
 NFLX,weekly_breakout_2_1,{}
@@ -5345,6 +5209,10 @@ NFLX,squeeze_ema_strategy,{}
 NFLX,squeeze_ema_10_20,{}
 NFLX,squeeze_ema_15_25,{}
 NFLX,ema_pullback_strategy,"{""short_ema"": 6, ""long_ema"": 24, ""min_move"": 0.01, ""min_trend_gap"": 0.05, ""lookback_trend"": 7}"
+NFLX,volume_trend_ema_threshold,{}
+NFLX,volume_donchian_breakout,{}
+NFLX,volume_donchian_breakout_10_25_20,{}
+NFLX,volume_donchian_breakout_15_30_20,{}
 NNDM,bollinger_bands_mean_reversion_sma_vectorized,{}
 NNDM,sma_stoch_close_strategy_vectorized,{}
 NNDM,stochastic_oscillator_signal_vectorized,{}
@@ -5396,12 +5264,6 @@ NNDM,donchian_breakout_with_ma_15_40,{}
 NNDM,donchian_inv_with_ma_filter,{}
 NNDM,donchian_inv_with_ma_15_40,{}
 NNDM,donchian_inv_with_ma_10_30,{}
-NNDM,keltner_rev_vectorized,{}
-NNDM,keltner_rev_15_1_5,{}
-NNDM,keltner_rev_50_2_5,{}
-NNDM,keltner_tf_vectorized,{}
-NNDM,keltner_tf_15_1_5,{}
-NNDM,keltner_tf_50_2_5,{}
 NNDM,weekly_breakout_vectorized,{}
 NNDM,weekly_breakout_1_2,{}
 NNDM,weekly_breakout_2_1,{}
@@ -5426,6 +5288,10 @@ NNDM,squeeze_ema_strategy,{}
 NNDM,squeeze_ema_10_20,{}
 NNDM,squeeze_ema_15_25,{}
 NNDM,ema_pullback_strategy,{}
+NNDM,volume_trend_ema_threshold,{}
+NNDM,volume_donchian_breakout,{}
+NNDM,volume_donchian_breakout_10_25_20,{}
+NNDM,volume_donchian_breakout_15_30_20,{}
 NRG,bollinger_bands_mean_reversion_sma_vectorized,{}
 NRG,sma_stoch_close_strategy_vectorized,{}
 NRG,stochastic_oscillator_signal_vectorized,{}
@@ -5477,12 +5343,6 @@ NRG,donchian_breakout_with_ma_15_40,{}
 NRG,donchian_inv_with_ma_filter,{}
 NRG,donchian_inv_with_ma_15_40,{}
 NRG,donchian_inv_with_ma_10_30,{}
-NRG,keltner_rev_vectorized,{}
-NRG,keltner_rev_15_1_5,{}
-NRG,keltner_rev_50_2_5,{}
-NRG,keltner_tf_vectorized,{}
-NRG,keltner_tf_15_1_5,{}
-NRG,keltner_tf_50_2_5,{}
 NRG,weekly_breakout_vectorized,{}
 NRG,weekly_breakout_1_2,{}
 NRG,weekly_breakout_2_1,{}
@@ -5507,6 +5367,10 @@ NRG,squeeze_ema_strategy,{}
 NRG,squeeze_ema_10_20,{}
 NRG,squeeze_ema_15_25,{}
 NRG,ema_pullback_strategy,{}
+NRG,volume_trend_ema_threshold,{}
+NRG,volume_donchian_breakout,{}
+NRG,volume_donchian_breakout_10_25_20,{}
+NRG,volume_donchian_breakout_15_30_20,{}
 NVDA,bollinger_bands_mean_reversion_sma_vectorized,{}
 NVDA,sma_stoch_close_strategy_vectorized,{}
 NVDA,stochastic_oscillator_signal_vectorized,{}
@@ -5558,12 +5422,6 @@ NVDA,donchian_breakout_with_ma_15_40,{}
 NVDA,donchian_inv_with_ma_filter,{}
 NVDA,donchian_inv_with_ma_15_40,{}
 NVDA,donchian_inv_with_ma_10_30,{}
-NVDA,keltner_rev_vectorized,{}
-NVDA,keltner_rev_15_1_5,{}
-NVDA,keltner_rev_50_2_5,{}
-NVDA,keltner_tf_vectorized,{}
-NVDA,keltner_tf_15_1_5,{}
-NVDA,keltner_tf_50_2_5,{}
 NVDA,weekly_breakout_vectorized,{}
 NVDA,weekly_breakout_1_2,{}
 NVDA,weekly_breakout_2_1,{}
@@ -5588,6 +5446,10 @@ NVDA,squeeze_ema_strategy,{}
 NVDA,squeeze_ema_10_20,{}
 NVDA,squeeze_ema_15_25,{}
 NVDA,ema_pullback_strategy,"{""short_ema"": 8, ""long_ema"": 28, ""min_move"": 0.01, ""min_trend_gap"": 0.08, ""lookback_trend"": 7}"
+NVDA,volume_trend_ema_threshold,{}
+NVDA,volume_donchian_breakout,{}
+NVDA,volume_donchian_breakout_10_25_20,{}
+NVDA,volume_donchian_breakout_15_30_20,{}
 ORCL,bollinger_bands_mean_reversion_sma_vectorized,{}
 ORCL,sma_stoch_close_strategy_vectorized,{}
 ORCL,stochastic_oscillator_signal_vectorized,{}
@@ -5639,12 +5501,6 @@ ORCL,donchian_breakout_with_ma_15_40,{}
 ORCL,donchian_inv_with_ma_filter,{}
 ORCL,donchian_inv_with_ma_15_40,{}
 ORCL,donchian_inv_with_ma_10_30,{}
-ORCL,keltner_rev_vectorized,{}
-ORCL,keltner_rev_15_1_5,{}
-ORCL,keltner_rev_50_2_5,{}
-ORCL,keltner_tf_vectorized,{}
-ORCL,keltner_tf_15_1_5,{}
-ORCL,keltner_tf_50_2_5,{}
 ORCL,weekly_breakout_vectorized,{}
 ORCL,weekly_breakout_1_2,{}
 ORCL,weekly_breakout_2_1,{}
@@ -5669,6 +5525,10 @@ ORCL,squeeze_ema_strategy,{}
 ORCL,squeeze_ema_10_20,{}
 ORCL,squeeze_ema_15_25,{}
 ORCL,ema_pullback_strategy,{}
+ORCL,volume_trend_ema_threshold,"{""lookback"": 20, ""ema_len"": 6, ""vol_threshold"": 0.1}"
+ORCL,volume_donchian_breakout,{}
+ORCL,volume_donchian_breakout_10_25_20,{}
+ORCL,volume_donchian_breakout_15_30_20,{}
 PFE,bollinger_bands_mean_reversion_sma_vectorized,{}
 PFE,sma_stoch_close_strategy_vectorized,{}
 PFE,stochastic_oscillator_signal_vectorized,{}
@@ -5720,12 +5580,6 @@ PFE,donchian_breakout_with_ma_15_40,{}
 PFE,donchian_inv_with_ma_filter,{}
 PFE,donchian_inv_with_ma_15_40,{}
 PFE,donchian_inv_with_ma_10_30,{}
-PFE,keltner_rev_vectorized,{}
-PFE,keltner_rev_15_1_5,{}
-PFE,keltner_rev_50_2_5,{}
-PFE,keltner_tf_vectorized,{}
-PFE,keltner_tf_15_1_5,{}
-PFE,keltner_tf_50_2_5,{}
 PFE,weekly_breakout_vectorized,{}
 PFE,weekly_breakout_1_2,{}
 PFE,weekly_breakout_2_1,{}
@@ -5750,6 +5604,10 @@ PFE,squeeze_ema_strategy,{}
 PFE,squeeze_ema_10_20,{}
 PFE,squeeze_ema_15_25,{}
 PFE,ema_pullback_strategy,{}
+PFE,volume_trend_ema_threshold,{}
+PFE,volume_donchian_breakout,{}
+PFE,volume_donchian_breakout_10_25_20,{}
+PFE,volume_donchian_breakout_15_30_20,{}
 PHUN,bollinger_bands_mean_reversion_sma_vectorized,{}
 PHUN,sma_stoch_close_strategy_vectorized,{}
 PHUN,stochastic_oscillator_signal_vectorized,{}
@@ -5801,12 +5659,6 @@ PHUN,donchian_breakout_with_ma_15_40,{}
 PHUN,donchian_inv_with_ma_filter,{}
 PHUN,donchian_inv_with_ma_15_40,{}
 PHUN,donchian_inv_with_ma_10_30,{}
-PHUN,keltner_rev_vectorized,{}
-PHUN,keltner_rev_15_1_5,{}
-PHUN,keltner_rev_50_2_5,{}
-PHUN,keltner_tf_vectorized,{}
-PHUN,keltner_tf_15_1_5,{}
-PHUN,keltner_tf_50_2_5,{}
 PHUN,weekly_breakout_vectorized,{}
 PHUN,weekly_breakout_1_2,{}
 PHUN,weekly_breakout_2_1,{}
@@ -5831,6 +5683,10 @@ PHUN,squeeze_ema_strategy,"{""short_ema"": 8, ""squeez_back_period"": 4}"
 PHUN,squeeze_ema_10_20,{}
 PHUN,squeeze_ema_15_25,{}
 PHUN,ema_pullback_strategy,{}
+PHUN,volume_trend_ema_threshold,{}
+PHUN,volume_donchian_breakout,"{""lookback_vol"": 10, ""lookback_price"": 32, ""vol_threshold"": 0.25}"
+PHUN,volume_donchian_breakout_10_25_20,{}
+PHUN,volume_donchian_breakout_15_30_20,{}
 PINS,bollinger_bands_mean_reversion_sma_vectorized,{}
 PINS,sma_stoch_close_strategy_vectorized,{}
 PINS,stochastic_oscillator_signal_vectorized,{}
@@ -5882,12 +5738,6 @@ PINS,donchian_breakout_with_ma_15_40,{}
 PINS,donchian_inv_with_ma_filter,{}
 PINS,donchian_inv_with_ma_15_40,{}
 PINS,donchian_inv_with_ma_10_30,{}
-PINS,keltner_rev_vectorized,{}
-PINS,keltner_rev_15_1_5,{}
-PINS,keltner_rev_50_2_5,{}
-PINS,keltner_tf_vectorized,{}
-PINS,keltner_tf_15_1_5,{}
-PINS,keltner_tf_50_2_5,{}
 PINS,weekly_breakout_vectorized,{}
 PINS,weekly_breakout_1_2,{}
 PINS,weekly_breakout_2_1,{}
@@ -5912,6 +5762,10 @@ PINS,squeeze_ema_strategy,{}
 PINS,squeeze_ema_10_20,{}
 PINS,squeeze_ema_15_25,{}
 PINS,ema_pullback_strategy,{}
+PINS,volume_trend_ema_threshold,{}
+PINS,volume_donchian_breakout,{}
+PINS,volume_donchian_breakout_10_25_20,{}
+PINS,volume_donchian_breakout_15_30_20,{}
 PLD,bollinger_bands_mean_reversion_sma_vectorized,{}
 PLD,sma_stoch_close_strategy_vectorized,{}
 PLD,stochastic_oscillator_signal_vectorized,{}
@@ -5963,12 +5817,6 @@ PLD,donchian_breakout_with_ma_15_40,{}
 PLD,donchian_inv_with_ma_filter,{}
 PLD,donchian_inv_with_ma_15_40,{}
 PLD,donchian_inv_with_ma_10_30,{}
-PLD,keltner_rev_vectorized,{}
-PLD,keltner_rev_15_1_5,{}
-PLD,keltner_rev_50_2_5,{}
-PLD,keltner_tf_vectorized,{}
-PLD,keltner_tf_15_1_5,{}
-PLD,keltner_tf_50_2_5,{}
 PLD,weekly_breakout_vectorized,{}
 PLD,weekly_breakout_1_2,{}
 PLD,weekly_breakout_2_1,{}
@@ -5993,6 +5841,10 @@ PLD,squeeze_ema_strategy,{}
 PLD,squeeze_ema_10_20,{}
 PLD,squeeze_ema_15_25,{}
 PLD,ema_pullback_strategy,{}
+PLD,volume_trend_ema_threshold,{}
+PLD,volume_donchian_breakout,{}
+PLD,volume_donchian_breakout_10_25_20,{}
+PLD,volume_donchian_breakout_15_30_20,{}
 PLTR,bollinger_bands_mean_reversion_sma_vectorized,{}
 PLTR,sma_stoch_close_strategy_vectorized,{}
 PLTR,stochastic_oscillator_signal_vectorized,{}
@@ -6044,12 +5896,6 @@ PLTR,donchian_breakout_with_ma_15_40,{}
 PLTR,donchian_inv_with_ma_filter,{}
 PLTR,donchian_inv_with_ma_15_40,{}
 PLTR,donchian_inv_with_ma_10_30,{}
-PLTR,keltner_rev_vectorized,{}
-PLTR,keltner_rev_15_1_5,{}
-PLTR,keltner_rev_50_2_5,{}
-PLTR,keltner_tf_vectorized,{}
-PLTR,keltner_tf_15_1_5,{}
-PLTR,keltner_tf_50_2_5,{}
 PLTR,weekly_breakout_vectorized,{}
 PLTR,weekly_breakout_1_2,{}
 PLTR,weekly_breakout_2_1,{}
@@ -6074,6 +5920,10 @@ PLTR,squeeze_ema_strategy,{}
 PLTR,squeeze_ema_10_20,{}
 PLTR,squeeze_ema_15_25,{}
 PLTR,ema_pullback_strategy,"{""short_ema"": 8, ""long_ema"": 18, ""min_move"": 0.01, ""min_trend_gap"": 0.06, ""lookback_trend"": 5}"
+PLTR,volume_trend_ema_threshold,{}
+PLTR,volume_donchian_breakout,"{""lookback_vol"": 26, ""lookback_price"": 32, ""vol_threshold"": 0.1}"
+PLTR,volume_donchian_breakout_10_25_20,{}
+PLTR,volume_donchian_breakout_15_30_20,{}
 RIO,bollinger_bands_mean_reversion_sma_vectorized,{}
 RIO,sma_stoch_close_strategy_vectorized,{}
 RIO,stochastic_oscillator_signal_vectorized,{}
@@ -6125,12 +5975,6 @@ RIO,donchian_breakout_with_ma_15_40,{}
 RIO,donchian_inv_with_ma_filter,{}
 RIO,donchian_inv_with_ma_15_40,{}
 RIO,donchian_inv_with_ma_10_30,{}
-RIO,keltner_rev_vectorized,{}
-RIO,keltner_rev_15_1_5,{}
-RIO,keltner_rev_50_2_5,{}
-RIO,keltner_tf_vectorized,{}
-RIO,keltner_tf_15_1_5,{}
-RIO,keltner_tf_50_2_5,{}
 RIO,weekly_breakout_vectorized,{}
 RIO,weekly_breakout_1_2,{}
 RIO,weekly_breakout_2_1,{}
@@ -6155,6 +5999,10 @@ RIO,squeeze_ema_strategy,{}
 RIO,squeeze_ema_10_20,{}
 RIO,squeeze_ema_15_25,{}
 RIO,ema_pullback_strategy,{}
+RIO,volume_trend_ema_threshold,{}
+RIO,volume_donchian_breakout,{}
+RIO,volume_donchian_breakout_10_25_20,{}
+RIO,volume_donchian_breakout_15_30_20,{}
 SAP,bollinger_bands_mean_reversion_sma_vectorized,{}
 SAP,sma_stoch_close_strategy_vectorized,{}
 SAP,stochastic_oscillator_signal_vectorized,{}
@@ -6206,12 +6054,6 @@ SAP,donchian_breakout_with_ma_15_40,{}
 SAP,donchian_inv_with_ma_filter,{}
 SAP,donchian_inv_with_ma_15_40,{}
 SAP,donchian_inv_with_ma_10_30,{}
-SAP,keltner_rev_vectorized,{}
-SAP,keltner_rev_15_1_5,{}
-SAP,keltner_rev_50_2_5,{}
-SAP,keltner_tf_vectorized,{}
-SAP,keltner_tf_15_1_5,{}
-SAP,keltner_tf_50_2_5,{}
 SAP,weekly_breakout_vectorized,{}
 SAP,weekly_breakout_1_2,{}
 SAP,weekly_breakout_2_1,{}
@@ -6236,6 +6078,10 @@ SAP,squeeze_ema_strategy,{}
 SAP,squeeze_ema_10_20,{}
 SAP,squeeze_ema_15_25,{}
 SAP,ema_pullback_strategy,{}
+SAP,volume_trend_ema_threshold,{}
+SAP,volume_donchian_breakout,{}
+SAP,volume_donchian_breakout_10_25_20,{}
+SAP,volume_donchian_breakout_15_30_20,{}
 SBUX,bollinger_bands_mean_reversion_sma_vectorized,{}
 SBUX,sma_stoch_close_strategy_vectorized,{}
 SBUX,stochastic_oscillator_signal_vectorized,{}
@@ -6287,12 +6133,6 @@ SBUX,donchian_breakout_with_ma_15_40,{}
 SBUX,donchian_inv_with_ma_filter,{}
 SBUX,donchian_inv_with_ma_15_40,{}
 SBUX,donchian_inv_with_ma_10_30,{}
-SBUX,keltner_rev_vectorized,{}
-SBUX,keltner_rev_15_1_5,{}
-SBUX,keltner_rev_50_2_5,{}
-SBUX,keltner_tf_vectorized,{}
-SBUX,keltner_tf_15_1_5,{}
-SBUX,keltner_tf_50_2_5,{}
 SBUX,weekly_breakout_vectorized,{}
 SBUX,weekly_breakout_1_2,{}
 SBUX,weekly_breakout_2_1,{}
@@ -6317,6 +6157,10 @@ SBUX,squeeze_ema_strategy,{}
 SBUX,squeeze_ema_10_20,{}
 SBUX,squeeze_ema_15_25,{}
 SBUX,ema_pullback_strategy,{}
+SBUX,volume_trend_ema_threshold,{}
+SBUX,volume_donchian_breakout,{}
+SBUX,volume_donchian_breakout_10_25_20,{}
+SBUX,volume_donchian_breakout_15_30_20,{}
 SHOP,bollinger_bands_mean_reversion_sma_vectorized,{}
 SHOP,sma_stoch_close_strategy_vectorized,{}
 SHOP,stochastic_oscillator_signal_vectorized,{}
@@ -6368,12 +6212,6 @@ SHOP,donchian_breakout_with_ma_15_40,{}
 SHOP,donchian_inv_with_ma_filter,{}
 SHOP,donchian_inv_with_ma_15_40,{}
 SHOP,donchian_inv_with_ma_10_30,{}
-SHOP,keltner_rev_vectorized,{}
-SHOP,keltner_rev_15_1_5,{}
-SHOP,keltner_rev_50_2_5,{}
-SHOP,keltner_tf_vectorized,{}
-SHOP,keltner_tf_15_1_5,{}
-SHOP,keltner_tf_50_2_5,{}
 SHOP,weekly_breakout_vectorized,{}
 SHOP,weekly_breakout_1_2,{}
 SHOP,weekly_breakout_2_1,{}
@@ -6398,6 +6236,10 @@ SHOP,squeeze_ema_strategy,{}
 SHOP,squeeze_ema_10_20,{}
 SHOP,squeeze_ema_15_25,{}
 SHOP,ema_pullback_strategy,"{""short_ema"": 14, ""long_ema"": 24, ""min_move"": 0.01, ""min_trend_gap"": 0.04, ""lookback_trend"": 7}"
+SHOP,volume_trend_ema_threshold,{}
+SHOP,volume_donchian_breakout,{}
+SHOP,volume_donchian_breakout_10_25_20,{}
+SHOP,volume_donchian_breakout_15_30_20,{}
 SMCI,bollinger_bands_mean_reversion_sma_vectorized,{}
 SMCI,sma_stoch_close_strategy_vectorized,{}
 SMCI,stochastic_oscillator_signal_vectorized,{}
@@ -6449,12 +6291,6 @@ SMCI,donchian_breakout_with_ma_15_40,{}
 SMCI,donchian_inv_with_ma_filter,{}
 SMCI,donchian_inv_with_ma_15_40,{}
 SMCI,donchian_inv_with_ma_10_30,{}
-SMCI,keltner_rev_vectorized,{}
-SMCI,keltner_rev_15_1_5,{}
-SMCI,keltner_rev_50_2_5,{}
-SMCI,keltner_tf_vectorized,{}
-SMCI,keltner_tf_15_1_5,{}
-SMCI,keltner_tf_50_2_5,{}
 SMCI,weekly_breakout_vectorized,{}
 SMCI,weekly_breakout_1_2,{}
 SMCI,weekly_breakout_2_1,{}
@@ -6479,6 +6315,10 @@ SMCI,squeeze_ema_strategy,{}
 SMCI,squeeze_ema_10_20,{}
 SMCI,squeeze_ema_15_25,{}
 SMCI,ema_pullback_strategy,"{""short_ema"": 8, ""long_ema"": 22, ""min_move"": 0.01, ""min_trend_gap"": 0.07, ""lookback_trend"": 5}"
+SMCI,volume_trend_ema_threshold,{}
+SMCI,volume_donchian_breakout,{}
+SMCI,volume_donchian_breakout_10_25_20,{}
+SMCI,volume_donchian_breakout_15_30_20,{}
 SNOW,bollinger_bands_mean_reversion_sma_vectorized,{}
 SNOW,sma_stoch_close_strategy_vectorized,{}
 SNOW,stochastic_oscillator_signal_vectorized,{}
@@ -6530,12 +6370,6 @@ SNOW,donchian_breakout_with_ma_15_40,{}
 SNOW,donchian_inv_with_ma_filter,{}
 SNOW,donchian_inv_with_ma_15_40,{}
 SNOW,donchian_inv_with_ma_10_30,{}
-SNOW,keltner_rev_vectorized,{}
-SNOW,keltner_rev_15_1_5,{}
-SNOW,keltner_rev_50_2_5,{}
-SNOW,keltner_tf_vectorized,{}
-SNOW,keltner_tf_15_1_5,{}
-SNOW,keltner_tf_50_2_5,{}
 SNOW,weekly_breakout_vectorized,{}
 SNOW,weekly_breakout_1_2,{}
 SNOW,weekly_breakout_2_1,{}
@@ -6560,6 +6394,10 @@ SNOW,squeeze_ema_strategy,{}
 SNOW,squeeze_ema_10_20,{}
 SNOW,squeeze_ema_15_25,{}
 SNOW,ema_pullback_strategy,{}
+SNOW,volume_trend_ema_threshold,{}
+SNOW,volume_donchian_breakout,{}
+SNOW,volume_donchian_breakout_10_25_20,{}
+SNOW,volume_donchian_breakout_15_30_20,{}
 SOFI,bollinger_bands_mean_reversion_sma_vectorized,{}
 SOFI,sma_stoch_close_strategy_vectorized,{}
 SOFI,stochastic_oscillator_signal_vectorized,{}
@@ -6611,12 +6449,6 @@ SOFI,donchian_breakout_with_ma_15_40,{}
 SOFI,donchian_inv_with_ma_filter,{}
 SOFI,donchian_inv_with_ma_15_40,{}
 SOFI,donchian_inv_with_ma_10_30,{}
-SOFI,keltner_rev_vectorized,{}
-SOFI,keltner_rev_15_1_5,{}
-SOFI,keltner_rev_50_2_5,{}
-SOFI,keltner_tf_vectorized,{}
-SOFI,keltner_tf_15_1_5,{}
-SOFI,keltner_tf_50_2_5,{}
 SOFI,weekly_breakout_vectorized,{}
 SOFI,weekly_breakout_1_2,{}
 SOFI,weekly_breakout_2_1,{}
@@ -6641,6 +6473,10 @@ SOFI,squeeze_ema_strategy,{}
 SOFI,squeeze_ema_10_20,{}
 SOFI,squeeze_ema_15_25,{}
 SOFI,ema_pullback_strategy,{}
+SOFI,volume_trend_ema_threshold,{}
+SOFI,volume_donchian_breakout,{}
+SOFI,volume_donchian_breakout_10_25_20,{}
+SOFI,volume_donchian_breakout_15_30_20,{}
 SPM.MI,bollinger_bands_mean_reversion_sma_vectorized,{}
 SPM.MI,sma_stoch_close_strategy_vectorized,{}
 SPM.MI,stochastic_oscillator_signal_vectorized,{}
@@ -6692,12 +6528,6 @@ SPM.MI,donchian_breakout_with_ma_15_40,{}
 SPM.MI,donchian_inv_with_ma_filter,{}
 SPM.MI,donchian_inv_with_ma_15_40,{}
 SPM.MI,donchian_inv_with_ma_10_30,{}
-SPM.MI,keltner_rev_vectorized,{}
-SPM.MI,keltner_rev_15_1_5,{}
-SPM.MI,keltner_rev_50_2_5,{}
-SPM.MI,keltner_tf_vectorized,{}
-SPM.MI,keltner_tf_15_1_5,{}
-SPM.MI,keltner_tf_50_2_5,{}
 SPM.MI,weekly_breakout_vectorized,{}
 SPM.MI,weekly_breakout_1_2,{}
 SPM.MI,weekly_breakout_2_1,{}
@@ -6722,6 +6552,10 @@ SPM.MI,squeeze_ema_strategy,{}
 SPM.MI,squeeze_ema_10_20,{}
 SPM.MI,squeeze_ema_15_25,{}
 SPM.MI,ema_pullback_strategy,{}
+SPM.MI,volume_trend_ema_threshold,{}
+SPM.MI,volume_donchian_breakout,{}
+SPM.MI,volume_donchian_breakout_10_25_20,{}
+SPM.MI,volume_donchian_breakout_15_30_20,{}
 STX,bollinger_bands_mean_reversion_sma_vectorized,{}
 STX,sma_stoch_close_strategy_vectorized,{}
 STX,stochastic_oscillator_signal_vectorized,{}
@@ -6773,12 +6607,6 @@ STX,donchian_breakout_with_ma_15_40,{}
 STX,donchian_inv_with_ma_filter,{}
 STX,donchian_inv_with_ma_15_40,{}
 STX,donchian_inv_with_ma_10_30,{}
-STX,keltner_rev_vectorized,{}
-STX,keltner_rev_15_1_5,{}
-STX,keltner_rev_50_2_5,{}
-STX,keltner_tf_vectorized,{}
-STX,keltner_tf_15_1_5,{}
-STX,keltner_tf_50_2_5,{}
 STX,weekly_breakout_vectorized,{}
 STX,weekly_breakout_1_2,{}
 STX,weekly_breakout_2_1,{}
@@ -6803,6 +6631,10 @@ STX,squeeze_ema_strategy,{}
 STX,squeeze_ema_10_20,{}
 STX,squeeze_ema_15_25,{}
 STX,ema_pullback_strategy,{}
+STX,volume_trend_ema_threshold,{}
+STX,volume_donchian_breakout,{}
+STX,volume_donchian_breakout_10_25_20,{}
+STX,volume_donchian_breakout_15_30_20,{}
 T,bollinger_bands_mean_reversion_sma_vectorized,{}
 T,sma_stoch_close_strategy_vectorized,{}
 T,stochastic_oscillator_signal_vectorized,{}
@@ -6854,12 +6686,6 @@ T,donchian_breakout_with_ma_15_40,{}
 T,donchian_inv_with_ma_filter,{}
 T,donchian_inv_with_ma_15_40,{}
 T,donchian_inv_with_ma_10_30,{}
-T,keltner_rev_vectorized,{}
-T,keltner_rev_15_1_5,{}
-T,keltner_rev_50_2_5,{}
-T,keltner_tf_vectorized,{}
-T,keltner_tf_15_1_5,{}
-T,keltner_tf_50_2_5,{}
 T,weekly_breakout_vectorized,{}
 T,weekly_breakout_1_2,{}
 T,weekly_breakout_2_1,{}
@@ -6884,6 +6710,10 @@ T,squeeze_ema_strategy,{}
 T,squeeze_ema_10_20,{}
 T,squeeze_ema_15_25,{}
 T,ema_pullback_strategy,{}
+T,volume_trend_ema_threshold,{}
+T,volume_donchian_breakout,{}
+T,volume_donchian_breakout_10_25_20,{}
+T,volume_donchian_breakout_15_30_20,{}
 TGT,bollinger_bands_mean_reversion_sma_vectorized,{}
 TGT,sma_stoch_close_strategy_vectorized,{}
 TGT,stochastic_oscillator_signal_vectorized,{}
@@ -6935,12 +6765,6 @@ TGT,donchian_breakout_with_ma_15_40,{}
 TGT,donchian_inv_with_ma_filter,{}
 TGT,donchian_inv_with_ma_15_40,{}
 TGT,donchian_inv_with_ma_10_30,{}
-TGT,keltner_rev_vectorized,{}
-TGT,keltner_rev_15_1_5,{}
-TGT,keltner_rev_50_2_5,{}
-TGT,keltner_tf_vectorized,{}
-TGT,keltner_tf_15_1_5,{}
-TGT,keltner_tf_50_2_5,{}
 TGT,weekly_breakout_vectorized,{}
 TGT,weekly_breakout_1_2,{}
 TGT,weekly_breakout_2_1,{}
@@ -6965,6 +6789,10 @@ TGT,squeeze_ema_strategy,{}
 TGT,squeeze_ema_10_20,{}
 TGT,squeeze_ema_15_25,{}
 TGT,ema_pullback_strategy,{}
+TGT,volume_trend_ema_threshold,{}
+TGT,volume_donchian_breakout,{}
+TGT,volume_donchian_breakout_10_25_20,{}
+TGT,volume_donchian_breakout_15_30_20,{}
 TMUS,bollinger_bands_mean_reversion_sma_vectorized,{}
 TMUS,sma_stoch_close_strategy_vectorized,{}
 TMUS,stochastic_oscillator_signal_vectorized,{}
@@ -7007,7 +6835,7 @@ TMUS,engulfing_pattern_signal_vectorized,{}
 TMUS,morning_evening_star_signal_vectorized,{}
 TMUS,doji_signal_strategy_v1_vectorized,{}
 TMUS,retracement_rev_vectorized,{}
-TMUS,retracement_tf_vectorized,{}
+TMUS,retracement_tf_vectorized,"{""short"": 8, ""medium"": 10, ""long"": 26}"
 TMUS,liquidity_grab_rev_strategy,{}
 TMUS,liquidity_grab_tf_strategy,{}
 TMUS,donchian_breakout_with_ma_filter,{}
@@ -7016,12 +6844,6 @@ TMUS,donchian_breakout_with_ma_15_40,{}
 TMUS,donchian_inv_with_ma_filter,{}
 TMUS,donchian_inv_with_ma_15_40,{}
 TMUS,donchian_inv_with_ma_10_30,{}
-TMUS,keltner_rev_vectorized,{}
-TMUS,keltner_rev_15_1_5,{}
-TMUS,keltner_rev_50_2_5,{}
-TMUS,keltner_tf_vectorized,{}
-TMUS,keltner_tf_15_1_5,{}
-TMUS,keltner_tf_50_2_5,{}
 TMUS,weekly_breakout_vectorized,{}
 TMUS,weekly_breakout_1_2,{}
 TMUS,weekly_breakout_2_1,{}
@@ -7046,6 +6868,10 @@ TMUS,squeeze_ema_strategy,{}
 TMUS,squeeze_ema_10_20,{}
 TMUS,squeeze_ema_15_25,{}
 TMUS,ema_pullback_strategy,{}
+TMUS,volume_trend_ema_threshold,{}
+TMUS,volume_donchian_breakout,{}
+TMUS,volume_donchian_breakout_10_25_20,{}
+TMUS,volume_donchian_breakout_15_30_20,{}
 TPR,bollinger_bands_mean_reversion_sma_vectorized,{}
 TPR,sma_stoch_close_strategy_vectorized,{}
 TPR,stochastic_oscillator_signal_vectorized,{}
@@ -7097,12 +6923,6 @@ TPR,donchian_breakout_with_ma_15_40,{}
 TPR,donchian_inv_with_ma_filter,{}
 TPR,donchian_inv_with_ma_15_40,{}
 TPR,donchian_inv_with_ma_10_30,{}
-TPR,keltner_rev_vectorized,{}
-TPR,keltner_rev_15_1_5,{}
-TPR,keltner_rev_50_2_5,{}
-TPR,keltner_tf_vectorized,{}
-TPR,keltner_tf_15_1_5,{}
-TPR,keltner_tf_50_2_5,{}
 TPR,weekly_breakout_vectorized,{}
 TPR,weekly_breakout_1_2,{}
 TPR,weekly_breakout_2_1,{}
@@ -7120,13 +6940,17 @@ TPR,ema_vwap_sma_vectorized,{}
 TPR,ema_vwap_sma_15_30_50,{}
 TPR,ema_vwap_sma_5_10_20,{}
 TPR,ema_vwap_vectorized,{}
-TPR,volume_trend_basic,{}
+TPR,volume_trend_basic,"{""lookback"": 14}"
 TPR,volume_trend_10,{}
 TPR,volume_trend_30,{}
 TPR,squeeze_ema_strategy,{}
 TPR,squeeze_ema_10_20,{}
 TPR,squeeze_ema_15_25,{}
 TPR,ema_pullback_strategy,{}
+TPR,volume_trend_ema_threshold,"{""lookback"": 18, ""ema_len"": 14, ""vol_threshold"": 0.3}"
+TPR,volume_donchian_breakout,"{""lookback_vol"": 10, ""lookback_price"": 20, ""vol_threshold"": 0.25}"
+TPR,volume_donchian_breakout_10_25_20,{}
+TPR,volume_donchian_breakout_15_30_20,{}
 TSLA,bollinger_bands_mean_reversion_sma_vectorized,{}
 TSLA,sma_stoch_close_strategy_vectorized,{}
 TSLA,stochastic_oscillator_signal_vectorized,{}
@@ -7178,12 +7002,6 @@ TSLA,donchian_breakout_with_ma_15_40,{}
 TSLA,donchian_inv_with_ma_filter,{}
 TSLA,donchian_inv_with_ma_15_40,{}
 TSLA,donchian_inv_with_ma_10_30,{}
-TSLA,keltner_rev_vectorized,{}
-TSLA,keltner_rev_15_1_5,{}
-TSLA,keltner_rev_50_2_5,{}
-TSLA,keltner_tf_vectorized,{}
-TSLA,keltner_tf_15_1_5,{}
-TSLA,keltner_tf_50_2_5,{}
 TSLA,weekly_breakout_vectorized,{}
 TSLA,weekly_breakout_1_2,{}
 TSLA,weekly_breakout_2_1,{}
@@ -7208,6 +7026,10 @@ TSLA,squeeze_ema_strategy,{}
 TSLA,squeeze_ema_10_20,{}
 TSLA,squeeze_ema_15_25,{}
 TSLA,ema_pullback_strategy,{}
+TSLA,volume_trend_ema_threshold,{}
+TSLA,volume_donchian_breakout,{}
+TSLA,volume_donchian_breakout_10_25_20,{}
+TSLA,volume_donchian_breakout_15_30_20,{}
 TSM,bollinger_bands_mean_reversion_sma_vectorized,{}
 TSM,sma_stoch_close_strategy_vectorized,{}
 TSM,stochastic_oscillator_signal_vectorized,{}
@@ -7259,12 +7081,6 @@ TSM,donchian_breakout_with_ma_15_40,{}
 TSM,donchian_inv_with_ma_filter,{}
 TSM,donchian_inv_with_ma_15_40,{}
 TSM,donchian_inv_with_ma_10_30,{}
-TSM,keltner_rev_vectorized,{}
-TSM,keltner_rev_15_1_5,{}
-TSM,keltner_rev_50_2_5,{}
-TSM,keltner_tf_vectorized,{}
-TSM,keltner_tf_15_1_5,{}
-TSM,keltner_tf_50_2_5,{}
 TSM,weekly_breakout_vectorized,{}
 TSM,weekly_breakout_1_2,{}
 TSM,weekly_breakout_2_1,{}
@@ -7282,13 +7098,17 @@ TSM,ema_vwap_sma_vectorized,{}
 TSM,ema_vwap_sma_15_30_50,{}
 TSM,ema_vwap_sma_5_10_20,{}
 TSM,ema_vwap_vectorized,{}
-TSM,volume_trend_basic,{}
+TSM,volume_trend_basic,"{""lookback"": 14}"
 TSM,volume_trend_10,{}
 TSM,volume_trend_30,{}
 TSM,squeeze_ema_strategy,{}
 TSM,squeeze_ema_10_20,{}
 TSM,squeeze_ema_15_25,{}
 TSM,ema_pullback_strategy,{}
+TSM,volume_trend_ema_threshold,{}
+TSM,volume_donchian_breakout,{}
+TSM,volume_donchian_breakout_10_25_20,{}
+TSM,volume_donchian_breakout_15_30_20,{}
 TTD,bollinger_bands_mean_reversion_sma_vectorized,{}
 TTD,sma_stoch_close_strategy_vectorized,{}
 TTD,stochastic_oscillator_signal_vectorized,{}
@@ -7340,12 +7160,6 @@ TTD,donchian_breakout_with_ma_15_40,{}
 TTD,donchian_inv_with_ma_filter,{}
 TTD,donchian_inv_with_ma_15_40,{}
 TTD,donchian_inv_with_ma_10_30,{}
-TTD,keltner_rev_vectorized,{}
-TTD,keltner_rev_15_1_5,{}
-TTD,keltner_rev_50_2_5,{}
-TTD,keltner_tf_vectorized,{}
-TTD,keltner_tf_15_1_5,{}
-TTD,keltner_tf_50_2_5,{}
 TTD,weekly_breakout_vectorized,{}
 TTD,weekly_breakout_1_2,{}
 TTD,weekly_breakout_2_1,{}
@@ -7370,6 +7184,10 @@ TTD,squeeze_ema_strategy,{}
 TTD,squeeze_ema_10_20,{}
 TTD,squeeze_ema_15_25,{}
 TTD,ema_pullback_strategy,{}
+TTD,volume_trend_ema_threshold,{}
+TTD,volume_donchian_breakout,{}
+TTD,volume_donchian_breakout_10_25_20,{}
+TTD,volume_donchian_breakout_15_30_20,{}
 UBER,bollinger_bands_mean_reversion_sma_vectorized,{}
 UBER,sma_stoch_close_strategy_vectorized,{}
 UBER,stochastic_oscillator_signal_vectorized,{}
@@ -7421,12 +7239,6 @@ UBER,donchian_breakout_with_ma_15_40,{}
 UBER,donchian_inv_with_ma_filter,{}
 UBER,donchian_inv_with_ma_15_40,{}
 UBER,donchian_inv_with_ma_10_30,{}
-UBER,keltner_rev_vectorized,{}
-UBER,keltner_rev_15_1_5,{}
-UBER,keltner_rev_50_2_5,{}
-UBER,keltner_tf_vectorized,{}
-UBER,keltner_tf_15_1_5,{}
-UBER,keltner_tf_50_2_5,{}
 UBER,weekly_breakout_vectorized,{}
 UBER,weekly_breakout_1_2,{}
 UBER,weekly_breakout_2_1,{}
@@ -7451,6 +7263,10 @@ UBER,squeeze_ema_strategy,{}
 UBER,squeeze_ema_10_20,{}
 UBER,squeeze_ema_15_25,{}
 UBER,ema_pullback_strategy,{}
+UBER,volume_trend_ema_threshold,{}
+UBER,volume_donchian_breakout,{}
+UBER,volume_donchian_breakout_10_25_20,{}
+UBER,volume_donchian_breakout_15_30_20,{}
 UBS,bollinger_bands_mean_reversion_sma_vectorized,{}
 UBS,sma_stoch_close_strategy_vectorized,{}
 UBS,stochastic_oscillator_signal_vectorized,{}
@@ -7502,12 +7318,6 @@ UBS,donchian_breakout_with_ma_15_40,{}
 UBS,donchian_inv_with_ma_filter,{}
 UBS,donchian_inv_with_ma_15_40,{}
 UBS,donchian_inv_with_ma_10_30,{}
-UBS,keltner_rev_vectorized,{}
-UBS,keltner_rev_15_1_5,{}
-UBS,keltner_rev_50_2_5,{}
-UBS,keltner_tf_vectorized,{}
-UBS,keltner_tf_15_1_5,{}
-UBS,keltner_tf_50_2_5,{}
 UBS,weekly_breakout_vectorized,{}
 UBS,weekly_breakout_1_2,{}
 UBS,weekly_breakout_2_1,{}
@@ -7532,6 +7342,10 @@ UBS,squeeze_ema_strategy,{}
 UBS,squeeze_ema_10_20,{}
 UBS,squeeze_ema_15_25,{}
 UBS,ema_pullback_strategy,{}
+UBS,volume_trend_ema_threshold,{}
+UBS,volume_donchian_breakout,{}
+UBS,volume_donchian_breakout_10_25_20,{}
+UBS,volume_donchian_breakout_15_30_20,{}
 UCG.MI,bollinger_bands_mean_reversion_sma_vectorized,{}
 UCG.MI,sma_stoch_close_strategy_vectorized,{}
 UCG.MI,stochastic_oscillator_signal_vectorized,{}
@@ -7583,12 +7397,6 @@ UCG.MI,donchian_breakout_with_ma_15_40,{}
 UCG.MI,donchian_inv_with_ma_filter,{}
 UCG.MI,donchian_inv_with_ma_15_40,{}
 UCG.MI,donchian_inv_with_ma_10_30,{}
-UCG.MI,keltner_rev_vectorized,{}
-UCG.MI,keltner_rev_15_1_5,{}
-UCG.MI,keltner_rev_50_2_5,{}
-UCG.MI,keltner_tf_vectorized,{}
-UCG.MI,keltner_tf_15_1_5,{}
-UCG.MI,keltner_tf_50_2_5,{}
 UCG.MI,weekly_breakout_vectorized,{}
 UCG.MI,weekly_breakout_1_2,{}
 UCG.MI,weekly_breakout_2_1,{}
@@ -7613,6 +7421,10 @@ UCG.MI,squeeze_ema_strategy,{}
 UCG.MI,squeeze_ema_10_20,{}
 UCG.MI,squeeze_ema_15_25,{}
 UCG.MI,ema_pullback_strategy,{}
+UCG.MI,volume_trend_ema_threshold,{}
+UCG.MI,volume_donchian_breakout,{}
+UCG.MI,volume_donchian_breakout_10_25_20,{}
+UCG.MI,volume_donchian_breakout_15_30_20,{}
 UNH,bollinger_bands_mean_reversion_sma_vectorized,{}
 UNH,sma_stoch_close_strategy_vectorized,{}
 UNH,stochastic_oscillator_signal_vectorized,{}
@@ -7664,12 +7476,6 @@ UNH,donchian_breakout_with_ma_15_40,{}
 UNH,donchian_inv_with_ma_filter,{}
 UNH,donchian_inv_with_ma_15_40,{}
 UNH,donchian_inv_with_ma_10_30,{}
-UNH,keltner_rev_vectorized,{}
-UNH,keltner_rev_15_1_5,{}
-UNH,keltner_rev_50_2_5,{}
-UNH,keltner_tf_vectorized,{}
-UNH,keltner_tf_15_1_5,{}
-UNH,keltner_tf_50_2_5,{}
 UNH,weekly_breakout_vectorized,{}
 UNH,weekly_breakout_1_2,{}
 UNH,weekly_breakout_2_1,{}
@@ -7694,6 +7500,10 @@ UNH,squeeze_ema_strategy,{}
 UNH,squeeze_ema_10_20,{}
 UNH,squeeze_ema_15_25,{}
 UNH,ema_pullback_strategy,{}
+UNH,volume_trend_ema_threshold,{}
+UNH,volume_donchian_breakout,{}
+UNH,volume_donchian_breakout_10_25_20,{}
+UNH,volume_donchian_breakout_15_30_20,{}
 V,bollinger_bands_mean_reversion_sma_vectorized,{}
 V,sma_stoch_close_strategy_vectorized,{}
 V,stochastic_oscillator_signal_vectorized,{}
@@ -7745,12 +7555,6 @@ V,donchian_breakout_with_ma_15_40,{}
 V,donchian_inv_with_ma_filter,{}
 V,donchian_inv_with_ma_15_40,{}
 V,donchian_inv_with_ma_10_30,{}
-V,keltner_rev_vectorized,{}
-V,keltner_rev_15_1_5,{}
-V,keltner_rev_50_2_5,{}
-V,keltner_tf_vectorized,{}
-V,keltner_tf_15_1_5,{}
-V,keltner_tf_50_2_5,{}
 V,weekly_breakout_vectorized,{}
 V,weekly_breakout_1_2,{}
 V,weekly_breakout_2_1,{}
@@ -7775,6 +7579,10 @@ V,squeeze_ema_strategy,{}
 V,squeeze_ema_10_20,{}
 V,squeeze_ema_15_25,{}
 V,ema_pullback_strategy,{}
+V,volume_trend_ema_threshold,{}
+V,volume_donchian_breakout,{}
+V,volume_donchian_breakout_10_25_20,{}
+V,volume_donchian_breakout_15_30_20,{}
 VCEL,bollinger_bands_mean_reversion_sma_vectorized,{}
 VCEL,sma_stoch_close_strategy_vectorized,{}
 VCEL,stochastic_oscillator_signal_vectorized,{}
@@ -7826,12 +7634,6 @@ VCEL,donchian_breakout_with_ma_15_40,{}
 VCEL,donchian_inv_with_ma_filter,{}
 VCEL,donchian_inv_with_ma_15_40,{}
 VCEL,donchian_inv_with_ma_10_30,{}
-VCEL,keltner_rev_vectorized,{}
-VCEL,keltner_rev_15_1_5,{}
-VCEL,keltner_rev_50_2_5,{}
-VCEL,keltner_tf_vectorized,{}
-VCEL,keltner_tf_15_1_5,{}
-VCEL,keltner_tf_50_2_5,{}
 VCEL,weekly_breakout_vectorized,{}
 VCEL,weekly_breakout_1_2,{}
 VCEL,weekly_breakout_2_1,{}
@@ -7856,6 +7658,10 @@ VCEL,squeeze_ema_strategy,{}
 VCEL,squeeze_ema_10_20,{}
 VCEL,squeeze_ema_15_25,{}
 VCEL,ema_pullback_strategy,{}
+VCEL,volume_trend_ema_threshold,{}
+VCEL,volume_donchian_breakout,{}
+VCEL,volume_donchian_breakout_10_25_20,{}
+VCEL,volume_donchian_breakout_15_30_20,{}
 WAB,bollinger_bands_mean_reversion_sma_vectorized,{}
 WAB,sma_stoch_close_strategy_vectorized,{}
 WAB,stochastic_oscillator_signal_vectorized,{}
@@ -7907,12 +7713,6 @@ WAB,donchian_breakout_with_ma_15_40,{}
 WAB,donchian_inv_with_ma_filter,{}
 WAB,donchian_inv_with_ma_15_40,{}
 WAB,donchian_inv_with_ma_10_30,{}
-WAB,keltner_rev_vectorized,{}
-WAB,keltner_rev_15_1_5,{}
-WAB,keltner_rev_50_2_5,{}
-WAB,keltner_tf_vectorized,{}
-WAB,keltner_tf_15_1_5,{}
-WAB,keltner_tf_50_2_5,{}
 WAB,weekly_breakout_vectorized,{}
 WAB,weekly_breakout_1_2,{}
 WAB,weekly_breakout_2_1,{}
@@ -7937,6 +7737,10 @@ WAB,squeeze_ema_strategy,{}
 WAB,squeeze_ema_10_20,{}
 WAB,squeeze_ema_15_25,{}
 WAB,ema_pullback_strategy,{}
+WAB,volume_trend_ema_threshold,{}
+WAB,volume_donchian_breakout,{}
+WAB,volume_donchian_breakout_10_25_20,{}
+WAB,volume_donchian_breakout_15_30_20,{}
 WBD,bollinger_bands_mean_reversion_sma_vectorized,{}
 WBD,sma_stoch_close_strategy_vectorized,{}
 WBD,stochastic_oscillator_signal_vectorized,{}
@@ -7988,12 +7792,6 @@ WBD,donchian_breakout_with_ma_15_40,{}
 WBD,donchian_inv_with_ma_filter,{}
 WBD,donchian_inv_with_ma_15_40,{}
 WBD,donchian_inv_with_ma_10_30,{}
-WBD,keltner_rev_vectorized,{}
-WBD,keltner_rev_15_1_5,{}
-WBD,keltner_rev_50_2_5,{}
-WBD,keltner_tf_vectorized,{}
-WBD,keltner_tf_15_1_5,{}
-WBD,keltner_tf_50_2_5,{}
 WBD,weekly_breakout_vectorized,{}
 WBD,weekly_breakout_1_2,{}
 WBD,weekly_breakout_2_1,{}
@@ -8018,6 +7816,10 @@ WBD,squeeze_ema_strategy,{}
 WBD,squeeze_ema_10_20,{}
 WBD,squeeze_ema_15_25,{}
 WBD,ema_pullback_strategy,{}
+WBD,volume_trend_ema_threshold,{}
+WBD,volume_donchian_breakout,{}
+WBD,volume_donchian_breakout_10_25_20,{}
+WBD,volume_donchian_breakout_15_30_20,{}
 WDC,bollinger_bands_mean_reversion_sma_vectorized,{}
 WDC,sma_stoch_close_strategy_vectorized,{}
 WDC,stochastic_oscillator_signal_vectorized,{}
@@ -8069,12 +7871,6 @@ WDC,donchian_breakout_with_ma_15_40,{}
 WDC,donchian_inv_with_ma_filter,{}
 WDC,donchian_inv_with_ma_15_40,{}
 WDC,donchian_inv_with_ma_10_30,{}
-WDC,keltner_rev_vectorized,{}
-WDC,keltner_rev_15_1_5,{}
-WDC,keltner_rev_50_2_5,{}
-WDC,keltner_tf_vectorized,{}
-WDC,keltner_tf_15_1_5,{}
-WDC,keltner_tf_50_2_5,{}
 WDC,weekly_breakout_vectorized,{}
 WDC,weekly_breakout_1_2,{}
 WDC,weekly_breakout_2_1,{}
@@ -8092,13 +7888,17 @@ WDC,ema_vwap_sma_vectorized,{}
 WDC,ema_vwap_sma_15_30_50,{}
 WDC,ema_vwap_sma_5_10_20,{}
 WDC,ema_vwap_vectorized,{}
-WDC,volume_trend_basic,{}
+WDC,volume_trend_basic,"{""lookback"": 8}"
 WDC,volume_trend_10,{}
 WDC,volume_trend_30,{}
 WDC,squeeze_ema_strategy,{}
 WDC,squeeze_ema_10_20,{}
 WDC,squeeze_ema_15_25,{}
 WDC,ema_pullback_strategy,{}
+WDC,volume_trend_ema_threshold,{}
+WDC,volume_donchian_breakout,{}
+WDC,volume_donchian_breakout_10_25_20,{}
+WDC,volume_donchian_breakout_15_30_20,{}
 WMT,bollinger_bands_mean_reversion_sma_vectorized,{}
 WMT,sma_stoch_close_strategy_vectorized,{}
 WMT,stochastic_oscillator_signal_vectorized,{}
@@ -8150,12 +7950,6 @@ WMT,donchian_breakout_with_ma_15_40,{}
 WMT,donchian_inv_with_ma_filter,{}
 WMT,donchian_inv_with_ma_15_40,{}
 WMT,donchian_inv_with_ma_10_30,{}
-WMT,keltner_rev_vectorized,{}
-WMT,keltner_rev_15_1_5,{}
-WMT,keltner_rev_50_2_5,{}
-WMT,keltner_tf_vectorized,{}
-WMT,keltner_tf_15_1_5,{}
-WMT,keltner_tf_50_2_5,{}
 WMT,weekly_breakout_vectorized,{}
 WMT,weekly_breakout_1_2,{}
 WMT,weekly_breakout_2_1,{}
@@ -8180,6 +7974,10 @@ WMT,squeeze_ema_strategy,{}
 WMT,squeeze_ema_10_20,{}
 WMT,squeeze_ema_15_25,{}
 WMT,ema_pullback_strategy,{}
+WMT,volume_trend_ema_threshold,{}
+WMT,volume_donchian_breakout,{}
+WMT,volume_donchian_breakout_10_25_20,{}
+WMT,volume_donchian_breakout_15_30_20,{}
 XOM,bollinger_bands_mean_reversion_sma_vectorized,{}
 XOM,sma_stoch_close_strategy_vectorized,{}
 XOM,stochastic_oscillator_signal_vectorized,{}
@@ -8231,12 +8029,6 @@ XOM,donchian_breakout_with_ma_15_40,{}
 XOM,donchian_inv_with_ma_filter,{}
 XOM,donchian_inv_with_ma_15_40,{}
 XOM,donchian_inv_with_ma_10_30,{}
-XOM,keltner_rev_vectorized,{}
-XOM,keltner_rev_15_1_5,{}
-XOM,keltner_rev_50_2_5,{}
-XOM,keltner_tf_vectorized,{}
-XOM,keltner_tf_15_1_5,{}
-XOM,keltner_tf_50_2_5,{}
 XOM,weekly_breakout_vectorized,{}
 XOM,weekly_breakout_1_2,{}
 XOM,weekly_breakout_2_1,{}
@@ -8261,6 +8053,10 @@ XOM,squeeze_ema_strategy,{}
 XOM,squeeze_ema_10_20,{}
 XOM,squeeze_ema_15_25,{}
 XOM,ema_pullback_strategy,{}
+XOM,volume_trend_ema_threshold,{}
+XOM,volume_donchian_breakout,{}
+XOM,volume_donchian_breakout_10_25_20,{}
+XOM,volume_donchian_breakout_15_30_20,{}
 ZM,bollinger_bands_mean_reversion_sma_vectorized,{}
 ZM,sma_stoch_close_strategy_vectorized,{}
 ZM,stochastic_oscillator_signal_vectorized,{}
@@ -8312,12 +8108,6 @@ ZM,donchian_breakout_with_ma_15_40,{}
 ZM,donchian_inv_with_ma_filter,{}
 ZM,donchian_inv_with_ma_15_40,{}
 ZM,donchian_inv_with_ma_10_30,{}
-ZM,keltner_rev_vectorized,{}
-ZM,keltner_rev_15_1_5,{}
-ZM,keltner_rev_50_2_5,{}
-ZM,keltner_tf_vectorized,{}
-ZM,keltner_tf_15_1_5,{}
-ZM,keltner_tf_50_2_5,{}
 ZM,weekly_breakout_vectorized,{}
 ZM,weekly_breakout_1_2,{}
 ZM,weekly_breakout_2_1,{}
@@ -8342,6 +8132,10 @@ ZM,squeeze_ema_strategy,{}
 ZM,squeeze_ema_10_20,{}
 ZM,squeeze_ema_15_25,{}
 ZM,ema_pullback_strategy,{}
+ZM,volume_trend_ema_threshold,{}
+ZM,volume_donchian_breakout,{}
+ZM,volume_donchian_breakout_10_25_20,{}
+ZM,volume_donchian_breakout_15_30_20,{}
 ETHFI-USD,bollinger_bands_mean_reversion_sma_vectorized,{}
 ETHFI-USD,sma_stoch_close_strategy_vectorized,{}
 ETHFI-USD,stochastic_oscillator_signal_vectorized,{}
@@ -8393,12 +8187,6 @@ ETHFI-USD,donchian_breakout_with_ma_15_40,{}
 ETHFI-USD,donchian_inv_with_ma_filter,{}
 ETHFI-USD,donchian_inv_with_ma_15_40,{}
 ETHFI-USD,donchian_inv_with_ma_10_30,{}
-ETHFI-USD,keltner_rev_vectorized,{}
-ETHFI-USD,keltner_rev_15_1_5,{}
-ETHFI-USD,keltner_rev_50_2_5,{}
-ETHFI-USD,keltner_tf_vectorized,{}
-ETHFI-USD,keltner_tf_15_1_5,{}
-ETHFI-USD,keltner_tf_50_2_5,{}
 ETHFI-USD,weekly_breakout_vectorized,{}
 ETHFI-USD,weekly_breakout_1_2,{}
 ETHFI-USD,weekly_breakout_2_1,{}
@@ -8406,7 +8194,7 @@ ETHFI-USD,weekly_breakout_2_2,{}
 ETHFI-USD,weekly_breakout_1_3,{}
 ETHFI-USD,weekly_breakout_2_3,{}
 ETHFI-USD,vwap_trading_strategy_threshold,{}
-ETHFI-USD,vwap_trading_strategy_cross,{}
+ETHFI-USD,vwap_trading_strategy_cross,"{""lookback"": 20, ""threshold"": 0.004}"
 ETHFI-USD,vwap_trading_strategy_cross_20_10,{}
 ETHFI-USD,vwap_trading_strategy_cross_30_20,{}
 ETHFI-USD,parab_rev_vectorized,{}
@@ -8423,6 +8211,10 @@ ETHFI-USD,squeeze_ema_strategy,{}
 ETHFI-USD,squeeze_ema_10_20,{}
 ETHFI-USD,squeeze_ema_15_25,{}
 ETHFI-USD,ema_pullback_strategy,{}
+ETHFI-USD,volume_trend_ema_threshold,"{""lookback"": 16, ""ema_len"": 8, ""vol_threshold"": 0.4}"
+ETHFI-USD,volume_donchian_breakout,{}
+ETHFI-USD,volume_donchian_breakout_10_25_20,{}
+ETHFI-USD,volume_donchian_breakout_15_30_20,{}
 API3-USD,bollinger_bands_mean_reversion_sma_vectorized,{}
 API3-USD,sma_stoch_close_strategy_vectorized,{}
 API3-USD,stochastic_oscillator_signal_vectorized,{}
@@ -8474,12 +8266,6 @@ API3-USD,donchian_breakout_with_ma_15_40,{}
 API3-USD,donchian_inv_with_ma_filter,{}
 API3-USD,donchian_inv_with_ma_15_40,{}
 API3-USD,donchian_inv_with_ma_10_30,{}
-API3-USD,keltner_rev_vectorized,{}
-API3-USD,keltner_rev_15_1_5,{}
-API3-USD,keltner_rev_50_2_5,{}
-API3-USD,keltner_tf_vectorized,{}
-API3-USD,keltner_tf_15_1_5,{}
-API3-USD,keltner_tf_50_2_5,{}
 API3-USD,weekly_breakout_vectorized,{}
 API3-USD,weekly_breakout_1_2,{}
 API3-USD,weekly_breakout_2_1,{}
@@ -8504,6 +8290,10 @@ API3-USD,squeeze_ema_strategy,{}
 API3-USD,squeeze_ema_10_20,{}
 API3-USD,squeeze_ema_15_25,{}
 API3-USD,ema_pullback_strategy,{}
+API3-USD,volume_trend_ema_threshold,{}
+API3-USD,volume_donchian_breakout,{}
+API3-USD,volume_donchian_breakout_10_25_20,{}
+API3-USD,volume_donchian_breakout_15_30_20,{}
 ADA-USD,bollinger_bands_mean_reversion_sma_vectorized,{}
 ADA-USD,sma_stoch_close_strategy_vectorized,{}
 ADA-USD,stochastic_oscillator_signal_vectorized,{}
@@ -8555,12 +8345,6 @@ ADA-USD,donchian_breakout_with_ma_15_40,{}
 ADA-USD,donchian_inv_with_ma_filter,{}
 ADA-USD,donchian_inv_with_ma_15_40,{}
 ADA-USD,donchian_inv_with_ma_10_30,{}
-ADA-USD,keltner_rev_vectorized,{}
-ADA-USD,keltner_rev_15_1_5,{}
-ADA-USD,keltner_rev_50_2_5,{}
-ADA-USD,keltner_tf_vectorized,{}
-ADA-USD,keltner_tf_15_1_5,{}
-ADA-USD,keltner_tf_50_2_5,{}
 ADA-USD,weekly_breakout_vectorized,{}
 ADA-USD,weekly_breakout_1_2,{}
 ADA-USD,weekly_breakout_2_1,{}
@@ -8585,6 +8369,10 @@ ADA-USD,squeeze_ema_strategy,{}
 ADA-USD,squeeze_ema_10_20,{}
 ADA-USD,squeeze_ema_15_25,{}
 ADA-USD,ema_pullback_strategy,{}
+ADA-USD,volume_trend_ema_threshold,{}
+ADA-USD,volume_donchian_breakout,{}
+ADA-USD,volume_donchian_breakout_10_25_20,{}
+ADA-USD,volume_donchian_breakout_15_30_20,{}
 TRX-USD,bollinger_bands_mean_reversion_sma_vectorized,{}
 TRX-USD,sma_stoch_close_strategy_vectorized,{}
 TRX-USD,stochastic_oscillator_signal_vectorized,{}
@@ -8636,12 +8424,6 @@ TRX-USD,donchian_breakout_with_ma_15_40,{}
 TRX-USD,donchian_inv_with_ma_filter,{}
 TRX-USD,donchian_inv_with_ma_15_40,{}
 TRX-USD,donchian_inv_with_ma_10_30,{}
-TRX-USD,keltner_rev_vectorized,{}
-TRX-USD,keltner_rev_15_1_5,{}
-TRX-USD,keltner_rev_50_2_5,{}
-TRX-USD,keltner_tf_vectorized,{}
-TRX-USD,keltner_tf_15_1_5,{}
-TRX-USD,keltner_tf_50_2_5,{}
 TRX-USD,weekly_breakout_vectorized,{}
 TRX-USD,weekly_breakout_1_2,{}
 TRX-USD,weekly_breakout_2_1,{}
@@ -8666,6 +8448,10 @@ TRX-USD,squeeze_ema_strategy,{}
 TRX-USD,squeeze_ema_10_20,{}
 TRX-USD,squeeze_ema_15_25,{}
 TRX-USD,ema_pullback_strategy,{}
+TRX-USD,volume_trend_ema_threshold,{}
+TRX-USD,volume_donchian_breakout,{}
+TRX-USD,volume_donchian_breakout_10_25_20,{}
+TRX-USD,volume_donchian_breakout_15_30_20,{}
 ZEC-USD,bollinger_bands_mean_reversion_sma_vectorized,{}
 ZEC-USD,sma_stoch_close_strategy_vectorized,{}
 ZEC-USD,stochastic_oscillator_signal_vectorized,{}
@@ -8717,12 +8503,6 @@ ZEC-USD,donchian_breakout_with_ma_15_40,{}
 ZEC-USD,donchian_inv_with_ma_filter,{}
 ZEC-USD,donchian_inv_with_ma_15_40,{}
 ZEC-USD,donchian_inv_with_ma_10_30,{}
-ZEC-USD,keltner_rev_vectorized,{}
-ZEC-USD,keltner_rev_15_1_5,{}
-ZEC-USD,keltner_rev_50_2_5,{}
-ZEC-USD,keltner_tf_vectorized,{}
-ZEC-USD,keltner_tf_15_1_5,{}
-ZEC-USD,keltner_tf_50_2_5,{}
 ZEC-USD,weekly_breakout_vectorized,{}
 ZEC-USD,weekly_breakout_1_2,{}
 ZEC-USD,weekly_breakout_2_1,{}
@@ -8747,6 +8527,10 @@ ZEC-USD,squeeze_ema_strategy,{}
 ZEC-USD,squeeze_ema_10_20,{}
 ZEC-USD,squeeze_ema_15_25,{}
 ZEC-USD,ema_pullback_strategy,"{""short_ema"": 10, ""long_ema"": 18, ""min_move"": 0.01, ""min_trend_gap"": 0.06, ""lookback_trend"": 7}"
+ZEC-USD,volume_trend_ema_threshold,"{""lookback"": 22, ""ema_len"": 8, ""vol_threshold"": 0.3}"
+ZEC-USD,volume_donchian_breakout,{}
+ZEC-USD,volume_donchian_breakout_10_25_20,{}
+ZEC-USD,volume_donchian_breakout_15_30_20,{}
 SKL-USD,bollinger_bands_mean_reversion_sma_vectorized,{}
 SKL-USD,sma_stoch_close_strategy_vectorized,{}
 SKL-USD,stochastic_oscillator_signal_vectorized,{}
@@ -8798,12 +8582,6 @@ SKL-USD,donchian_breakout_with_ma_15_40,{}
 SKL-USD,donchian_inv_with_ma_filter,{}
 SKL-USD,donchian_inv_with_ma_15_40,{}
 SKL-USD,donchian_inv_with_ma_10_30,{}
-SKL-USD,keltner_rev_vectorized,{}
-SKL-USD,keltner_rev_15_1_5,{}
-SKL-USD,keltner_rev_50_2_5,{}
-SKL-USD,keltner_tf_vectorized,{}
-SKL-USD,keltner_tf_15_1_5,{}
-SKL-USD,keltner_tf_50_2_5,{}
 SKL-USD,weekly_breakout_vectorized,{}
 SKL-USD,weekly_breakout_1_2,{}
 SKL-USD,weekly_breakout_2_1,{}
@@ -8811,7 +8589,7 @@ SKL-USD,weekly_breakout_2_2,{}
 SKL-USD,weekly_breakout_1_3,{}
 SKL-USD,weekly_breakout_2_3,{}
 SKL-USD,vwap_trading_strategy_threshold,{}
-SKL-USD,vwap_trading_strategy_cross,{}
+SKL-USD,vwap_trading_strategy_cross,"{""lookback"": 21, ""threshold"": 0.006}"
 SKL-USD,vwap_trading_strategy_cross_20_10,{}
 SKL-USD,vwap_trading_strategy_cross_30_20,{}
 SKL-USD,parab_rev_vectorized,{}
@@ -8828,6 +8606,10 @@ SKL-USD,squeeze_ema_strategy,{}
 SKL-USD,squeeze_ema_10_20,{}
 SKL-USD,squeeze_ema_15_25,{}
 SKL-USD,ema_pullback_strategy,"{""short_ema"": 10, ""long_ema"": 30, ""min_move"": 0.01, ""min_trend_gap"": 0.05, ""lookback_trend"": 5}"
+SKL-USD,volume_trend_ema_threshold,{}
+SKL-USD,volume_donchian_breakout,{}
+SKL-USD,volume_donchian_breakout_10_25_20,{}
+SKL-USD,volume_donchian_breakout_15_30_20,{}
 LTC,bollinger_bands_mean_reversion_sma_vectorized,{}
 LTC,sma_stoch_close_strategy_vectorized,{}
 LTC,stochastic_oscillator_signal_vectorized,{}
@@ -8879,12 +8661,6 @@ LTC,donchian_breakout_with_ma_15_40,{}
 LTC,donchian_inv_with_ma_filter,{}
 LTC,donchian_inv_with_ma_15_40,{}
 LTC,donchian_inv_with_ma_10_30,{}
-LTC,keltner_rev_vectorized,{}
-LTC,keltner_rev_15_1_5,{}
-LTC,keltner_rev_50_2_5,{}
-LTC,keltner_tf_vectorized,{}
-LTC,keltner_tf_15_1_5,{}
-LTC,keltner_tf_50_2_5,{}
 LTC,weekly_breakout_vectorized,{}
 LTC,weekly_breakout_1_2,{}
 LTC,weekly_breakout_2_1,{}
@@ -8909,6 +8685,10 @@ LTC,squeeze_ema_strategy,{}
 LTC,squeeze_ema_10_20,{}
 LTC,squeeze_ema_15_25,{}
 LTC,ema_pullback_strategy,{}
+LTC,volume_trend_ema_threshold,{}
+LTC,volume_donchian_breakout,{}
+LTC,volume_donchian_breakout_10_25_20,{}
+LTC,volume_donchian_breakout_15_30_20,{}
 CELO-USD,bollinger_bands_mean_reversion_sma_vectorized,{}
 CELO-USD,sma_stoch_close_strategy_vectorized,{}
 CELO-USD,stochastic_oscillator_signal_vectorized,{}
@@ -8960,12 +8740,6 @@ CELO-USD,donchian_breakout_with_ma_15_40,{}
 CELO-USD,donchian_inv_with_ma_filter,{}
 CELO-USD,donchian_inv_with_ma_15_40,{}
 CELO-USD,donchian_inv_with_ma_10_30,{}
-CELO-USD,keltner_rev_vectorized,{}
-CELO-USD,keltner_rev_15_1_5,{}
-CELO-USD,keltner_rev_50_2_5,{}
-CELO-USD,keltner_tf_vectorized,{}
-CELO-USD,keltner_tf_15_1_5,{}
-CELO-USD,keltner_tf_50_2_5,{}
 CELO-USD,weekly_breakout_vectorized,{}
 CELO-USD,weekly_breakout_1_2,{}
 CELO-USD,weekly_breakout_2_1,{}
@@ -8973,7 +8747,7 @@ CELO-USD,weekly_breakout_2_2,{}
 CELO-USD,weekly_breakout_1_3,{}
 CELO-USD,weekly_breakout_2_3,{}
 CELO-USD,vwap_trading_strategy_threshold,{}
-CELO-USD,vwap_trading_strategy_cross,{}
+CELO-USD,vwap_trading_strategy_cross,"{""lookback"": 20, ""threshold"": 0.004}"
 CELO-USD,vwap_trading_strategy_cross_20_10,{}
 CELO-USD,vwap_trading_strategy_cross_30_20,{}
 CELO-USD,parab_rev_vectorized,{}
@@ -8990,6 +8764,10 @@ CELO-USD,squeeze_ema_strategy,{}
 CELO-USD,squeeze_ema_10_20,{}
 CELO-USD,squeeze_ema_15_25,{}
 CELO-USD,ema_pullback_strategy,{}
+CELO-USD,volume_trend_ema_threshold,{}
+CELO-USD,volume_donchian_breakout,{}
+CELO-USD,volume_donchian_breakout_10_25_20,{}
+CELO-USD,volume_donchian_breakout_15_30_20,{}
 SNX-USD,bollinger_bands_mean_reversion_sma_vectorized,{}
 SNX-USD,sma_stoch_close_strategy_vectorized,{}
 SNX-USD,stochastic_oscillator_signal_vectorized,{}
@@ -9041,12 +8819,6 @@ SNX-USD,donchian_breakout_with_ma_15_40,{}
 SNX-USD,donchian_inv_with_ma_filter,{}
 SNX-USD,donchian_inv_with_ma_15_40,{}
 SNX-USD,donchian_inv_with_ma_10_30,{}
-SNX-USD,keltner_rev_vectorized,{}
-SNX-USD,keltner_rev_15_1_5,{}
-SNX-USD,keltner_rev_50_2_5,{}
-SNX-USD,keltner_tf_vectorized,{}
-SNX-USD,keltner_tf_15_1_5,{}
-SNX-USD,keltner_tf_50_2_5,{}
 SNX-USD,weekly_breakout_vectorized,{}
 SNX-USD,weekly_breakout_1_2,{}
 SNX-USD,weekly_breakout_2_1,{}
@@ -9071,6 +8843,10 @@ SNX-USD,squeeze_ema_strategy,{}
 SNX-USD,squeeze_ema_10_20,{}
 SNX-USD,squeeze_ema_15_25,{}
 SNX-USD,ema_pullback_strategy,"{""short_ema"": 10, ""long_ema"": 18, ""min_move"": 0.01, ""min_trend_gap"": 0.07, ""lookback_trend"": 7}"
+SNX-USD,volume_trend_ema_threshold,{}
+SNX-USD,volume_donchian_breakout,{}
+SNX-USD,volume_donchian_breakout_10_25_20,{}
+SNX-USD,volume_donchian_breakout_15_30_20,{}
 SUSHI-USD,bollinger_bands_mean_reversion_sma_vectorized,{}
 SUSHI-USD,sma_stoch_close_strategy_vectorized,{}
 SUSHI-USD,stochastic_oscillator_signal_vectorized,{}
@@ -9122,12 +8898,6 @@ SUSHI-USD,donchian_breakout_with_ma_15_40,{}
 SUSHI-USD,donchian_inv_with_ma_filter,{}
 SUSHI-USD,donchian_inv_with_ma_15_40,{}
 SUSHI-USD,donchian_inv_with_ma_10_30,{}
-SUSHI-USD,keltner_rev_vectorized,{}
-SUSHI-USD,keltner_rev_15_1_5,{}
-SUSHI-USD,keltner_rev_50_2_5,{}
-SUSHI-USD,keltner_tf_vectorized,{}
-SUSHI-USD,keltner_tf_15_1_5,{}
-SUSHI-USD,keltner_tf_50_2_5,{}
 SUSHI-USD,weekly_breakout_vectorized,{}
 SUSHI-USD,weekly_breakout_1_2,{}
 SUSHI-USD,weekly_breakout_2_1,{}
@@ -9152,6 +8922,10 @@ SUSHI-USD,squeeze_ema_strategy,{}
 SUSHI-USD,squeeze_ema_10_20,{}
 SUSHI-USD,squeeze_ema_15_25,{}
 SUSHI-USD,ema_pullback_strategy,"{""short_ema"": 8, ""long_ema"": 24, ""min_move"": 0.01, ""min_trend_gap"": 0.07, ""lookback_trend"": 5}"
+SUSHI-USD,volume_trend_ema_threshold,{}
+SUSHI-USD,volume_donchian_breakout,{}
+SUSHI-USD,volume_donchian_breakout_10_25_20,{}
+SUSHI-USD,volume_donchian_breakout_15_30_20,{}
 QNT-USD,bollinger_bands_mean_reversion_sma_vectorized,{}
 QNT-USD,sma_stoch_close_strategy_vectorized,{}
 QNT-USD,stochastic_oscillator_signal_vectorized,{}
@@ -9203,12 +8977,6 @@ QNT-USD,donchian_breakout_with_ma_15_40,{}
 QNT-USD,donchian_inv_with_ma_filter,{}
 QNT-USD,donchian_inv_with_ma_15_40,{}
 QNT-USD,donchian_inv_with_ma_10_30,{}
-QNT-USD,keltner_rev_vectorized,{}
-QNT-USD,keltner_rev_15_1_5,{}
-QNT-USD,keltner_rev_50_2_5,{}
-QNT-USD,keltner_tf_vectorized,{}
-QNT-USD,keltner_tf_15_1_5,{}
-QNT-USD,keltner_tf_50_2_5,{}
 QNT-USD,weekly_breakout_vectorized,{}
 QNT-USD,weekly_breakout_1_2,{}
 QNT-USD,weekly_breakout_2_1,{}
@@ -9233,6 +9001,10 @@ QNT-USD,squeeze_ema_strategy,{}
 QNT-USD,squeeze_ema_10_20,{}
 QNT-USD,squeeze_ema_15_25,{}
 QNT-USD,ema_pullback_strategy,{}
+QNT-USD,volume_trend_ema_threshold,{}
+QNT-USD,volume_donchian_breakout,{}
+QNT-USD,volume_donchian_breakout_10_25_20,{}
+QNT-USD,volume_donchian_breakout_15_30_20,{}
 BAND,bollinger_bands_mean_reversion_sma_vectorized,{}
 BAND,sma_stoch_close_strategy_vectorized,{}
 BAND,stochastic_oscillator_signal_vectorized,{}
@@ -9284,12 +9056,6 @@ BAND,donchian_breakout_with_ma_15_40,{}
 BAND,donchian_inv_with_ma_filter,{}
 BAND,donchian_inv_with_ma_15_40,{}
 BAND,donchian_inv_with_ma_10_30,{}
-BAND,keltner_rev_vectorized,{}
-BAND,keltner_rev_15_1_5,{}
-BAND,keltner_rev_50_2_5,{}
-BAND,keltner_tf_vectorized,{}
-BAND,keltner_tf_15_1_5,{}
-BAND,keltner_tf_50_2_5,{}
 BAND,weekly_breakout_vectorized,{}
 BAND,weekly_breakout_1_2,{}
 BAND,weekly_breakout_2_1,{}
@@ -9314,6 +9080,10 @@ BAND,squeeze_ema_strategy,{}
 BAND,squeeze_ema_10_20,{}
 BAND,squeeze_ema_15_25,{}
 BAND,ema_pullback_strategy,{}
+BAND,volume_trend_ema_threshold,{}
+BAND,volume_donchian_breakout,{}
+BAND,volume_donchian_breakout_10_25_20,{}
+BAND,volume_donchian_breakout_15_30_20,{}
 DAX,bollinger_bands_mean_reversion_sma_vectorized,{}
 DAX,sma_stoch_close_strategy_vectorized,{}
 DAX,stochastic_oscillator_signal_vectorized,{}
@@ -9365,12 +9135,6 @@ DAX,donchian_breakout_with_ma_15_40,{}
 DAX,donchian_inv_with_ma_filter,{}
 DAX,donchian_inv_with_ma_15_40,{}
 DAX,donchian_inv_with_ma_10_30,{}
-DAX,keltner_rev_vectorized,{}
-DAX,keltner_rev_15_1_5,{}
-DAX,keltner_rev_50_2_5,{}
-DAX,keltner_tf_vectorized,{}
-DAX,keltner_tf_15_1_5,{}
-DAX,keltner_tf_50_2_5,{}
 DAX,weekly_breakout_vectorized,{}
 DAX,weekly_breakout_1_2,{}
 DAX,weekly_breakout_2_1,{}
@@ -9395,6 +9159,10 @@ DAX,squeeze_ema_strategy,{}
 DAX,squeeze_ema_10_20,{}
 DAX,squeeze_ema_15_25,{}
 DAX,ema_pullback_strategy,{}
+DAX,volume_trend_ema_threshold,{}
+DAX,volume_donchian_breakout,{}
+DAX,volume_donchian_breakout_10_25_20,{}
+DAX,volume_donchian_breakout_15_30_20,{}
 GLD,bollinger_bands_mean_reversion_sma_vectorized,{}
 GLD,sma_stoch_close_strategy_vectorized,{}
 GLD,stochastic_oscillator_signal_vectorized,{}
@@ -9446,12 +9214,6 @@ GLD,donchian_breakout_with_ma_15_40,{}
 GLD,donchian_inv_with_ma_filter,{}
 GLD,donchian_inv_with_ma_15_40,{}
 GLD,donchian_inv_with_ma_10_30,{}
-GLD,keltner_rev_vectorized,{}
-GLD,keltner_rev_15_1_5,{}
-GLD,keltner_rev_50_2_5,{}
-GLD,keltner_tf_vectorized,{}
-GLD,keltner_tf_15_1_5,{}
-GLD,keltner_tf_50_2_5,{}
 GLD,weekly_breakout_vectorized,{}
 GLD,weekly_breakout_1_2,{}
 GLD,weekly_breakout_2_1,{}
@@ -9476,6 +9238,10 @@ GLD,squeeze_ema_strategy,"{""short_ema"": 24, ""squeez_back_period"": 12}"
 GLD,squeeze_ema_10_20,{}
 GLD,squeeze_ema_15_25,{}
 GLD,ema_pullback_strategy,{}
+GLD,volume_trend_ema_threshold,"{""lookback"": 20, ""ema_len"": 20, ""vol_threshold"": 0.5}"
+GLD,volume_donchian_breakout,"{""lookback_vol"": 14, ""lookback_price"": 36, ""vol_threshold"": 0.2}"
+GLD,volume_donchian_breakout_10_25_20,{}
+GLD,volume_donchian_breakout_15_30_20,{}
 SLV,bollinger_bands_mean_reversion_sma_vectorized,{}
 SLV,sma_stoch_close_strategy_vectorized,{}
 SLV,stochastic_oscillator_signal_vectorized,{}
@@ -9527,12 +9293,6 @@ SLV,donchian_breakout_with_ma_15_40,{}
 SLV,donchian_inv_with_ma_filter,{}
 SLV,donchian_inv_with_ma_15_40,{}
 SLV,donchian_inv_with_ma_10_30,{}
-SLV,keltner_rev_vectorized,{}
-SLV,keltner_rev_15_1_5,{}
-SLV,keltner_rev_50_2_5,{}
-SLV,keltner_tf_vectorized,{}
-SLV,keltner_tf_15_1_5,{}
-SLV,keltner_tf_50_2_5,{}
 SLV,weekly_breakout_vectorized,{}
 SLV,weekly_breakout_1_2,{}
 SLV,weekly_breakout_2_1,{}
@@ -9557,6 +9317,10 @@ SLV,squeeze_ema_strategy,{}
 SLV,squeeze_ema_10_20,{}
 SLV,squeeze_ema_15_25,{}
 SLV,ema_pullback_strategy,{}
+SLV,volume_trend_ema_threshold,"{""lookback"": 22, ""ema_len"": 8, ""vol_threshold"": 0.2}"
+SLV,volume_donchian_breakout,{}
+SLV,volume_donchian_breakout_10_25_20,{}
+SLV,volume_donchian_breakout_15_30_20,{}
 NDAQ,bollinger_bands_mean_reversion_sma_vectorized,{}
 NDAQ,sma_stoch_close_strategy_vectorized,{}
 NDAQ,stochastic_oscillator_signal_vectorized,{}
@@ -9608,12 +9372,6 @@ NDAQ,donchian_breakout_with_ma_15_40,{}
 NDAQ,donchian_inv_with_ma_filter,{}
 NDAQ,donchian_inv_with_ma_15_40,{}
 NDAQ,donchian_inv_with_ma_10_30,{}
-NDAQ,keltner_rev_vectorized,{}
-NDAQ,keltner_rev_15_1_5,{}
-NDAQ,keltner_rev_50_2_5,{}
-NDAQ,keltner_tf_vectorized,{}
-NDAQ,keltner_tf_15_1_5,{}
-NDAQ,keltner_tf_50_2_5,{}
 NDAQ,weekly_breakout_vectorized,{}
 NDAQ,weekly_breakout_1_2,{}
 NDAQ,weekly_breakout_2_1,{}
@@ -9621,7 +9379,7 @@ NDAQ,weekly_breakout_2_2,{}
 NDAQ,weekly_breakout_1_3,{}
 NDAQ,weekly_breakout_2_3,{}
 NDAQ,vwap_trading_strategy_threshold,{}
-NDAQ,vwap_trading_strategy_cross,{}
+NDAQ,vwap_trading_strategy_cross,"{""lookback"": 21, ""threshold"": 0.003}"
 NDAQ,vwap_trading_strategy_cross_20_10,{}
 NDAQ,vwap_trading_strategy_cross_30_20,{}
 NDAQ,parab_rev_vectorized,{}
@@ -9638,6 +9396,10 @@ NDAQ,squeeze_ema_strategy,{}
 NDAQ,squeeze_ema_10_20,{}
 NDAQ,squeeze_ema_15_25,{}
 NDAQ,ema_pullback_strategy,{}
+NDAQ,volume_trend_ema_threshold,{}
+NDAQ,volume_donchian_breakout,{}
+NDAQ,volume_donchian_breakout_10_25_20,{}
+NDAQ,volume_donchian_breakout_15_30_20,{}
 TRV,bollinger_bands_mean_reversion_sma_vectorized,{}
 TRV,sma_stoch_close_strategy_vectorized,{}
 TRV,stochastic_oscillator_signal_vectorized,{}
@@ -9689,12 +9451,6 @@ TRV,donchian_breakout_with_ma_15_40,{}
 TRV,donchian_inv_with_ma_filter,{}
 TRV,donchian_inv_with_ma_15_40,{}
 TRV,donchian_inv_with_ma_10_30,{}
-TRV,keltner_rev_vectorized,{}
-TRV,keltner_rev_15_1_5,{}
-TRV,keltner_rev_50_2_5,{}
-TRV,keltner_tf_vectorized,{}
-TRV,keltner_tf_15_1_5,{}
-TRV,keltner_tf_50_2_5,{}
 TRV,weekly_breakout_vectorized,{}
 TRV,weekly_breakout_1_2,{}
 TRV,weekly_breakout_2_1,{}
@@ -9719,6 +9475,10 @@ TRV,squeeze_ema_strategy,{}
 TRV,squeeze_ema_10_20,{}
 TRV,squeeze_ema_15_25,{}
 TRV,ema_pullback_strategy,{}
+TRV,volume_trend_ema_threshold,{}
+TRV,volume_donchian_breakout,{}
+TRV,volume_donchian_breakout_10_25_20,{}
+TRV,volume_donchian_breakout_15_30_20,{}
 MCD,bollinger_bands_mean_reversion_sma_vectorized,{}
 MCD,sma_stoch_close_strategy_vectorized,{}
 MCD,stochastic_oscillator_signal_vectorized,{}
@@ -9770,12 +9530,6 @@ MCD,donchian_breakout_with_ma_15_40,{}
 MCD,donchian_inv_with_ma_filter,{}
 MCD,donchian_inv_with_ma_15_40,{}
 MCD,donchian_inv_with_ma_10_30,{}
-MCD,keltner_rev_vectorized,{}
-MCD,keltner_rev_15_1_5,{}
-MCD,keltner_rev_50_2_5,{}
-MCD,keltner_tf_vectorized,{}
-MCD,keltner_tf_15_1_5,{}
-MCD,keltner_tf_50_2_5,{}
 MCD,weekly_breakout_vectorized,{}
 MCD,weekly_breakout_1_2,{}
 MCD,weekly_breakout_2_1,{}
@@ -9800,6 +9554,10 @@ MCD,squeeze_ema_strategy,{}
 MCD,squeeze_ema_10_20,{}
 MCD,squeeze_ema_15_25,{}
 MCD,ema_pullback_strategy,{}
+MCD,volume_trend_ema_threshold,{}
+MCD,volume_donchian_breakout,{}
+MCD,volume_donchian_breakout_10_25_20,{}
+MCD,volume_donchian_breakout_15_30_20,{}
 OHB.DE,bollinger_bands_mean_reversion_sma_vectorized,{}
 OHB.DE,sma_stoch_close_strategy_vectorized,{}
 OHB.DE,stochastic_oscillator_signal_vectorized,{}
@@ -9851,12 +9609,6 @@ OHB.DE,donchian_breakout_with_ma_15_40,{}
 OHB.DE,donchian_inv_with_ma_filter,{}
 OHB.DE,donchian_inv_with_ma_15_40,{}
 OHB.DE,donchian_inv_with_ma_10_30,{}
-OHB.DE,keltner_rev_vectorized,{}
-OHB.DE,keltner_rev_15_1_5,{}
-OHB.DE,keltner_rev_50_2_5,{}
-OHB.DE,keltner_tf_vectorized,{}
-OHB.DE,keltner_tf_15_1_5,{}
-OHB.DE,keltner_tf_50_2_5,{}
 OHB.DE,weekly_breakout_vectorized,{}
 OHB.DE,weekly_breakout_1_2,{}
 OHB.DE,weekly_breakout_2_1,{}
@@ -9864,7 +9616,7 @@ OHB.DE,weekly_breakout_2_2,{}
 OHB.DE,weekly_breakout_1_3,{}
 OHB.DE,weekly_breakout_2_3,{}
 OHB.DE,vwap_trading_strategy_threshold,{}
-OHB.DE,vwap_trading_strategy_cross,{}
+OHB.DE,vwap_trading_strategy_cross,"{""lookback"": 25, ""threshold"": 0.003}"
 OHB.DE,vwap_trading_strategy_cross_20_10,{}
 OHB.DE,vwap_trading_strategy_cross_30_20,{}
 OHB.DE,parab_rev_vectorized,{}
@@ -9881,6 +9633,10 @@ OHB.DE,squeeze_ema_strategy,{}
 OHB.DE,squeeze_ema_10_20,{}
 OHB.DE,squeeze_ema_15_25,{}
 OHB.DE,ema_pullback_strategy,{}
+OHB.DE,volume_trend_ema_threshold,{}
+OHB.DE,volume_donchian_breakout,{}
+OHB.DE,volume_donchian_breakout_10_25_20,{}
+OHB.DE,volume_donchian_breakout_15_30_20,{}
 RHM.DE,bollinger_bands_mean_reversion_sma_vectorized,{}
 RHM.DE,sma_stoch_close_strategy_vectorized,{}
 RHM.DE,stochastic_oscillator_signal_vectorized,{}
@@ -9932,12 +9688,6 @@ RHM.DE,donchian_breakout_with_ma_15_40,{}
 RHM.DE,donchian_inv_with_ma_filter,{}
 RHM.DE,donchian_inv_with_ma_15_40,{}
 RHM.DE,donchian_inv_with_ma_10_30,{}
-RHM.DE,keltner_rev_vectorized,{}
-RHM.DE,keltner_rev_15_1_5,{}
-RHM.DE,keltner_rev_50_2_5,{}
-RHM.DE,keltner_tf_vectorized,{}
-RHM.DE,keltner_tf_15_1_5,{}
-RHM.DE,keltner_tf_50_2_5,{}
 RHM.DE,weekly_breakout_vectorized,{}
 RHM.DE,weekly_breakout_1_2,{}
 RHM.DE,weekly_breakout_2_1,{}
@@ -9962,6 +9712,10 @@ RHM.DE,squeeze_ema_strategy,{}
 RHM.DE,squeeze_ema_10_20,{}
 RHM.DE,squeeze_ema_15_25,{}
 RHM.DE,ema_pullback_strategy,{}
+RHM.DE,volume_trend_ema_threshold,{}
+RHM.DE,volume_donchian_breakout,{}
+RHM.DE,volume_donchian_breakout_10_25_20,{}
+RHM.DE,volume_donchian_breakout_15_30_20,{}
 BAYN.DE,bollinger_bands_mean_reversion_sma_vectorized,{}
 BAYN.DE,sma_stoch_close_strategy_vectorized,{}
 BAYN.DE,stochastic_oscillator_signal_vectorized,{}
@@ -10013,12 +9767,6 @@ BAYN.DE,donchian_breakout_with_ma_15_40,{}
 BAYN.DE,donchian_inv_with_ma_filter,{}
 BAYN.DE,donchian_inv_with_ma_15_40,{}
 BAYN.DE,donchian_inv_with_ma_10_30,{}
-BAYN.DE,keltner_rev_vectorized,{}
-BAYN.DE,keltner_rev_15_1_5,{}
-BAYN.DE,keltner_rev_50_2_5,{}
-BAYN.DE,keltner_tf_vectorized,{}
-BAYN.DE,keltner_tf_15_1_5,{}
-BAYN.DE,keltner_tf_50_2_5,{}
 BAYN.DE,weekly_breakout_vectorized,{}
 BAYN.DE,weekly_breakout_1_2,{}
 BAYN.DE,weekly_breakout_2_1,{}
@@ -10043,6 +9791,10 @@ BAYN.DE,squeeze_ema_strategy,{}
 BAYN.DE,squeeze_ema_10_20,{}
 BAYN.DE,squeeze_ema_15_25,{}
 BAYN.DE,ema_pullback_strategy,{}
+BAYN.DE,volume_trend_ema_threshold,{}
+BAYN.DE,volume_donchian_breakout,{}
+BAYN.DE,volume_donchian_breakout_10_25_20,{}
+BAYN.DE,volume_donchian_breakout_15_30_20,{}
 HPQ,bollinger_bands_mean_reversion_sma_vectorized,{}
 HPQ,sma_stoch_close_strategy_vectorized,{}
 HPQ,stochastic_oscillator_signal_vectorized,{}
@@ -10094,12 +9846,6 @@ HPQ,donchian_breakout_with_ma_15_40,{}
 HPQ,donchian_inv_with_ma_filter,{}
 HPQ,donchian_inv_with_ma_15_40,{}
 HPQ,donchian_inv_with_ma_10_30,{}
-HPQ,keltner_rev_vectorized,{}
-HPQ,keltner_rev_15_1_5,{}
-HPQ,keltner_rev_50_2_5,{}
-HPQ,keltner_tf_vectorized,{}
-HPQ,keltner_tf_15_1_5,{}
-HPQ,keltner_tf_50_2_5,{}
 HPQ,weekly_breakout_vectorized,{}
 HPQ,weekly_breakout_1_2,{}
 HPQ,weekly_breakout_2_1,{}
@@ -10124,6 +9870,10 @@ HPQ,squeeze_ema_strategy,{}
 HPQ,squeeze_ema_10_20,{}
 HPQ,squeeze_ema_15_25,{}
 HPQ,ema_pullback_strategy,{}
+HPQ,volume_trend_ema_threshold,{}
+HPQ,volume_donchian_breakout,{}
+HPQ,volume_donchian_breakout_10_25_20,{}
+HPQ,volume_donchian_breakout_15_30_20,{}
 CSCO,bollinger_bands_mean_reversion_sma_vectorized,{}
 CSCO,sma_stoch_close_strategy_vectorized,{}
 CSCO,stochastic_oscillator_signal_vectorized,{}
@@ -10175,12 +9925,6 @@ CSCO,donchian_breakout_with_ma_15_40,{}
 CSCO,donchian_inv_with_ma_filter,{}
 CSCO,donchian_inv_with_ma_15_40,{}
 CSCO,donchian_inv_with_ma_10_30,{}
-CSCO,keltner_rev_vectorized,{}
-CSCO,keltner_rev_15_1_5,{}
-CSCO,keltner_rev_50_2_5,{}
-CSCO,keltner_tf_vectorized,{}
-CSCO,keltner_tf_15_1_5,{}
-CSCO,keltner_tf_50_2_5,{}
 CSCO,weekly_breakout_vectorized,{}
 CSCO,weekly_breakout_1_2,{}
 CSCO,weekly_breakout_2_1,{}
@@ -10205,6 +9949,10 @@ CSCO,squeeze_ema_strategy,{}
 CSCO,squeeze_ema_10_20,{}
 CSCO,squeeze_ema_15_25,{}
 CSCO,ema_pullback_strategy,{}
+CSCO,volume_trend_ema_threshold,{}
+CSCO,volume_donchian_breakout,{}
+CSCO,volume_donchian_breakout_10_25_20,{}
+CSCO,volume_donchian_breakout_15_30_20,{}
 PEP,bollinger_bands_mean_reversion_sma_vectorized,{}
 PEP,sma_stoch_close_strategy_vectorized,{}
 PEP,stochastic_oscillator_signal_vectorized,{}
@@ -10256,12 +10004,6 @@ PEP,donchian_breakout_with_ma_15_40,{}
 PEP,donchian_inv_with_ma_filter,{}
 PEP,donchian_inv_with_ma_15_40,{}
 PEP,donchian_inv_with_ma_10_30,{}
-PEP,keltner_rev_vectorized,{}
-PEP,keltner_rev_15_1_5,{}
-PEP,keltner_rev_50_2_5,{}
-PEP,keltner_tf_vectorized,{}
-PEP,keltner_tf_15_1_5,{}
-PEP,keltner_tf_50_2_5,{}
 PEP,weekly_breakout_vectorized,{}
 PEP,weekly_breakout_1_2,{}
 PEP,weekly_breakout_2_1,{}
@@ -10286,6 +10028,10 @@ PEP,squeeze_ema_strategy,{}
 PEP,squeeze_ema_10_20,{}
 PEP,squeeze_ema_15_25,{}
 PEP,ema_pullback_strategy,{}
+PEP,volume_trend_ema_threshold,{}
+PEP,volume_donchian_breakout,{}
+PEP,volume_donchian_breakout_10_25_20,{}
+PEP,volume_donchian_breakout_15_30_20,{}
 NKE,bollinger_bands_mean_reversion_sma_vectorized,{}
 NKE,sma_stoch_close_strategy_vectorized,{}
 NKE,stochastic_oscillator_signal_vectorized,{}
@@ -10337,12 +10083,6 @@ NKE,donchian_breakout_with_ma_15_40,{}
 NKE,donchian_inv_with_ma_filter,{}
 NKE,donchian_inv_with_ma_15_40,{}
 NKE,donchian_inv_with_ma_10_30,{}
-NKE,keltner_rev_vectorized,{}
-NKE,keltner_rev_15_1_5,{}
-NKE,keltner_rev_50_2_5,{}
-NKE,keltner_tf_vectorized,{}
-NKE,keltner_tf_15_1_5,{}
-NKE,keltner_tf_50_2_5,{}
 NKE,weekly_breakout_vectorized,{}
 NKE,weekly_breakout_1_2,{}
 NKE,weekly_breakout_2_1,{}
@@ -10367,6 +10107,10 @@ NKE,squeeze_ema_strategy,{}
 NKE,squeeze_ema_10_20,{}
 NKE,squeeze_ema_15_25,{}
 NKE,ema_pullback_strategy,{}
+NKE,volume_trend_ema_threshold,{}
+NKE,volume_donchian_breakout,"{""lookback_vol"": 6, ""lookback_price"": 20, ""vol_threshold"": 0.4}"
+NKE,volume_donchian_breakout_10_25_20,{}
+NKE,volume_donchian_breakout_15_30_20,{}
 PINS,bollinger_bands_mean_reversion_sma_vectorized,{}
 PINS,sma_stoch_close_strategy_vectorized,{}
 PINS,stochastic_oscillator_signal_vectorized,{}
@@ -10418,12 +10162,6 @@ PINS,donchian_breakout_with_ma_15_40,{}
 PINS,donchian_inv_with_ma_filter,{}
 PINS,donchian_inv_with_ma_15_40,{}
 PINS,donchian_inv_with_ma_10_30,{}
-PINS,keltner_rev_vectorized,{}
-PINS,keltner_rev_15_1_5,{}
-PINS,keltner_rev_50_2_5,{}
-PINS,keltner_tf_vectorized,{}
-PINS,keltner_tf_15_1_5,{}
-PINS,keltner_tf_50_2_5,{}
 PINS,weekly_breakout_vectorized,{}
 PINS,weekly_breakout_1_2,{}
 PINS,weekly_breakout_2_1,{}
@@ -10448,6 +10186,10 @@ PINS,squeeze_ema_strategy,{}
 PINS,squeeze_ema_10_20,{}
 PINS,squeeze_ema_15_25,{}
 PINS,ema_pullback_strategy,{}
+PINS,volume_trend_ema_threshold,{}
+PINS,volume_donchian_breakout,{}
+PINS,volume_donchian_breakout_10_25_20,{}
+PINS,volume_donchian_breakout_15_30_20,{}
 NNDM,bollinger_bands_mean_reversion_sma_vectorized,{}
 NNDM,sma_stoch_close_strategy_vectorized,{}
 NNDM,stochastic_oscillator_signal_vectorized,{}
@@ -10499,12 +10241,6 @@ NNDM,donchian_breakout_with_ma_15_40,{}
 NNDM,donchian_inv_with_ma_filter,{}
 NNDM,donchian_inv_with_ma_15_40,{}
 NNDM,donchian_inv_with_ma_10_30,{}
-NNDM,keltner_rev_vectorized,{}
-NNDM,keltner_rev_15_1_5,{}
-NNDM,keltner_rev_50_2_5,{}
-NNDM,keltner_tf_vectorized,{}
-NNDM,keltner_tf_15_1_5,{}
-NNDM,keltner_tf_50_2_5,{}
 NNDM,weekly_breakout_vectorized,{}
 NNDM,weekly_breakout_1_2,{}
 NNDM,weekly_breakout_2_1,{}
@@ -10529,3 +10265,7 @@ NNDM,squeeze_ema_strategy,{}
 NNDM,squeeze_ema_10_20,{}
 NNDM,squeeze_ema_15_25,{}
 NNDM,ema_pullback_strategy,{}
+NNDM,volume_trend_ema_threshold,{}
+NNDM,volume_donchian_breakout,{}
+NNDM,volume_donchian_breakout_10_25_20,{}
+NNDM,volume_donchian_breakout_15_30_20,{}
