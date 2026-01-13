@@ -1852,6 +1852,14 @@ def liquidity_grab_tf_strategy(df: pd.DataFrame, lookback: int = 20) -> pd.Serie
 
     return inverse_signals
 
+def buy_and_hold_strategy(df: pd.DataFrame) -> pd.Series:
+
+    signals = pd.Series(0, index=df.index, dtype='int8')
+
+    signals.iloc[0]=2
+    signals.iloc[-1] = -2
+
+    return signals
 
 
 def aaa():
@@ -1942,6 +1950,7 @@ candlestick_strategies = [
     parab_rev_ema_vectorized,
     #vwap_trading_strategy_cross_alfa,
     liquidity_grab_rev_ema_strategy,
+    #buy_and_hold_strategy,
     #combined_signal_vectorized
 ]
 if __name__ == "__main__":

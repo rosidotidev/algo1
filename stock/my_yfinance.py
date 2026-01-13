@@ -8,6 +8,10 @@ class MyYFinance:
 
     @staticmethod
     def _to_unix_timestamp(date_str: str) -> int:
+        # se è già un unix timestamp (es. "1733088765"), lo ritorno diretto
+        if date_str.isdigit() and len(date_str) > 8:
+            return int(date_str)
+
         dt = datetime.strptime(date_str, "%Y%m%d")
         return int(time.mktime(dt.timetuple()))
 
@@ -79,7 +83,8 @@ class MyYFinance:
             raise ValueError("Unsupported period format. Use '1y', '6mo', '30d', etc.")
         tomorrow=today+timedelta(days=1)
         start_str = start.strftime("%Y%m%d")
-        end_str = tomorrow.strftime("%Y%m%d")
+        #end_str = tomorrow.strftime("%Y%m%d")
+        end_str = str(int(time.time()))
 
         return MyYFinance.fetch_data(symbol, start_str, end_str, interval)
 

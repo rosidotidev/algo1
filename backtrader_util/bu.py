@@ -177,7 +177,7 @@ cache = {
     "stop_loss": 0.05,
     "take_profit": 0.08,
     "enabled_long": True,
-    "enabled_short": True,
+    "enabled_short": False,
     "df": {},
     "context": {}
 }
