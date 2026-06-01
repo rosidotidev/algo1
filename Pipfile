@@ -17,3 +17,4 @@ backtesting = "==0.6.2"
 
 [requires]
 python_version = "3.12"
+

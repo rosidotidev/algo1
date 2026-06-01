@@ -14,12 +14,8 @@
 git clone https://github.com/rosidotidev/algo1.git
 cd algo1
 
-# Clean start — reset Pipfile and remove any old lockfile
-git checkout -- Pipfile Pipfile.lock 2>/dev/null
-rm -f Pipfile.lock
-
-# Install all dependencies (pinned to validated versions)
-pipenv install pandas==2.3.2 python-dotenv==1.0.1 yfinance==0.2.54 matplotlib==3.10.0 scikit-learn==1.6.1 joblib==1.4.2 pandas-ta==0.4.71b0 backtesting==0.6.2
+# Install all dependencies (uses the committed Pipfile.lock for reproducibility)
+pipenv install
 
 # Run the app
 pipenv run python main_web.py
@@ -29,6 +25,26 @@ pipenv run python main_web.py
 
 ```bash
 pipenv run python -c "import pandas; import numpy; import yfinance; import matplotlib; import sklearn; import joblib; import pandas_ta; import backtesting; print('All packages loaded successfully')"
+```
+
+---
+
+### Troubleshooting — clean reinstall
+
+If you run into dependency conflicts, reset the environment and reinstall:
+
+```bash
+# Remove the virtual environment
+pipenv --rm
+
+# Reset Pipfile and Pipfile.lock to the committed versions
+git checkout -- Pipfile Pipfile.lock
+
+# Reinstall using the pinned versions (Pipfile.lock is included for reproducibility)
+pipenv install
+
+# Run the app
+pipenv run python main_web.py
 ```
 
 ---
