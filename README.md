@@ -2,18 +2,33 @@
 
 ## 0️⃣ Installation
 
-Make sure you have **Python 3.9+** and **Pipenv** installed.
- 
+### Prerequisites
+
+- **Python 3.12+**
+- **Pipenv** installed (`pip install pipenv`)
+
+### Step-by-step
+
 ```bash
 # Clone the repository
 git clone https://github.com/rosidotidev/algo1.git
 cd algo1
 
-# Install dependencies using Pipenv
-pipenv install
+# Clean start — reset Pipfile and remove any old lockfile
+git checkout -- Pipfile Pipfile.lock 2>/dev/null
+rm -f Pipfile.lock
+
+# Install all dependencies (pinned to validated versions)
+pipenv install pandas==2.3.2 python-dotenv==1.0.1 yfinance==0.2.54 matplotlib==3.10.0 scikit-learn==1.6.1 joblib==1.4.2 pandas-ta==0.4.71b0 backtesting==0.6.2
 
 # Run the app
 pipenv run python main_web.py
+```
+
+### Verify the installation
+
+```bash
+pipenv run python -c "import pandas; import numpy; import yfinance; import matplotlib; import sklearn; import joblib; import pandas_ta; import backtesting; print('All packages loaded successfully')"
 ```
 
 ---

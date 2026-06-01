@@ -4,20 +4,16 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pandas = "*"
-python-dotenv = "*"
-yfinance = "*"
-matplotlib = "*"
-backtrader = "*"
-scikit-learn = "*"
-joblib = "*"
-pandas-ta = "*"
-xgboost = "*"
-backtesting = "*"
-numpy = "==1.23.5"
-tensorflow = "*"
+pandas = "==2.3.2"
+python-dotenv = "==1.0.1"
+yfinance = "==0.2.54"
+matplotlib = "==3.10.0"
+scikit-learn = "==1.6.1"
+joblib = "==1.4.2"
+pandas-ta = "==0.4.71b0"
+backtesting = "==0.6.2"
 
 [dev-packages]
 
 [requires]
-python_version = "3.11"
+python_version = "3.12"
