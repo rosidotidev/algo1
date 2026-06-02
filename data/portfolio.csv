@@ -1,0 +1,7 @@
+type,id,ticker,action,amount,exposure,leverage,entry_date,exit_date,fee,pl_amount,pl_pct,note,status
+cash,0,,,0.0,,,,,0.0,,,initial_cash,
+trade,1,AAPL,Buy,100.0,100.0,1.0,2026-06-02,2026-06-02,0.0,,,,Closed
+cash_op,2,,Deposit,811.0,0.0,1.0,2026-06-02,,0.0,,,Deposit of €811.00,Closed
+trade,3,AAPL,Sell,116.0,116.0,1.0,2026-06-02,2026-06-02,0.57,15.43,0.1543,closed via UI,Closed
+cash_op,4,,Withdrawal,-15.0,0.0,1.0,2026-06-02,,0.0,,,spese condominio,Closed
+cash_op,5,,Deposit,100.0,0.0,1.0,2026-06-02,,0.0,,,Deposit of €100.00,Closed

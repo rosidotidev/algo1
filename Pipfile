@@ -12,9 +12,10 @@ scikit-learn = "==1.6.1"
 joblib = "==1.4.2"
 pandas-ta = "==0.4.71b0"
 backtesting = "==0.6.2"
+gradio = "*"
+streamlit = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.12"
-

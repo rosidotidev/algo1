@@ -1862,6 +1862,42 @@ def buy_and_hold_strategy(df: pd.DataFrame) -> pd.Series:
     return signals
 
 
+def roc_momentum_strategy(df: pd.DataFrame,
+                          roc_period: int = 20,
+                          ema_period: int = 50,
+                          threshold: float = 5.0) -> pd.Series:
+    """
+    Rate-of-Change momentum strategy (Jegadeesh & Titman 1993).
+    Enters when N-day momentum exceeds a threshold, confirmed by EMA trend.
+
+    Signals:
+        2 = Buy  when ROC > threshold and Close > EMA
+        1 = Sell when ROC < -threshold and Close < EMA
+        0 = Hold otherwise
+    """
+    close = df['Close']
+
+    roc = (close / close.shift(roc_period) - 1) * 100
+    ema = close.ewm(span=ema_period, adjust=False).mean()
+
+    long_entry = (roc > threshold) & (close > ema)
+    short_entry = (roc < -threshold) & (close < ema)
+
+    signals = pd.Series(0, index=df.index, dtype='int8')
+    signals[long_entry] = 2
+    signals[short_entry] = 1
+
+    return signals
+
+
+def roc_momentum_20_5(df: pd.DataFrame) -> pd.Series:
+    return roc_momentum_strategy(df, roc_period=20, ema_period=50, threshold=5.0)
+
+
+def roc_momentum_40_10(df: pd.DataFrame) -> pd.Series:
+    return roc_momentum_strategy(df, roc_period=40, ema_period=75, threshold=10.0)
+
+
 def aaa():
     """
 
@@ -1951,7 +1987,10 @@ candlestick_strategies = [
     #vwap_trading_strategy_cross_alfa,
     liquidity_grab_rev_ema_strategy,
     #buy_and_hold_strategy,
-    #combined_signal_vectorized
+    #combined_signal_vectorized,
+    roc_momentum_strategy,
+    roc_momentum_20_5,
+    roc_momentum_40_10,
 ]
 if __name__ == "__main__":
     print(count_hammers_in_ticker("GE"))
